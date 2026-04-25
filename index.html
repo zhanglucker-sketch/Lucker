@@ -70,7 +70,7 @@ body {
   height: 18px;
   fill: white;
 }
-
+	
 .glow-canvas {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -270,7 +270,7 @@ body {
   padding-top: 16px;
   border-top: 1px solid rgba(255,255,255,0.05);
 }
-
+	
 /* 新增：关于我模块视频+文字布局 */
 .about-wrapper {
   display: grid;
@@ -293,7 +293,7 @@ body {
   height: 100%;
   border: 0;
 }
-
+	
 .personal-info {
   margin-top: 40px;
   display: flex;
@@ -609,13 +609,13 @@ body {
   .section {
     padding: 80px 0 !important;
   }
-  /* 新增：移动端关于我模块改为单列 */
+	  /* 新增：移动端关于我模块改为单列 */
   .about-wrapper {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  /* 新增：移动端下载按钮适配 */
- .download-btn {
+	  /* 新增：移动端下载按钮适配 */
+	.download-btn {
   right: 20px;
   bottom: 20px;
   padding: 12px 18px;
@@ -784,14 +784,14 @@ body {
 
 <div class="glow-canvas" id="glow"></div>
 
-<!-- 新增：悬浮下载按钮 -->
+	<!-- 新增：悬浮下载按钮 -->
 <button class="download-btn" onclick="downloadResume()">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
   </svg>
   下载简历作品
 </button>
-
+	
 <nav class="nav" id="navbar">
   <div class="container">
     <div class="nav-logo">张琪 ZHANG QI</div>
@@ -822,7 +822,7 @@ body {
 
   <section id="about" class="section">
     <h2 class="section-title">About Me <span>关于我</span></h2>
-    
+
     <!-- 新增：视频+文字布局 -->
     <div class="about-wrapper reveal">
      <div class="about-video">
@@ -833,32 +833,32 @@ body {
     allowfullscreen>
   </iframe>
 </div>
-      <div class="hero-desc">
-        具备品牌视觉全案策划与落地能力，擅长从品牌策略、LOGO/VI体系、产品包装、网页设计到三维视觉、发布会舞美、XR直播场景的整体视觉打造。拥有大型国家级项目统筹经验，可独立带队完成从创意输出到现场落地的全流程执行，兼顾艺术审美、技术实现与商业传播效果。
-        <div class="en">
-          With the ability of brand visual full-case planning and implementation, I am good at the overall visual creation from brand strategy, LOGO/VI system, product packaging, web design to 3D vision, conference stage design and XR live streaming scenes. With experience in coordinating large-scale national-level projects, I can independently lead a team to complete the full process from creative output to on-site implementation, balancing artistic aesthetics, technical implementation and commercial communication effects.
-        </div>
+    <div class="hero-desc reveal">
+     11 年视觉创意经验，近6年主导操盘品牌视觉全案，具备从品牌策略、视觉体系、三维呈现、现场落地全链路创意管理。擅长以品牌策略为底层，构建 LOGO/VI、包装、数字媒介到发布会舞美、XR 虚拟直播的一体化视觉体系；主导国家级赛事与头部品牌大型项目，带队完成全流程落地，用视觉体系放大品牌传播与商业转化。
+		<div class="en">
+      11 years of visual creativity experience, with 6 years leading brand visual full‑case delivery. Proficient in end‑to‑end creative management: brand strategy, visual system, 3D production, and on‑site execution.Rooted in brand strategy, I build integrated visual systems spanning logo/VI, packaging, digital media, event stage design, and XR virtual live streaming.Led national‑level events and top‑brand projects, delivered full‑cycle execution, and drove brand communication and business growth through visual systemization.
       </div>
     </div>
-    
-    <div class="personal-info reveal">
-      <div class="personal-info-item">
-        <span class="personal-info-label">出生年月 /</span>
-        <span class="personal-info-value">1991年9月</span>
-      </div>
-      <div class="personal-info-item">
-        <span class="personal-info-label">毕业院校 /</span>
-        <span class="personal-info-value">中南民族大学</span>
-      </div>
-      <div class="personal-info-item">
-        <span class="personal-info-label">联系电话 /</span>
-        <span class="personal-info-value">15220107783</span>
-      </div>
-      <div class="personal-info-item">
-        <span class="personal-info-label">邮箱 /</span>
-        <span class="personal-info-value">369887709@qq.com</span>
-      </div>
-    </div>
+</div>
+	  
+<div class="personal-info reveal">
+  <div class="personal-info-item">
+    <span class="personal-info-label">出生年月 /</span>
+    <span class="personal-info-value">1991年9月</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">毕业院校 /</span>
+    <span class="personal-info-value">中南民族大学</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">联系电话 /</span>
+    <span class="personal-info-value">15220107783</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">邮箱 /</span>
+    <span class="personal-info-value">369887709@qq.com</span>
+  </div>
+</div>
 
   <section id="advantages" class="section">
     <h2 class="section-title">Core Strengths <span>核心优势</span></h2>
@@ -914,7 +914,7 @@ body {
           <ul>
             <li>服务京东、腾讯、花旗银行、习酒等全球知名品牌的大型商业项目，助力品牌曝光与商业转化</li>
             <li>统筹品牌视觉全案创意与执行，负责大型活动、发布会、虚拟 IP、文旅光影项目的整体视觉风格把控与落地</li>
-            <li>负责春晚、全运会、冬奥赛事等舞台视觉执行，打造高规格品牌级视效</li>
+            <li>参与春晚、全运会、冬奥赛事等舞台视觉执行，打造高规格品牌级视效</li>
             <li>统筹数字资产体系建设，沉淀品牌视觉素材库，提升团队复用效率与统一性</li>
             <li>管理20人创意团队，主导全流程视觉生产，制定视觉标准与交付规范，建立人才培养体系</li>
           </ul>
@@ -934,9 +934,9 @@ body {
         </div>
         <div class="exp-desc">
           <ul>
-            <li>搭建LOGO/VI/包装/网页/物料全渠道视觉体系</li>
+            <li>搭建以公司产品为核心的LOGO/VI/包装/官网/物料全渠道视觉体系，统一品牌视觉语言</li>
             <li>为长安欧尚、南方航空、星巴克、光大银行、罗永浩、辛巴直播间提供XR直播视觉全案，提升品牌直播质感与用户体验</li>
-            <li>主导湖南卫视元宵喜乐会等大型晚会XR视觉设计</li>
+            <li>主导湖南卫视元宵喜乐会等大型晚会 XR 视觉创意与落地，保障高规格舞台呈现。</li>
             <li>参与品牌交互系统与展会视觉设计，优化品牌视觉体验，助力商务曝光与转化</li>
           </ul>
         </div>
@@ -951,7 +951,7 @@ body {
           <div class="exp-date">2018.01 – 2019.01</div>
         </div>
         <div class="exp-position">
-          制作中心总监<span class="en">Visual Designer</span>
+          视觉负责人<span class="en">Visual Designer</span>
         </div>
         <div class="exp-desc">
           <ul>
@@ -971,7 +971,7 @@ body {
           <div class="exp-date">2015.07 – 2017.12</div>
         </div>
         <div class="exp-position">
-          镜头预演师 <span class="en">Intern Designer</span>
+          镜头预演师 <span class="en">Shot Previsualization Artist</span>
         </div>
         <div class="exp-desc">
           <ul>
@@ -1229,19 +1229,38 @@ matrix.addEventListener('mouseleave', () => {
     img.style.opacity = '';
   });
 });
+	function downloadResume() {
+  // 禁用按钮+提示
+  const btn = document.querySelector('.download-btn');
+  btn.disabled = true;
+  btn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+    </svg>
+    下载中...
+  `;
 
-// 新增：下载简历作品函数（需替换为实际简历链接）
-function downloadResume() {
-  // 替换为你的简历/作品包下载链接
+  // 下载逻辑
   const resumeUrl = 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/%E5%BC%A0%E7%90%AA-%E5%93%81%E7%89%8C%E8%A7%86%E8%A7%89%E5%88%9B%E6%84%8F.zip';
-  // 创建下载链接
   const link = document.createElement('a');
   link.href = resumeUrl;
-  link.download = '张琪-品牌创意视觉总监-简历作品.pdf'; // 下载后的文件名
+  link.download = '张琪-品牌创意视觉总监-简历作品.pdf';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
+  // 恢复按钮状态（3秒后）
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+      </svg>
+      下载简历作品
+    `;
+  }, 3000);
 }
+
 </script>
 
 </body>
