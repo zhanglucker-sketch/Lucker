@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf">
+	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张琪 ZHANG QI | 品牌创意视觉总监 Creative Director Portfolio</title>
+<style>
+:root {
+  --accent: #ffffff;
+  --bg: #050505;
+  --text-dim: rgba(255, 255, 255, 0.4);
+  --glass: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --gradient-1: #ffffff;
+  --gradient-2: #a8b0ff;
+  --gradient-3: #ff80b5;
+  --title-gradient-top: #ffffff;
+  --title-gradient-bottom: #a8b0ff;
+  /* Logo矩阵变量 */
+  --logo-base-size: 75px;
+  --logo-gap: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  color: var(--accent);
+  font-family: "Inter", "PingFang SC", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+}
+
+/* 新增：悬浮下载按钮样式 */
+.download-btn {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 999;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--gradient-2), var(--gradient-3));
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.4s var(--ease);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(90, 110, 255, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.download-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(90, 110, 255, 0.25);
+}
+.download-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+.glow-canvas {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  background: 
+    radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(90, 110, 255, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(255, 80, 180, 0.12) 0%, transparent 35%);
+  transition: background-position 0.3s var(--ease);
+}
+
+/* Logo矩阵 - 核心修正：移除最小宽度限制，宽屏贴右、窄屏自适应 */
+.logo-matrix {
+  display: grid;
+  grid-template-columns: repeat(6, var(--logo-base-size));
+  gap: var(--logo-gap);
+  mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  background: linear-gradient(135deg, rgba(90, 110, 255, 0.05), rgba(255, 80, 180, 0.05));
+  padding: 20px;
+  border-radius: 8px;
+  margin-left: auto; /* 宽屏贴右侧 */
+  margin-right: auto; /* 窄屏自动居中 */
+  max-width: 100%; /* 关键：不超过容器宽度 */
+  min-width: auto; /* 移除强制最小宽度（核心修正） */
+  overflow: visible;
+}
+
+.logo-item {
+  width: var(--logo-base-size);
+  height: var(--logo-base-size);
+  aspect-ratio: 1/1;
+  border-radius: 0;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+.logo-item:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.logo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.6) brightness(0.9);
+  opacity: 0.3;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+.container { 
+  max-width: 1400px; 
+  margin: 0 auto; 
+  padding: 0 24px; 
+  position: relative; 
+  z-index: 1; 
+  width: 100%;
+}
+
+.nav {
+  position: fixed;
+  top: 0; width: 100%; height: 88px;
+  display: flex; align-items: center;
+  backdrop-filter: blur(24px) saturate(120%);
+  background: var(--glass);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  transition: all 0.4s var(--ease);
+}
+.nav.scroll {
+  height: 72px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.nav .container {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+}
+.nav-logo { 
+  font-size: 1.3rem; 
+  font-weight: 800; 
+  letter-spacing: 5px; 
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  transition: letter-spacing 0.4s var(--ease);
+}
+.nav-logo:hover {
+  letter-spacing: 7px;
+}
+.nav-links { display: flex; gap: 48px; }
+.nav-links a {
+  text-decoration: none; 
+  color: var(--text-dim); 
+  font-size: 0.88rem; 
+  font-weight: 500;
+  transition: all 0.4s var(--ease); 
+  text-transform: uppercase; 
+  letter-spacing: 1.2px;
+  position: relative;
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gradient-2), var(--gradient-3));
+  transition: width 0.4s var(--ease);
+}
+.nav-links a:hover { 
+  color: var(--accent); 
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.hero {
+  height: 100vh;
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 100px;
+  padding-bottom: 40px;
+  flex-wrap: nowrap;
+  gap: 40px;
+  width: 100%;
+  overflow: visible;
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 300px;
+  padding-right: 20px;
+}
+
+.hero-logo-wrapper {
+  flex: 0 0 auto;
+  min-width: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  overflow: visible;
+  padding-left: 20px;
+}
+
+.hero-tag {
+  font-size: 0.95rem; 
+  color: var(--text-dim); 
+  letter-spacing: 6px; 
+  margin-bottom: 24px;
+  animation: fadeIn 1s ease forwards;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-tag span {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.2);
+}
+.hero h1 {
+  font-size: clamp(3.5rem, 11vw, 8.5rem);
+  line-height: 0.95; 
+  font-weight: 900; 
+  margin-left: 0;
+  padding-bottom: 10px;
+  background: linear-gradient(to bottom, 
+    var(--title-gradient-top), 
+    var(--title-gradient-bottom));
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent;
+  vertical-align: baseline;
+  overflow: visible;
+  display: block;
+}
+.hero-desc {
+  margin-top: 48px; 
+  max-width: 650px; 
+  color: var(--text-dim);
+  font-size: 1.15rem; 
+  border-left: 2px solid rgba(255,255,255,0.2); 
+  padding-left: 24px;
+  line-height: 1.7;
+}
+.hero-desc .en {
+  font-size: 0.95rem;
+  margin-top: 16px;
+  color: rgba(255,255,255,0.3);
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* 新增：关于我模块视频+文字布局 */
+.about-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+.about-video {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.5);
+}
+.about-video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.personal-info {
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 30px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+}
+.personal-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.personal-info-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.personal-info-value {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.section { 
+  padding: 160px 0; 
+  width: 100%;
+}
+.section-title {
+  font-size: 0.85rem; 
+  text-transform: uppercase; 
+  letter-spacing: 4px;
+  color: var(--text-dim); 
+  margin-bottom: 60px; 
+  display: flex; 
+  align-items: center;
+  width: 100%;
+}
+.section-title span {
+  color: var(--accent);
+  margin-left: 12px;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+.section-title::after {
+  content: ""; 
+  flex: 1; 
+  height: 1px; 
+  background: var(--border); 
+  margin-left: 20px;
+}
+
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  width: 100%;
+}
+.award-card {
+  padding: 40px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.award-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.award-type {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.award-type::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(var(--gradient-2), var(--gradient-3));
+  display: block;
+}
+.award-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.award-list li {
+  position: relative;
+  padding-left: 24px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.award-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--gradient-2);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.portfolio-grid {
+  display: grid; 
+  grid-template-columns: repeat(12, 1fr); 
+  gap: 30px;
+  width: 100%;
+}
+.portfolio-grid a {
+  text-decoration: none;
+  color: inherit;
+  grid-column: span 6; 
+  position: relative; 
+  overflow: hidden;
+  border-radius: 4px; 
+  transition: transform 0.6s var(--ease);
+  width: 100%;
+}
+.portfolio-grid a:nth-child(even) { margin-top: 80px; }
+
+.pf-image-wrap {
+  width: 100%; 
+  aspect-ratio: 16/10; 
+  background: #111;
+  overflow: hidden; 
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.pf-image-wrap img {
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover;
+  transition: all 1s var(--ease); 
+  filter: grayscale(100%) brightness(0.7);
+}
+.portfolio-grid a:hover img { 
+  transform: scale(1.05); 
+  filter: grayscale(0%) brightness(1);
+}
+
+.pf-info { margin-top: 20px; }
+.pf-category { 
+  font-size: 0.75rem; 
+  color: var(--text-dim); 
+  text-transform: uppercase; 
+  letter-spacing: 2px; 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pf-category .cn {
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.5);
+}
+.pf-name { 
+  font-size: 1.45rem; 
+  font-weight: 500; 
+  margin-top: 5px; 
+}
+
+.advantage-grid {
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 1px; 
+  background: var(--border);
+  width: 100%;
+}
+.adv-card {
+  background: var(--bg); 
+  padding: 60px 40px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.adv-card:hover { 
+  background: #0a0a0a; 
+  transform: translateY(-8px);
+}
+.adv-num { 
+  font-size: 0.85rem; 
+  color: var(--text-dim); 
+  margin-bottom: 30px; 
+  display: block; 
+}
+.adv-card h3 { 
+  font-size: 1.55rem; 
+  margin-bottom: 15px; 
+  font-weight: 600;
+}
+.adv-card p { 
+  color: var(--text-dim); 
+  line-height: 1.6; 
+  font-size: 0.95rem; 
+}
+
+.experience-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
+.exp-item {
+  padding: 40px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.exp-item:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.exp-company {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.exp-company .en {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-weight: 400;
+}
+.exp-date {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.exp-position {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.exp-position .en {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.exp-desc {
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+.exp-desc ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.exp-desc li {
+  position: relative;
+  padding-left: 20px;
+}
+.exp-desc li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--gradient-2);
+}
+
+.skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+.skill-tag {
+  padding: 12px 24px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: all 0.3s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+.skill-tag:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--gradient-2);
+  transform: translateY(-3px);
+}
+.skill-tag .en {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* 移动端适配 - 核心修正LOGO矩阵 */
+@media (max-width: 968px) {
+  .container {
+    padding: 0 20px !important;
+  }
+  .section {
+    padding: 80px 0 !important;
+  }
+  /* 新增：移动端关于我模块改为单列 */
+  .about-wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  /* 新增：移动端下载按钮适配 */
+  .download-btn {
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 18px;
+    font-size: 0.85rem;
+  }
+  .portfolio-grid a { 
+    grid-column: span 12; 
+    margin-top: 0 !important;
+    margin-bottom: 40px !important;
+  }
+  .advantage-grid { 
+    grid-template-columns: 1fr; 
+    gap: 1px;
+  }
+  .hero {
+    flex-direction: column; /* 强制上下布局 */
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+    height: auto; /* 取消100vh高度限制，避免内容溢出 */
+    padding-top: 120px;
+    padding-bottom: 60px;
+  }
+  .hero-content {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 40px; /* 增加和LOGO矩阵的间距 */
+  }
+  .hero-logo-wrapper {
+    width: 100%;
+    justify-content: center; /* 居中展示LOGO矩阵 */
+    margin-top: 20px;
+    padding-left: 0;
+  }
+  .hero h1 { 
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    line-height: 1.1; 
+  }
+  .hero-tag {
+    justify-content: center;
+  }
+  .hero-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .nav-links { 
+    gap: 16px !important;
+    overflow-x: auto;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+  .nav-links a {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px !important;
+  }
+  .nav-logo { 
+    letter-spacing: 2px !important; 
+    font-size: 1rem !important;
+  }
+  .exp-header { 
+    flex-direction: column; 
+    gap: 12px; 
+  }
+  .exp-date { 
+    align-self: flex-start; 
+  }
+  .exp-item {
+    padding: 20px !important;
+  }
+  .personal-info {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px !important;
+  }
+  .awards-grid {
+    grid-template-columns: 1fr;
+    gap: 20px !important;
+  }
+  .award-card {
+    padding: 20px !important;
+  }
+  .skills-wrap {
+    gap: 10px !important;
+  }
+  .skill-tag {
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+  }
+  .adv-card {
+    padding: 30px 20px !important;
+  }
+  .hero-desc {
+    font-size: 1rem !important;
+    padding-left: 16px !important;
+    max-width: 100% !important;
+  }
+  .section-title {
+    margin-bottom: 30px !important;
+    font-size: 0.75rem !important;
+  }
+  :root {
+    --logo-base-size: 60px;
+    --logo-gap: 8px;
+  }
+  /* LOGO矩阵移动端核心适配 */
+  .logo-matrix {
+    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
+    max-width: 100%; /* 不超过屏幕宽度 */
+    min-width: auto; /* 彻底移除最小宽度 */
+    margin: 0 auto; /* 居中 */
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    gap: 10px !important;
+  }
+  .hero-tag {
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+  }
+  .pf-image-wrap {
+    aspect-ratio: 4/3 !important;
+  }
+  :root {
+    --logo-base-size: 40px;
+    --logo-gap: 6px;
+  }
+  /* 手机屏LOGO矩阵适配 */
+  .logo-matrix {
+    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
+    max-width: 100%;
+    min-width: auto;
+  }
+  /* 新增：小屏下载按钮进一步适配 */
+  .download-btn {
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+  .download-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(40px); transition: 1s var(--ease); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="glow-canvas" id="glow"></div>
+
+<!-- 新增：悬浮下载按钮 -->
+<button class="download-btn" onclick="downloadResume()">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+  </svg>
+  下载简历作品
+</button>
+
+<nav class="nav" id="navbar">
+  <div class="container">
+    <div class="nav-logo">张琪 ZHANG QI</div>
+    <div class="nav-links">
+      <a href="#about">关于</a>
+      <a href="#advantages">优势</a>
+      <a href="#experience">经历</a>
+      <a href="#awards">荣誉</a>
+      <a href="#work">作品</a>
+      <a href="#skills">技能</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">品牌创意 | 视觉总监 <span>|</span> CREATIVE DIRECTOR / VISUAL EXPERT</span>
+      <h1>BEYOND<br>VISUALS.</h1>
+      <p class="hero-desc">
+        11年视觉创意经验，专注于品牌策略与多维形态的深度融合<br>平面 + 三维 + 发布会 + 直播 + 品牌全案统筹
+      </p>
+    </div>
+    <div class="hero-logo-wrapper">
+      <div class="logo-matrix" id="matrix"></div>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <h2 class="section-title">About Me <span>关于我</span></h2>
+    
+    <!-- 新增：视频+文字布局 -->
+    <div class="about-wrapper reveal">
+      <div class="about-video">
+        <!-- 嵌入B站视频，自动循环播放，静音（避免自动播放限制） -->
+        <iframe src="https://player.bilibili.com/player.html?aid=710000001&bvid=BV1Y4411Y7cM&cid=123456789&page=1&autoplay=1&loop=1&muted=1&controls=1" 
+                scrolling="no" 
+                allow="autoplay; fullscreen; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
+      </div>
+      <div class="hero-desc">
+        具备品牌视觉全案策划与落地能力，擅长从品牌策略、LOGO/VI体系、产品包装、网页设计到三维视觉、发布会舞美、XR直播场景的整体视觉打造。拥有大型国家级项目统筹经验，可独立带队完成从创意输出到现场落地的全流程执行，兼顾艺术审美、技术实现与商业传播效果。
+        <div class="en">
+          With the ability of brand visual full-case planning and implementation, I am good at the overall visual creation from brand strategy, LOGO/VI system, product packaging, web design to 3D vision, conference stage design and XR live streaming scenes. With experience in coordinating large-scale national-level projects, I can independently lead a team to complete the full process from creative output to on-site implementation, balancing artistic aesthetics, technical implementation and commercial communication effects.
+        </div>
+      </div>
+    </div>
+    
+    <div class="personal-info reveal">
+      <div class="personal-info-item">
+        <span class="personal-info-label">出生年月 /</span>
+        <span class="personal-info-value">1991年9月</span>
+      </div>
+      <div class="personal-info-item">
+        <span class="personal-info-label">毕业院校 /</span>
+        <span class="personal-info-value">中南民族大学</span>
+      </div>
+      <div class="personal-info-item">
+        <span class="personal-info-label">联系电话 /</span>
+        <span class="personal-info-value">15220107783</span>
+      </div>
+      <div class="personal-info-item">
+        <span class="personal-info-label">邮箱 /</span>
+        <span class="personal-info-value">369887709@qq.com</span>
+      </div>
+    </div>
+
+  <section id="advantages" class="section">
+    <h2 class="section-title">Core Strengths <span>核心优势</span></h2>
+    <div class="advantage-grid reveal">
+      <div class="adv-card">
+        <span class="adv-num">01/</span>
+        <h3>全栈品牌视觉能力</h3>
+        <p>精通平面、三维、动效、网页设计，可独立完成全品类品牌视觉输出。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">02/</span>
+        <h3>大型项目操盘</h3>
+        <p>主导品牌发布会、晚会、虚拟直播、文旅项目，熟悉高规格执行流程。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">03/</span>
+        <h3>技术+创意双驱动</h3>
+        <p>以三维视效、XR虚拟拍摄打造差异化视觉，提升品牌质感与体验。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">04/</span>
+        <h3>团队与项目统筹</h3>
+        <p>带领20人团队，制定视觉标准，优化流程，保障多项目高效交付。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">05/</span>
+        <h3>商业落地能力</h3>
+        <p>服务汽车、快消、金融、文旅等行业，视觉可直接转化为传播与业绩。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">06/</span>
+        <h3>资源整合+跨行业沟通能力</h3>
+        <p>具备内研 + 外包协同管理经验，高效整合技术开发、硬件集成与视觉制作，保障项目高质量落地。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="section">
+    <h2 class="section-title">Work Experience <span>工作经历</span></h2>
+    <div class="experience-list">
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            深圳市洲明科技股份有限公司
+            <div class="en">Unilumin Group Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2022.04 – 2026.03</div>
+        </div>
+        <div class="exp-position">
+          品牌创意 | 视觉总监 <span class="en">Brand Creative | Visual Director</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>服务京东、腾讯、花旗银行、习酒等全球知名品牌的大型商业项目，助力品牌曝光与商业转化</li>
+            <li>统筹品牌视觉全案创意与执行，负责大型活动、发布会、虚拟 IP、文旅光影项目的整体视觉风格把控与落地</li>
+            <li>负责春晚、全运会、冬奥赛事等舞台视觉执行，打造高规格品牌级视效</li>
+            <li>统筹数字资产体系建设，沉淀品牌视觉素材库，提升团队复用效率与统一性</li>
+            <li>管理20人创意团队，主导全流程视觉生产，制定视觉标准与交付规范，建立人才培养体系</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            茄子咔咔科技有限公司
+            <div class="en">Qiezi Kaka Technology Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2019.02 – 2022.04</div>
+        </div>
+        <div class="exp-position">
+          品牌视觉专家 <span class="en">Brand Visual Expert</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>搭建LOGO/VI/包装/网页/物料全渠道视觉体系</li>
+            <li>为长安欧尚、南方航空、星巴克、光大银行、罗永浩、辛巴直播间提供XR直播视觉全案，提升品牌直播质感与用户体验</li>
+            <li>主导湖南卫视元宵喜乐会等大型晚会XR视觉设计</li>
+            <li>参与品牌交互系统与展会视觉设计，优化品牌视觉体验，助力商务曝光与转化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            前海手讯文化传媒有限公司
+            <div class="en">Qianhai Shouxun Culture Media Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2018.01 – 2019.01</div>
+        </div>
+        <div class="exp-position">
+          制作中心总监<span class="en">Visual Designer</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>负责品牌视觉、产品包装、线下活动主KV创意设计、物料等视觉输出</li>
+            <li>完成 50 + 场发布会、访谈节目、科创活动的视觉设计与落地执行，统一品牌栏目视觉形象</li>
+	    <li>配合团队完成三维视觉渲染与平面延展工作</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            深圳华强数码电影有限公司
+            <div class="en">Shenzhen Huaqiang Digital Film Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2015.07 – 2017.12</div>
+        </div>
+        <div class="exp-position">
+          镜头预演师 <span class="en">Intern Designer</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>负责球幕、环幕、特种影院项目的镜头语言设计与视觉预演，优化影片叙事节奏与画面呈现</li>
+            <li>参与《飞跃吴哥窟》《大闹天宫》《女娲补天》等项目视觉制作，提升内容视觉冲击力与沉浸体验</li>
+            <li>自研多款流程插件，优化制作效率，提升团队整体出片速度</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="awards" class="section">
+    <h2 class="section-title">Honors & Awards <span>荣誉奖项</span></h2>
+    <div class="awards-grid reveal">
+      <div class="award-card">
+        <h3 class="award-type">工作荣誉</h3>
+        <ul class="award-list">
+          <li>荣获第三届高新视频创新应用大赛一等奖</li>
+          <li>荣获第十届深圳（国际）科技影视周“卓越影视技术贡献奖”</li>
+          <li>获评洲明科技2023上半年度“最佳创意奖”</li>
+          <li>受聘洲明学堂动画制作工程技术导师，发挥专业优势赋能人才培养</li>
+        </ul>
+      </div>
+      
+      <div class="award-card">
+        <h3 class="award-type">在校荣誉</h3>
+        <ul class="award-list">
+          <li>两度斩获全国大学生计算机设计大赛一等奖（民族组、专业组）</li>
+          <li>荣获全国大学生广告大赛湖北省三等奖</li>
+          <li>荣获ONESHOW国际创意广告优秀奖</li>
+          <li>多次获评校级“创新标兵”</li>
+          <li>凭借优异成绩斩获专业一、二等奖学金，展现扎实的专业功底与创新能力</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="section">
+    <h2 class="section-title">Selected Works <span>代表作品</span></h2>
+    <div class="portfolio-grid">
+    
+      <a href="work-brand-case.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/brand.jpg" alt="品牌全案视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Brand Identity <span class="cn">| 品牌视觉体系</span></span>
+          <div class="pf-name">品牌全案视觉</div>
+        </div>
+      </a>
+
+      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/stage.jpg" alt="品牌发布会设计">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Brand Launch Design <span class="cn">| 发布会设计</span></span>
+          <div class="pf-name">品牌发布会设计</div>
+        </div>
+      </a>
+
+      <a href="work-live-xr.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/live.jpg" alt="品牌直播视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Live Streaming <span class="cn">| 直播视觉</span></span>
+          <div class="pf-name">品牌直播视觉</div>
+        </div>
+      </a>
+
+      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/ip.jpg" alt="品牌虚拟IP视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Virtual IP <span class="cn">| 虚拟IP视觉</span></span>
+          <div class="pf-name">品牌虚拟IP视觉</div>
+        </div>
+      </a>
+		
+		<a href="work-3d-visual.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/3d.jpg" alt="三维视觉创意">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">3D Visual <span class="cn">| 三维视觉</span></span>
+          <div class="pf-name">三维视觉创意</div>
+        </div>
+      </a>
+
+      <a href="work-tourism-light.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/tourism.jpg" alt="文旅光影项目">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Cultural Tourism <span class="cn">| 文旅光影</span></span>
+          <div class="pf-name">文旅光影项目</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section id="skills" class="section">
+    <h2 class="section-title">Professional Skills <span>专业技能</span></h2>
+    <div class="skills-wrap reveal">
+      <div class="skill-tag">LOGO/VI设计 <span class="en">LOGO/VI Design</span></div>
+      <div class="skill-tag">品牌全案 <span class="en">Brand Full Case</span></div>
+      <div class="skill-tag">主KV设计 <span class="en">Key Visual</span></div>
+      <div class="skill-tag">产品包装 <span class="en">Product Packaging</span></div>
+      <div class="skill-tag">网页设计 <span class="en">Web Design</span></div>
+      <div class="skill-tag">三维视觉 <span class="en">3D Visual</span></div>
+      <div class="skill-tag">AIGC <span class="en">AIGC</span></div>
+      <div class="skill-tag">发布会舞美 <span class="en">Stage Design</span></div>
+      <div class="skill-tag">XR直播 <span class="en">XR Live</span></div>
+      <div class="skill-tag">虚拟拍摄 <span class="en">Virtual Shooting</span></div>
+      <div class="skill-tag">团队管理 <span class="en">Team Management</span></div>
+      <div class="skill-tag">Maya <span class="en">3D Software</span></div>
+      <div class="skill-tag">UE <span class="en">Unreal Engine</span></div>
+      <div class="skill-tag">Adobe全套 <span class="en">Adobe Suite</span></div>
+      <div class="skill-tag">镜头语言 <span class="en">Cinematography</span></div>
+      <div class="skill-tag">裸眼3D <span class="en">Naked-Eye 3D</span></div>
+      <div class="skill-tag">光影设计 <span class="en">Lighting Design</span></div>
+    </div>
+  </section>
+</main>
+
+<footer class="section" style="text-align: center; border-top: 1px solid var(--border); padding: 60px 0;">
+  <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 1px;">张琪 ZHANG QI © 2026. 联系方式：15220107783.</p>
+</footer>
+
+<script>
+// 鼠标光影
+const glow = document.getElementById('glow');
+window.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth) * 100;
+  const y = (e.clientY / window.innerHeight) * 100;
+  glow.style.setProperty('--x', `${x}%`);
+  glow.style.setProperty('--y', `${y}%`);
+});
+
+// 滚动动画
+const observerOptions = { threshold: 0.1 };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// 作品微动效
+document.querySelectorAll('.portfolio-grid a').forEach(item => {
+  item.addEventListener('mousemove', (e) => {
+    const { left, top, width, height } = item.getBoundingClientRect();
+    const x = (e.clientX - left - width/2) * 0.1;
+    const y = (e.clientY - top - height/2) * 0.1;
+    item.style.transform = `translate(${x}px, ${y}px)`;
+  });
+  item.addEventListener('mouseleave', () => {
+    item.style.transform = `translate(0, 0)`;
+  });
+});
+
+// 导航栏
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.classList.add('scroll');
+  } else {
+    navbar.classList.remove('scroll');
+  }
+});
+
+// 平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 100,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+//  Logo 矩阵 ======================
+const matrix = document.getElementById('matrix');
+const totalLogos = 30;
+
+for (let i = 0; i < totalLogos; i++) {
+  const item = document.createElement('div');
+  item.className = 'logo-item';
+  // 自动加载 1.jpg、2.jpg、3.jpg...
+  const imgNum = (i % 30) + 1;
+  // 懒加载格式（保留）
+  item.innerHTML = `<img data-src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/logo/${imgNum}.jpg" src="" alt="LOGO">`;
+  matrix.appendChild(item);
+}
+
+// LOGO 懒加载（保留，不影响高亮）
+const logoItems = document.querySelectorAll('.logo-item img');
+const logoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      img.src = img.dataset.src;
+      logoObserver.unobserve(img);
+    }
+  });
+});
+logoItems.forEach(img => logoObserver.observe(img));
+
+// 你原来的鼠标光效逻辑（修复高亮参数，强化视觉效果）
+const items = document.querySelectorAll('.logo-item');
+
+matrix.addEventListener('mousemove', (e) => {
+  const { clientX: mouseX, clientY: mouseY } = e;
+
+  items.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distance = Math.hypot(mouseX - centerX, mouseY - centerY);
+    
+    const radius = 160;
+    const strength = Math.max(0, 1 - distance / radius); 
+
+    // 👇 核心修复：强化高亮参数，让效果更明显
+    const opacity = 0.4 + strength * 0.6; // 基础透明度提高，高亮时更亮
+    const grayscale = 0.8 * (1 - strength); // 灰度弱化更多，高亮时几乎无灰度
+    const brightness = 1 + strength * 0.4; // 亮度提升幅度加大
+
+    // 背景和边框高亮强化
+    item.style.background = `rgba(255, 255, 255, ${0.05 + strength * 0.15})`;
+    item.style.borderColor = `rgba(168, 176, 255, ${strength * 0.6})`;
+    
+    const img = item.querySelector('img');
+    img.style.filter = `grayscale(${grayscale}) brightness(${brightness})`;
+    img.style.opacity = opacity;
+  });
+});
+
+matrix.addEventListener('mouseleave', () => {
+  items.forEach(item => {
+    item.style.background = '';
+    item.style.borderColor = '';
+    const img = item.querySelector('img');
+    img.style.filter = '';
+    img.style.opacity = '';
+  });
+});
+
+// 新增：下载简历作品函数（需替换为实际简历链接）
+function downloadResume() {
+  // 替换为你的简历/作品包下载链接
+  const resumeUrl = 'https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/resume/张琪-品牌创意视觉总监.pdf';
+  // 创建下载链接
+  const link = document.createElement('a');
+  link.href = resumeUrl;
+  link.download = '张琪-品牌创意视觉总监-简历作品.pdf'; // 下载后的文件名
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+</script>
+
+</body>
+</html>
