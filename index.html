@@ -825,10 +825,10 @@ body {
 
     <!-- 新增：视频+文字布局 -->
     <div class="about-wrapper reveal">
-   <div class="about-video">
+  <div class="about-video">
   <iframe 
-    id="aboutVideo"  <!-- 新增这行ID -->
-    src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=0&loop=1&muted=1&controls=1"  <!-- autoplay改0 -->
+    id="aboutVideo"  <!-- 必须保留这个ID，JS要用到 -->
+    src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&t=0.1&autoplay=0&loop=1&muted=1&controls=1" 
     scrolling="no" 
     allow="autoplay; fullscreen; picture-in-picture" 
     allowfullscreen>
@@ -1261,9 +1261,7 @@ matrix.addEventListener('mouseleave', () => {
     `;
   }, 3000);
 }
-
-</script>
-<!-- 这里放我给你的JS代码 -->
+	
 <script>
 // 滚动到关于我时播放视频，离开暂停 —— 全设备兼容
 const video = document.getElementById('aboutVideo');
@@ -1273,21 +1271,24 @@ let isPlaying = false;
 
 function checkVideoPlay() {
   const rect = aboutSection.getBoundingClientRect();
+  // 当「关于我」区域进入屏幕70%时触发播放
   const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > 0;
 
   if (isInView && !isPlaying) {
+    // 进入可视区：开启自动播放
     video.src = video.src.replace("autoplay=0", "autoplay=1");
     isPlaying = true;
   } else if (!isInView && isPlaying) {
+    // 离开可视区：关闭自动播放
     video.src = video.src.replace("autoplay=1", "autoplay=0");
     isPlaying = false;
   }
 }
 
+// 监听滚动+页面加载事件，确保首次加载也能判断
 window.addEventListener('scroll', checkVideoPlay);
 window.addEventListener('load', checkVideoPlay);
 </script>
-
 
 </body>
 </html>
