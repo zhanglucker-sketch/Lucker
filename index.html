@@ -825,9 +825,10 @@ body {
 
     <!-- 新增：视频+文字布局 -->
     <div class="about-wrapper reveal">
-     <div class="about-video">
+   <div class="about-video">
   <iframe 
-    src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=1&loop=1&muted=1&controls=1" 
+    id="aboutVideo"  <!-- 新增这行ID -->
+    src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=0&loop=1&muted=1&controls=1"  <!-- autoplay改0 -->
     scrolling="no" 
     allow="autoplay; fullscreen; picture-in-picture" 
     allowfullscreen>
@@ -1262,6 +1263,31 @@ matrix.addEventListener('mouseleave', () => {
 }
 
 </script>
+<!-- 这里放我给你的JS代码 -->
+<script>
+// 滚动到关于我时播放视频，离开暂停 —— 全设备兼容
+const video = document.getElementById('aboutVideo');
+const aboutSection = document.getElementById('about');
+
+let isPlaying = false;
+
+function checkVideoPlay() {
+  const rect = aboutSection.getBoundingClientRect();
+  const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > 0;
+
+  if (isInView && !isPlaying) {
+    video.src = video.src.replace("autoplay=0", "autoplay=1");
+    isPlaying = true;
+  } else if (!isInView && isPlaying) {
+    video.src = video.src.replace("autoplay=1", "autoplay=0");
+    isPlaying = false;
+  }
+}
+
+window.addEventListener('scroll', checkVideoPlay);
+window.addEventListener('load', checkVideoPlay);
+</script>
+
 
 </body>
 </html>
