@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
 	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf">
 	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf">
@@ -22,6 +23,9 @@
   /* Logo矩阵变量 */
   --logo-base-size: 75px;
   --logo-gap: 12px;
+  /* 新增：动画控制参数（可自定义） */
+  --scroll-trigger-offset: 50; /* 触发文字切换的滚动距离（像素） */
+  --text-animation-duration: 0.8s; /* 中文文字滑入动画时长（秒） */
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -239,7 +243,13 @@ body {
   font-size: 0.85rem;
   color: rgba(255,255,255,0.2);
 }
-.hero h1 {
+
+/* 新增：中英文标题切换样式 */
+.hero-title-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.hero-title-en {
   font-size: clamp(3.5rem, 11vw, 8.5rem);
   line-height: 0.95; 
   font-weight: 900; 
@@ -253,7 +263,36 @@ body {
   vertical-align: baseline;
   overflow: visible;
   display: block;
+  transition: opacity 0.5s var(--ease);
 }
+.hero-title-cn {
+  font-size: clamp(3.5rem, 11vw, 8.5rem);
+  line-height: 0.95; 
+  font-weight: 900; 
+  margin-left: 0;
+  padding-bottom: 10px;
+  background: linear-gradient(to bottom, 
+    var(--title-gradient-top), 
+    var(--title-gradient-bottom));
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent;
+  vertical-align: baseline;
+  overflow: visible;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  opacity: 0;
+  white-space: nowrap;
+  transition: transform var(--text-animation-duration) var(--ease), 
+              opacity var(--text-animation-duration) var(--ease);
+}
+.hero-title-cn.active {
+  opacity: 1;
+  transform: translateY(70%);
+}
+
 .hero-desc {
   margin-top: 48px; 
   max-width: 650px; 
@@ -653,9 +692,17 @@ body {
     margin-top: 20px;
     padding-left: 0;
   }
-  .hero h1 { 
+  .hero-title-en, .hero-title-cn { 
     font-size: clamp(2.5rem, 10vw, 4rem);
     line-height: 1.1; 
+    text-align: center;
+  }
+  .hero-title-cn {
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+  }
+  .hero-title-cn.active {
+    transform: translateX(-50%) translateY(0);
   }
   .hero-tag {
     justify-content: center;
@@ -779,6 +826,20 @@ body {
 .reveal { opacity: 0; transform: translateY(40px); transition: 1s var(--ease); }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b00f12adaf5e1212cbfae150084e8f4a";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	
+<!-- 不蒜子统计脚本 -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
 </head>
 <body>
 
@@ -810,7 +871,11 @@ body {
   <section class="hero">
     <div class="hero-content">
       <span class="hero-tag">品牌创意 | 视觉总监 <span>|</span> CREATIVE DIRECTOR / VISUAL EXPERT</span>
-      <h1>BEYOND<br>VISUALS.</h1>
+      <!-- 修改位置1：替换原h1为中英文标题容器 -->
+      <div class="hero-title-wrapper">
+        <div class="hero-title-en">BEYOND<br>VISUALS.</div>
+        <div class="hero-title-cn">超越视觉</div>
+      </div>
       <p class="hero-desc">
         11年视觉创意经验，专注于品牌策略与多维形态的深度融合<br>平面 + 三维 + 发布会 + 直播 + 品牌全案统筹
       </p>
@@ -825,10 +890,11 @@ body {
 
     <!-- 新增：视频+文字布局 -->
     <div class="about-wrapper reveal">
-  <div class="about-video">
+     <div class="about-video" id="aboutVideo">
   <iframe 
-    id="aboutVideo"  <!-- 必须保留这个ID，JS要用到 -->
-    src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&t=0.1&autoplay=0&loop=1&muted=1&controls=1" 
+    id="bilibiliVideo"
+    data-src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=1&loop=1&muted=1&controls=1"
+    src=""
     scrolling="no" 
     allow="autoplay; fullscreen; picture-in-picture" 
     allowfullscreen>
@@ -1102,8 +1168,9 @@ body {
 </main>
 
 <footer class="section" style="text-align: center; border-top: 1px solid var(--border); padding: 60px 0;">
-  <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 1px;">张琪 ZHANG QI © 2026. 联系方式：15220107783.</p>
-  <p style="font-size: 1px; color: rgba(255,255,255,0.01); margin-top: 10px; line-height: 1;">qi199109</p>
+  <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 1px;">
+    张琪 ZHANG QI © 2026. all:<span id="busuanzi_value_site_uv"></span> see:<span id="busuanzi_value_site_pv"></span> 联系方式：15220107783.
+  </p>
 </footer>
 
 <script>
@@ -1262,33 +1329,97 @@ matrix.addEventListener('mouseleave', () => {
     `;
   }, 3000);
 }
-	
-<script>
-// 滚动到关于我时播放视频，离开暂停 —— 全设备兼容
-const video = document.getElementById('aboutVideo');
-const aboutSection = document.getElementById('about');
 
-let isPlaying = false;
-
-function checkVideoPlay() {
-  const rect = aboutSection.getBoundingClientRect();
-  // 当「关于我」区域进入屏幕70%时触发播放
-  const isInView = rect.top < window.innerHeight * 0.7 && rect.bottom > 0;
-
-  if (isInView && !isPlaying) {
-    // 进入可视区：开启自动播放
-    video.src = video.src.replace("autoplay=0", "autoplay=1");
-    isPlaying = true;
-  } else if (!isInView && isPlaying) {
-    // 离开可视区：关闭自动播放
-    video.src = video.src.replace("autoplay=1", "autoplay=0");
-    isPlaying = false;
+// 视频滚动触发播放/暂停功能（支持播放位置记忆）
+(function() {
+  const videoContainer = document.getElementById('aboutVideo');
+  const videoIframe = document.getElementById('bilibiliVideo');
+  const videoSrc = videoIframe.getAttribute('data-src');
+  
+  let isVideoLoaded = false;
+  let isVideoPlaying = false;
+  let videoObserver = null;
+  let startTime = 0;
+  let savedTime = 0;
+  
+  const STORAGE_KEY = 'bilibili_video_time';
+  
+  function loadVideo() {
+    if (!isVideoLoaded) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      savedTime = saved ? parseInt(saved, 10) : 0;
+      
+      let url = videoSrc;
+      if (savedTime > 0) {
+        const separator = videoSrc.includes('?') ? '&' : '?';
+        url = videoSrc + separator + `t=${savedTime}`;
+      }
+      
+      videoIframe.src = url;
+      isVideoLoaded = true;
+      isVideoPlaying = true;
+      startTime = Date.now();
+    }
   }
-}
+  
+  function unloadVideo() {
+    if (isVideoLoaded) {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      savedTime = savedTime + elapsed;
+      localStorage.setItem(STORAGE_KEY, savedTime.toString());
+      
+      videoIframe.src = '';
+      isVideoLoaded = false;
+      isVideoPlaying = false;
+    }
+  }
+  
+  function handleVideoVisibility(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        loadVideo();
+      } else if (!entry.isIntersecting) {
+        unloadVideo();
+      }
+    });
+  }
+  
+  function initVideoObserver() {
+    if ('IntersectionObserver' in window) {
+      videoObserver = new IntersectionObserver(handleVideoVisibility, {
+        threshold: [0, 0.5, 1],
+        rootMargin: '0px'
+      });
+      videoObserver.observe(videoContainer);
+    } else {
+      loadVideo();
+    }
+  }
+  
+  if (videoContainer && videoIframe) {
+    initVideoObserver();
+  }
+})();
 
-// 监听滚动+页面加载事件，确保首次加载也能判断
-window.addEventListener('scroll', checkVideoPlay);
-window.addEventListener('load', checkVideoPlay);
+// 修改位置2：新增滚动切换中英文标题逻辑
+const heroTitleEn = document.querySelector('.hero-title-en');
+const heroTitleCn = document.querySelector('.hero-title-cn');
+const scrollTriggerOffset = getComputedStyle(document.documentElement).getPropertyValue('--scroll-trigger-offset');
+
+window.addEventListener('scroll', function() {
+  const scrollTop = window.scrollY;
+  // 当滚动距离超过设定值时，显示中文，隐藏英文
+  if (scrollTop > scrollTriggerOffset) {
+    heroTitleEn.style.opacity = 0;
+    heroTitleCn.classList.add('active');
+  } else {
+    heroTitleEn.style.opacity = 1;
+    heroTitleCn.classList.remove('active');
+  }
+});
+
+</script>
+<style>
 
 </body>
 </html>
