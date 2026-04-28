@@ -477,7 +477,8 @@ body {
   transition: all 1s var(--ease); 
   filter: grayscale(100%) brightness(0.7);
 }
-.portfolio-grid a:hover img { 
+.portfolio-grid a:hover img,
+.portfolio-grid a.active img { 
   transform: scale(1.05); 
   filter: grayscale(0%) brightness(1);
 }
@@ -1417,6 +1418,71 @@ window.addEventListener('scroll', function() {
     heroTitleCn.classList.remove('active');
   }
 });
+
+// 移动端作品栏滑动点亮功能
+(function() {
+  const portfolioGrid = document.querySelector('.portfolio-grid');
+  if (!portfolioGrid) return;
+  
+  const portfolioItems = portfolioGrid.querySelectorAll('a');
+  let activeItem = null;
+  let isTouching = false;
+  
+  function getTouchTarget(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+  }
+  
+  function findPortfolioItem(element) {
+    let current = element;
+    while (current) {
+      if (current.classList && current.classList.contains('reveal') && current.tagName === 'A') {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
+  }
+  
+  function activateItem(item) {
+    if (activeItem === item) return;
+    
+    if (activeItem) {
+      activeItem.classList.remove('active');
+    }
+    
+    if (item) {
+      item.classList.add('active');
+      activeItem = item;
+    } else {
+      activeItem = null;
+    }
+  }
+  
+  function handleTouchStart(e) {
+    isTouching = true;
+    const target = getTouchTarget(e);
+    const item = findPortfolioItem(target);
+    activateItem(item);
+  }
+  
+  function handleTouchMove(e) {
+    if (!isTouching) return;
+    
+    const target = getTouchTarget(e);
+    const item = findPortfolioItem(target);
+    activateItem(item);
+  }
+  
+  function handleTouchEnd() {
+    isTouching = false;
+    activateItem(null);
+  }
+  
+  portfolioGrid.addEventListener('touchstart', handleTouchStart, { passive: true });
+  portfolioGrid.addEventListener('touchmove', handleTouchMove, { passive: true });
+  portfolioGrid.addEventListener('touchend', handleTouchEnd, { passive: true });
+})();
 
 </script>
 <style>
