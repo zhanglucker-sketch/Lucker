@@ -118,9 +118,12 @@ body {
   overflow: hidden;
 }
 
-.logo-item:hover {
+.logo-item:hover,
+.logo-item.active {
   transform: scale(1.1);
   z-index: 10;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(168, 176, 255, 0.4);
 }
 
 .logo-item img {
@@ -131,6 +134,12 @@ body {
   opacity: 0.3;
   transition: all 0.4s ease;
   pointer-events: none;
+}
+
+.logo-item:hover img,
+.logo-item.active img {
+  filter: grayscale(0%) brightness(1);
+  opacity: 0.9;
 }
 
 .container { 
@@ -1482,6 +1491,70 @@ window.addEventListener('scroll', function() {
   portfolioGrid.addEventListener('touchstart', handleTouchStart, { passive: true });
   portfolioGrid.addEventListener('touchmove', handleTouchMove, { passive: true });
   portfolioGrid.addEventListener('touchend', handleTouchEnd, { passive: true });
+})();
+
+// Logo矩阵触摸点亮功能
+(function() {
+  const logoMatrix = document.querySelector('.logo-matrix');
+  if (!logoMatrix) return;
+  
+  let activeLogo = null;
+  let isTouching = false;
+  
+  function getTouchTarget(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+  }
+  
+  function findLogoItem(element) {
+    let current = element;
+    while (current) {
+      if (current.classList && current.classList.contains('logo-item')) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
+  }
+  
+  function activateLogo(item) {
+    if (activeLogo === item) return;
+    
+    if (activeLogo) {
+      activeLogo.classList.remove('active');
+    }
+    
+    if (item) {
+      item.classList.add('active');
+      activeLogo = item;
+    } else {
+      activeLogo = null;
+    }
+  }
+  
+  function handleTouchStart(e) {
+    isTouching = true;
+    const target = getTouchTarget(e);
+    const item = findLogoItem(target);
+    activateLogo(item);
+  }
+  
+  function handleTouchMove(e) {
+    if (!isTouching) return;
+    
+    const target = getTouchTarget(e);
+    const item = findLogoItem(target);
+    activateLogo(item);
+  }
+  
+  function handleTouchEnd() {
+    isTouching = false;
+    activateLogo(null);
+  }
+  
+  logoMatrix.addEventListener('touchstart', handleTouchStart, { passive: true });
+  logoMatrix.addEventListener('touchmove', handleTouchMove, { passive: true });
+  logoMatrix.addEventListener('touchend', handleTouchEnd, { passive: true });
 })();
 
 </script>
