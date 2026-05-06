@@ -1923,6 +1923,103 @@
         </div>
     </footer>
     <script>
+        class TouchInteractionHandler {
+            constructor(element, options = {}) {
+                this.element = element;
+                this.tapThreshold = options.tapThreshold || 20;
+                this.tapDuration = options.tapDuration || 300;
+                this.touchStartTime = 0;
+                this.touchStartPos = { x: 0, y: 0 };
+                this.isTouching = false;
+
+                this.tapCallback = options.onTap || null;
+                this.swipeCallback = options.onSwipe || null;
+                this.touchStartCallback = options.onTouchStart || null;
+                this.touchEndCallback = options.onTouchEnd || null;
+
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                this.element.addEventListener('touchstart', (e) => {
+                    this.handleTouchStart(e);
+                }, { passive: true });
+
+                this.element.addEventListener('touchend', (e) => {
+                    this.handleTouchEnd(e);
+                }, { passive: true });
+
+                this.element.addEventListener('touchcancel', () => {
+                    this.handleTouchCancel();
+                }, { passive: true });
+            }
+
+            handleTouchStart(e) {
+                this.isTouching = true;
+                this.touchStartTime = Date.now();
+                this.touchStartPos = { 
+                    x: e.touches[0].clientX, 
+                    y: e.touches[0].clientY 
+                };
+
+                if (this.touchStartCallback) {
+                    this.touchStartCallback(e);
+                }
+            }
+
+            handleTouchEnd(e) {
+                if (!this.isTouching) return;
+                this.isTouching = false;
+
+                const touchDuration = Date.now() - this.touchStartTime;
+                const touchEndPos = { 
+                    x: e.changedTouches[0].clientX, 
+                    y: e.changedTouches[0].clientY 
+                };
+                const moveDistance = Math.sqrt(
+                    Math.pow(touchEndPos.x - this.touchStartPos.x, 2) +
+                    Math.pow(touchEndPos.y - this.touchStartPos.y, 2)
+                );
+
+                if (touchDuration < this.tapDuration && moveDistance < this.tapThreshold) {
+                    if (this.tapCallback) {
+                        this.tapCallback(e);
+                    }
+                } else if (moveDistance >= this.tapThreshold && this.swipeCallback) {
+                    const direction = this.getSwipeDirection(touchEndPos);
+                    this.swipeCallback(direction, e);
+                }
+
+                if (this.touchEndCallback) {
+                    this.touchEndCallback(e);
+                }
+            }
+
+            handleTouchCancel() {
+                this.isTouching = false;
+                if (this.touchEndCallback) {
+                    this.touchEndCallback();
+                }
+            }
+
+            getSwipeDirection(endPos) {
+                const deltaX = endPos.x - this.touchStartPos.x;
+                const deltaY = endPos.y - this.touchStartPos.y;
+
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    return deltaX > 0 ? 'right' : 'left';
+                } else {
+                    return deltaY > 0 ? 'down' : 'up';
+                }
+            }
+
+            destroy() {
+                this.element.removeEventListener('touchstart', this.handleTouchStart.bind(this));
+                this.element.removeEventListener('touchend', this.handleTouchEnd.bind(this));
+                this.element.removeEventListener('touchcancel', this.handleTouchCancel.bind(this));
+            }
+        }
+
         class WebpSequenceAnimator {
             constructor(container, framePaths, options = {}) {
                 this.container = container;
@@ -1957,31 +2054,13 @@
             }
 
             setupEventListeners() {
-                let touchStartTime = 0;
-                let touchStartPos = { x: 0, y: 0 };
-
                 this.container.addEventListener('mouseenter', () => this.playForward());
                 this.container.addEventListener('mouseleave', () => this.playReverse());
 
-                this.container.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }, { passive: true });
-
-                this.container.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-                    const moveDistance = Math.sqrt(
-                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
-                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
-                    );
-
-                    if (touchDuration < 300 && moveDistance < 20) {
-                        this.playForward();
-                    }
-                }, { passive: true });
-
-                this.container.addEventListener('touchcancel', () => this.playReverse());
+                new TouchInteractionHandler(this.container, {
+                    onTap: () => this.playForward(),
+                    onTouchEnd: () => this.playReverse()
+                });
             }
 
             playForward() {
@@ -2105,31 +2184,13 @@
             });
 
             animator.setupEventListenersForCard = function(cardElement) {
-                let touchStartTime = 0;
-                let touchStartPos = { x: 0, y: 0 };
-
                 cardElement.addEventListener('mouseenter', () => this.playForward());
                 cardElement.addEventListener('mouseleave', () => this.playReverse());
 
-                cardElement.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }, { passive: true });
-
-                cardElement.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-                    const moveDistance = Math.sqrt(
-                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
-                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
-                    );
-
-                    if (touchDuration < 300 && moveDistance < 20) {
-                        this.playForward();
-                    }
-                }, { passive: true });
-
-                cardElement.addEventListener('touchcancel', () => this.playReverse());
+                new TouchInteractionHandler(cardElement, {
+                    onTap: () => this.playForward(),
+                    onTouchEnd: () => this.playReverse()
+                });
             };
 
             animator.setupEventListenersForCard(card);
@@ -2159,31 +2220,13 @@
             });
 
             showcaseAnimator.setupEventListenersForSection = function(section) {
-                let touchStartTime = 0;
-                let touchStartPos = { x: 0, y: 0 };
-
                 section.addEventListener('mouseenter', () => this.playForward());
                 section.addEventListener('mouseleave', () => this.playReverse());
 
-                section.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }, { passive: true });
-
-                section.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-                    const moveDistance = Math.sqrt(
-                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
-                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
-                    );
-
-                    if (touchDuration < 300 && moveDistance < 20) {
-                        this.playForward();
-                    }
-                }, { passive: true });
-
-                section.addEventListener('touchcancel', () => this.playReverse());
+                new TouchInteractionHandler(section, {
+                    onTap: () => this.playForward(),
+                    onTouchEnd: () => this.playReverse()
+                });
             };
 
             showcaseAnimator.setupEventListenersForSection(showcaseSection);
@@ -2214,31 +2257,13 @@
 
             // Override event listeners for hero section
             heroAnimator.setupEventListeners = function() {
-                let touchStartTime = 0;
-                let touchStartPos = { x: 0, y: 0 };
-
                 this.container.addEventListener('mouseenter', () => this.playForward());
                 this.container.addEventListener('mouseleave', () => this.playReverse());
 
-                this.container.addEventListener('touchstart', (e) => {
-                    touchStartTime = Date.now();
-                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                }, { passive: true });
-
-                this.container.addEventListener('touchend', (e) => {
-                    const touchDuration = Date.now() - touchStartTime;
-                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-                    const moveDistance = Math.sqrt(
-                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
-                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
-                    );
-
-                    if (touchDuration < 300 && moveDistance < 20) {
-                        this.playForward();
-                    }
-                }, { passive: true });
-
-                this.container.addEventListener('touchcancel', () => this.playReverse());
+                new TouchInteractionHandler(this.container, {
+                    onTap: () => this.playForward(),
+                    onTouchEnd: () => this.playReverse()
+                });
             };
             heroAnimator.setupEventListeners();
 
@@ -2319,21 +2344,26 @@
 
                 viewportObserver.observe(videoContainer);
 
-                videoContainer.addEventListener('touchstart', (e) => {
-                    if (Date.now() - (videoContainer._touchStartTime || 0) < 300) {
-                        playVideo();
-                    }
-                    videoContainer._touchStartTime = Date.now();
-                }, { passive: true });
-
-                videoContainer.addEventListener('touchend', () => {
-                    resetVideo();
+                new TouchInteractionHandler(videoContainer, {
+                    onTap: () => playVideo(),
+                    onTouchEnd: () => resetVideo()
                 });
 
                 video.addEventListener('ended', () => {
                     video.currentTime = 0;
                 });
             }
+        });
+
+        document.querySelectorAll('.add-cart-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+            });
+            new TouchInteractionHandler(btn, {
+                onTap: function(e) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 
@@ -2602,29 +2632,39 @@
             console.log('Model viewer initialized');
         }
 
-        document.querySelectorAll('.nav-logo a, .nav-links a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const href = this.getAttribute('href');
-                if (href === '#' || !href) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    const targetId = href.substring(1);
-                    const target = document.getElementById(targetId);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('.btn-buy-now-hero').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.getElementById('color-selection');
+        const handleNavClick = function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href === '#' || !href) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                const targetId = href.substring(1);
+                const target = document.getElementById(targetId);
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
+            }
+        };
+
+        document.querySelectorAll('.nav-logo a, .nav-links a').forEach(link => {
+            link.addEventListener('click', handleNavClick);
+            new TouchInteractionHandler(link, {
+                onTap: handleNavClick.bind(link)
+            });
+        });
+
+        const handleBuyNowClick = function(e) {
+            e.preventDefault();
+            const target = document.getElementById('color-selection');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        document.querySelectorAll('.btn-buy-now-hero').forEach(btn => {
+            btn.addEventListener('click', handleBuyNowClick);
+            new TouchInteractionHandler(btn, {
+                onTap: handleBuyNowClick.bind(btn)
             });
         });
     </script>
