@@ -1931,11 +1931,15 @@
                 this.touchStartTime = 0;
                 this.touchStartPos = { x: 0, y: 0 };
                 this.isTouching = false;
+                this.hasTriggeredOnMove = false;
+                this.triggerDelay = options.triggerDelay || 100;
+                this.triggerTimeout = null;
 
                 this.tapCallback = options.onTap || null;
                 this.swipeCallback = options.onSwipe || null;
                 this.touchStartCallback = options.onTouchStart || null;
                 this.touchEndCallback = options.onTouchEnd || null;
+                this.touchMoveCallback = options.onTouchMove || null;
 
                 this.setupEventListeners();
             }
@@ -1943,6 +1947,10 @@
             setupEventListeners() {
                 this.element.addEventListener('touchstart', (e) => {
                     this.handleTouchStart(e);
+                }, { passive: true });
+
+                this.element.addEventListener('touchmove', (e) => {
+                    this.handleTouchMove(e);
                 }, { passive: true });
 
                 this.element.addEventListener('touchend', (e) => {
@@ -1956,6 +1964,7 @@
 
             handleTouchStart(e) {
                 this.isTouching = true;
+                this.hasTriggeredOnMove = false;
                 this.touchStartTime = Date.now();
                 this.touchStartPos = { 
                     x: e.touches[0].clientX, 
@@ -1965,9 +1974,43 @@
                 if (this.touchStartCallback) {
                     this.touchStartCallback(e);
                 }
+
+                if (this.touchMoveCallback && !this.hasTriggeredOnMove) {
+                    this.triggerTimeout = setTimeout(() => {
+                        if (this.isTouching && !this.hasTriggeredOnMove) {
+                            this.hasTriggeredOnMove = true;
+                            this.touchMoveCallback(e);
+                        }
+                    }, this.triggerDelay);
+                }
+            }
+
+            handleTouchMove(e) {
+                if (!this.isTouching) return;
+
+                const touch = e.touches[0];
+                const rect = this.element.getBoundingClientRect();
+                
+                const isInside = touch.clientX >= rect.left && 
+                                touch.clientX <= rect.right && 
+                                touch.clientY >= rect.top && 
+                                touch.clientY <= rect.bottom;
+
+                if (isInside && this.touchMoveCallback && !this.hasTriggeredOnMove) {
+                    if (this.triggerTimeout) {
+                        clearTimeout(this.triggerTimeout);
+                    }
+                    this.hasTriggeredOnMove = true;
+                    this.touchMoveCallback(e);
+                }
             }
 
             handleTouchEnd(e) {
+                if (this.triggerTimeout) {
+                    clearTimeout(this.triggerTimeout);
+                    this.triggerTimeout = null;
+                }
+
                 if (!this.isTouching) return;
                 this.isTouching = false;
 
@@ -1993,10 +2036,17 @@
                 if (this.touchEndCallback) {
                     this.touchEndCallback(e);
                 }
+
+                this.hasTriggeredOnMove = false;
             }
 
             handleTouchCancel() {
+                if (this.triggerTimeout) {
+                    clearTimeout(this.triggerTimeout);
+                    this.triggerTimeout = null;
+                }
                 this.isTouching = false;
+                this.hasTriggeredOnMove = false;
                 if (this.touchEndCallback) {
                     this.touchEndCallback();
                 }
@@ -2015,6 +2065,7 @@
 
             destroy() {
                 this.element.removeEventListener('touchstart', this.handleTouchStart.bind(this));
+                this.element.removeEventListener('touchmove', this.handleTouchMove.bind(this));
                 this.element.removeEventListener('touchend', this.handleTouchEnd.bind(this));
                 this.element.removeEventListener('touchcancel', this.handleTouchCancel.bind(this));
             }
@@ -2058,7 +2109,7 @@
                 this.container.addEventListener('mouseleave', () => this.playReverse());
 
                 new TouchInteractionHandler(this.container, {
-                    onTap: () => this.playForward(),
+                    onTouchMove: () => this.playForward(),
                     onTouchEnd: () => this.playReverse()
                 });
             }
@@ -2188,7 +2239,7 @@
                 cardElement.addEventListener('mouseleave', () => this.playReverse());
 
                 new TouchInteractionHandler(cardElement, {
-                    onTap: () => this.playForward(),
+                    onTouchMove: () => this.playForward(),
                     onTouchEnd: () => this.playReverse()
                 });
             };
@@ -2224,7 +2275,7 @@
                 section.addEventListener('mouseleave', () => this.playReverse());
 
                 new TouchInteractionHandler(section, {
-                    onTap: () => this.playForward(),
+                    onTouchMove: () => this.playForward(),
                     onTouchEnd: () => this.playReverse()
                 });
             };
@@ -2261,7 +2312,7 @@
                 this.container.addEventListener('mouseleave', () => this.playReverse());
 
                 new TouchInteractionHandler(this.container, {
-                    onTap: () => this.playForward(),
+                    onTouchMove: () => this.playForward(),
                     onTouchEnd: () => this.playReverse()
                 });
             };
@@ -2345,7 +2396,7 @@
                 viewportObserver.observe(videoContainer);
 
                 new TouchInteractionHandler(videoContainer, {
-                    onTap: () => playVideo(),
+                    onTouchMove: () => playVideo(),
                     onTouchEnd: () => resetVideo()
                 });
 
