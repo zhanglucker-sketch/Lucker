@@ -1957,13 +1957,31 @@
             }
 
             setupEventListeners() {
+                let touchStartTime = 0;
+                let touchStartPos = { x: 0, y: 0 };
+
                 this.container.addEventListener('mouseenter', () => this.playForward());
                 this.container.addEventListener('mouseleave', () => this.playReverse());
+
                 this.container.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.playForward();
-                }, { passive: false });
-                this.container.addEventListener('touchend', () => this.playReverse());
+                    touchStartTime = Date.now();
+                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }, { passive: true });
+
+                this.container.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    const moveDistance = Math.sqrt(
+                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
+                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
+                    );
+
+                    if (touchDuration < 300 && moveDistance < 20) {
+                        this.playForward();
+                    }
+                }, { passive: true });
+
+                this.container.addEventListener('touchcancel', () => this.playReverse());
             }
 
             playForward() {
@@ -2087,13 +2105,31 @@
             });
 
             animator.setupEventListenersForCard = function(cardElement) {
+                let touchStartTime = 0;
+                let touchStartPos = { x: 0, y: 0 };
+
                 cardElement.addEventListener('mouseenter', () => this.playForward());
                 cardElement.addEventListener('mouseleave', () => this.playReverse());
+
                 cardElement.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.playForward();
-                }, { passive: false });
-                cardElement.addEventListener('touchend', () => this.playReverse());
+                    touchStartTime = Date.now();
+                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }, { passive: true });
+
+                cardElement.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    const moveDistance = Math.sqrt(
+                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
+                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
+                    );
+
+                    if (touchDuration < 300 && moveDistance < 20) {
+                        this.playForward();
+                    }
+                }, { passive: true });
+
+                cardElement.addEventListener('touchcancel', () => this.playReverse());
             };
 
             animator.setupEventListenersForCard(card);
@@ -2123,13 +2159,31 @@
             });
 
             showcaseAnimator.setupEventListenersForSection = function(section) {
+                let touchStartTime = 0;
+                let touchStartPos = { x: 0, y: 0 };
+
                 section.addEventListener('mouseenter', () => this.playForward());
                 section.addEventListener('mouseleave', () => this.playReverse());
+
                 section.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.playForward();
-                }, { passive: false });
-                section.addEventListener('touchend', () => this.playReverse());
+                    touchStartTime = Date.now();
+                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }, { passive: true });
+
+                section.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    const moveDistance = Math.sqrt(
+                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
+                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
+                    );
+
+                    if (touchDuration < 300 && moveDistance < 20) {
+                        this.playForward();
+                    }
+                }, { passive: true });
+
+                section.addEventListener('touchcancel', () => this.playReverse());
             };
 
             showcaseAnimator.setupEventListenersForSection(showcaseSection);
@@ -2160,13 +2214,31 @@
 
             // Override event listeners for hero section
             heroAnimator.setupEventListeners = function() {
+                let touchStartTime = 0;
+                let touchStartPos = { x: 0, y: 0 };
+
                 this.container.addEventListener('mouseenter', () => this.playForward());
                 this.container.addEventListener('mouseleave', () => this.playReverse());
+
                 this.container.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    this.playForward();
-                }, { passive: false });
-                this.container.addEventListener('touchend', () => this.playReverse());
+                    touchStartTime = Date.now();
+                    touchStartPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }, { passive: true });
+
+                this.container.addEventListener('touchend', (e) => {
+                    const touchDuration = Date.now() - touchStartTime;
+                    const touchEndPos = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+                    const moveDistance = Math.sqrt(
+                        Math.pow(touchEndPos.x - touchStartPos.x, 2) +
+                        Math.pow(touchEndPos.y - touchStartPos.y, 2)
+                    );
+
+                    if (touchDuration < 300 && moveDistance < 20) {
+                        this.playForward();
+                    }
+                }, { passive: true });
+
+                this.container.addEventListener('touchcancel', () => this.playReverse());
             };
             heroAnimator.setupEventListeners();
 
@@ -2196,22 +2268,69 @@
             const video = videoContainer ? videoContainer.querySelector('.product-video') : null;
 
             if (video && videoContainer) {
-                videoContainer.addEventListener('mouseenter', () => {
-                    video.play();
-                });
+                let isInViewport = false;
+                let debounceTimeout = null;
 
-                videoContainer.addEventListener('mouseleave', () => {
+                const playVideo = () => {
+                    if (video.paused && isInViewport) {
+                        video.play().catch(() => {});
+                    }
+                };
+
+                const pauseVideo = () => {
+                    if (!video.paused) {
+                        video.pause();
+                    }
+                };
+
+                const resetVideo = () => {
                     video.pause();
                     video.currentTime = 0;
-                });
+                };
+
+                const debouncePlay = () => {
+                    if (debounceTimeout) {
+                        clearTimeout(debounceTimeout);
+                    }
+                    debounceTimeout = setTimeout(() => {
+                        playVideo();
+                    }, 100);
+                };
+
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '-50px',
+                    threshold: 0.3
+                };
+
+                const viewportObserver = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        isInViewport = entry.isIntersecting;
+                        if (isInViewport) {
+                            debouncePlay();
+                        } else {
+                            if (debounceTimeout) {
+                                clearTimeout(debounceTimeout);
+                            }
+                            pauseVideo();
+                        }
+                    });
+                }, observerOptions);
+
+                viewportObserver.observe(videoContainer);
 
                 videoContainer.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    video.play();
-                }, { passive: false });
+                    if (Date.now() - (videoContainer._touchStartTime || 0) < 300) {
+                        playVideo();
+                    }
+                    videoContainer._touchStartTime = Date.now();
+                }, { passive: true });
 
                 videoContainer.addEventListener('touchend', () => {
-                    video.pause();
+                    resetVideo();
+                });
+
+                video.addEventListener('ended', () => {
                     video.currentTime = 0;
                 });
             }
