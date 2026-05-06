@@ -141,6 +141,35 @@
             opacity: 1;
         }
 
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu-btn span {
+            width: 24px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
         /* ===== HERO SECTION ===== */
         .hero {
             position: relative;
@@ -1501,7 +1530,47 @@
             }
 
             .nav-links {
-                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: rgba(10, 14, 23, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 20px;
+                transform: translateY(-150%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.4s ease;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .nav-links li {
+                margin-bottom: 16px;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 12px 0;
+                font-size: 16px;
+            }
+
+            .nav-links .nav-cta {
+                display: inline-block;
+                margin-left: 0;
+                margin-top: 10px;
+                text-align: center;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
             }
 
             .hero-content {
@@ -1565,8 +1634,13 @@
             <li><a href="#color-selection">色彩</a></li>
             <li><a href="#product-details">详情</a></li>
             <li><a href="#product-params">参数</a></li>
-            <a href="#color-selection" class="nav-cta">Buy Now</a>
+            <li><a href="#color-selection" class="nav-cta">Buy Now</a></li>
         </ul>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
 
     <!-- Hero Section -->
@@ -2395,11 +2469,6 @@
 
                 viewportObserver.observe(videoContainer);
 
-                new TouchInteractionHandler(videoContainer, {
-                    onTouchMove: () => playVideo(),
-                    onTouchEnd: () => resetVideo()
-                });
-
                 video.addEventListener('ended', () => {
                     video.currentTime = 0;
                 });
@@ -2410,12 +2479,24 @@
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
             });
-            new TouchInteractionHandler(btn, {
-                onTap: function(e) {
-                    e.preventDefault();
-                }
-            });
         });
+
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (mobileMenuBtn && navLinks) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenuBtn.classList.remove('active');
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
     </script>
 
     <!-- 3D Model Viewer Script -->
