@@ -1469,58 +1469,39 @@ var _hmt = _hmt || [];
 </footer>
 
 <script>
-// 下载次数统计防抖标志
-let isDownloadCounting = false;
+// Counter API 配置
+const namespace = "lucker";
+const key = "resume-download";
 
 // 初始化下载次数显示
 function initDownloadCount() {
-  const downloadCount = localStorage.getItem('downloadCount') || 7;
-  updateDownloadCountDisplay(downloadCount);
+  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`)
+    .then(r => r.json())
+    .then(d => {
+      const countElement = document.getElementById('downloadCount');
+      if (countElement) {
+        countElement.textContent = d.count.toLocaleString();
+      }
+    })
+    .catch(() => {
+      const countElement = document.getElementById('downloadCount');
+      if (countElement) {
+        countElement.textContent = '--';
+      }
+    });
 }
 
-// 更新下载次数（与浏览次数原理相同：通过图片请求记录）
+// 更新下载次数
 function updateDownloadCount() {
-  if (isDownloadCounting) return;
-  isDownloadCounting = true;
-  
-  // 1. 更新本地存储
-  const currentCount = parseInt(localStorage.getItem('downloadCount') || 7, 10);
-  const newCount = currentCount + 1;
-  localStorage.setItem('downloadCount', newCount.toString());
-  
-  // 2. 更新页面显示
-  updateDownloadCountDisplay(newCount);
-  
-  // 3. 通过图片请求方式记录（与busuanzi原理相同）
-  const img = new Image();
-  img.src = `//busuanzi.ibruce.info/busuanzi?download=1&url=${encodeURIComponent(window.location.href)}&t=${Date.now()}`;
-  img.style.display = 'none';
-  document.body.appendChild(img);
-  img.onload = img.onerror = function() {
-    document.body.removeChild(img);
-  };
-  
-  // 4. 3秒防抖
-  setTimeout(() => {
-    isDownloadCounting = false;
-  }, 3000);
+  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
+    .then(r => r.json())
+    .then(d => {
+      const countElement = document.getElementById('downloadCount');
+      if (countElement) {
+        countElement.textContent = d.count.toLocaleString();
+      }
+    });
 }
-
-// 更新下载次数显示
-function updateDownloadCountDisplay(count) {
-  const countElement = document.getElementById('downloadCount');
-  if (countElement) {
-    countElement.textContent = parseInt(count).toLocaleString();
-  }
-}
-
-// 监听 localStorage 变化，实现跨标签页同步更新
-window.addEventListener('storage', (e) => {
-  if (e.key === 'downloadCount') {
-    const newCount = parseInt(e.newValue || 7, 10);
-    updateDownloadCountDisplay(newCount);
-  }
-});
 
 // 页面加载完成后初始化下载次数
 document.addEventListener('DOMContentLoaded', () => {
