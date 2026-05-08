@@ -1475,30 +1475,78 @@ const key = "resume-download";
 
 // 初始化下载次数显示
 function initDownloadCount() {
-  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`)
-    .then(r => r.json())
-    .then(d => {
-      const countElement = document.getElementById('downloadCount');
-      if (countElement) {
-        countElement.textContent = d.count.toLocaleString();
+  // 先显示本地缓存的计数
+  const cachedCount = localStorage.getItem('downloadCountCache');
+  const countElement = document.getElementById('downloadCount');
+  if (countElement) {
+    countElement.textContent = cachedCount ? parseInt(cachedCount).toLocaleString() : '--';
+  }
+  
+  // 然后尝试从 API 获取最新计数
+  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`, {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-cache'
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data && typeof data.count === 'number') {
+        const count = data.count;
+        // 更新显示
+        if (countElement) {
+          countElement.textContent = count.toLocaleString();
+        }
+        // 更新本地缓存
+        localStorage.setItem('downloadCountCache', count.toString());
       }
     })
-    .catch(() => {
-      const countElement = document.getElementById('downloadCount');
-      if (countElement) {
-        countElement.textContent = '--';
+    .catch(error => {
+      console.log('获取下载计数失败，使用本地缓存:', error.message);
+      // 如果没有缓存且API失败，显示默认值
+      if (!cachedCount && countElement) {
+        countElement.textContent = '0';
       }
     });
 }
 
 // 更新下载次数
 function updateDownloadCount() {
-  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
-    .then(r => r.json())
-    .then(d => {
+  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`, {
+    method: 'POST',
+    mode: 'cors',
+    cache: 'no-cache'
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data && typeof data.count === 'number') {
+        const count = data.count;
+        const countElement = document.getElementById('downloadCount');
+        if (countElement) {
+          countElement.textContent = count.toLocaleString();
+        }
+        // 更新本地缓存
+        localStorage.setItem('downloadCountCache', count.toString());
+      }
+    })
+    .catch(error => {
+      console.log('更新下载计数失败:', error.message);
+      // 失败时尝试本地计数+1作为降级
+      const cachedCount = parseInt(localStorage.getItem('downloadCountCache') || '0', 10);
+      const newCount = cachedCount + 1;
+      localStorage.setItem('downloadCountCache', newCount.toString());
       const countElement = document.getElementById('downloadCount');
       if (countElement) {
-        countElement.textContent = d.count.toLocaleString();
+        countElement.textContent = newCount.toLocaleString();
       }
     });
 }
