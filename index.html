@@ -1475,24 +1475,32 @@ let isDownloadCounting = false;
 // 初始化下载次数显示
 function initDownloadCount() {
   const downloadCount = localStorage.getItem('downloadCount') || 7;
-  const countElement = document.getElementById('downloadCount');
-  if (countElement) {
-    countElement.textContent = downloadCount.toLocaleString();
-  }
+  updateDownloadCountDisplay(downloadCount);
 }
 
-// 更新下载次数（带防抖机制，确保每次有效点击只记录一次）
+// 更新下载次数（与浏览次数原理相同：通过图片请求记录）
 function updateDownloadCount() {
   if (isDownloadCounting) return;
   isDownloadCounting = true;
   
+  // 1. 更新本地存储
   const currentCount = parseInt(localStorage.getItem('downloadCount') || 7, 10);
   const newCount = currentCount + 1;
   localStorage.setItem('downloadCount', newCount.toString());
   
+  // 2. 更新页面显示
   updateDownloadCountDisplay(newCount);
   
-  // 3秒内不允许重复计数（与按钮恢复状态同步）
+  // 3. 通过图片请求方式记录（与busuanzi原理相同）
+  const img = new Image();
+  img.src = `//busuanzi.ibruce.info/busuanzi?download=1&url=${encodeURIComponent(window.location.href)}&t=${Date.now()}`;
+  img.style.display = 'none';
+  document.body.appendChild(img);
+  img.onload = img.onerror = function() {
+    document.body.removeChild(img);
+  };
+  
+  // 4. 3秒防抖
   setTimeout(() => {
     isDownloadCounting = false;
   }, 3000);
@@ -1502,7 +1510,7 @@ function updateDownloadCount() {
 function updateDownloadCountDisplay(count) {
   const countElement = document.getElementById('downloadCount');
   if (countElement) {
-    countElement.textContent = count.toLocaleString();
+    countElement.textContent = parseInt(count).toLocaleString();
   }
 }
 
