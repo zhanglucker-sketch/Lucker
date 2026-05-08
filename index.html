@@ -1,2962 +1,1874 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURORA — Power, Compact and Always with You.</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Three.js Library -->
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/"
-        }
-    }
-    </script>
-
-    <style>
-        :root {
-            --bg-primary: #000000;
-            --bg-secondary: #000000;
-            --text-primary: #ffffff;
-            --text-secondary: rgba(255, 255, 255, 0.6);
-            --text-muted: rgba(255, 255, 255, 0.4);
-            --accent-cyan: #5baefe;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ===== NAVIGATION ===== */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 20px 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 14, 23, 0.6);
-            backdrop-filter: blur(20px) saturate(180%);
-            border-bottom: 1px solid var(--border-subtle);
-            transition: all 0.4s ease;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 0.25em;
-            color: white;
-        }
-
-        .nav-logo img {
-            height: 32px;
-            width: auto;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: white;
-        }
-
-        .nav-links .nav-cta {
-            color: #0a0e17;
-        }
-
-        .nav-links .nav-cta:hover {
-            color: #0a0e17;
-        }
-
-        .nav-cta {
-            padding: 10px 24px;
-            background: white;
-            color: #0a0e17;
-            border: none;
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-left: 20px;
-        }
-
-        .nav-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255,255,255,0.3);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            margin-left: 20px;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
-
-        .nav-icon:hover {
-            opacity: 1;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        .mobile-menu-btn span {
-            width: 24px;
-            height: 2px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(6px, 6px);
-        }
-
-        .mobile-menu-btn.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(6px, -6px);
-        }
-
-        /* ===== HERO SECTION ===== */
-        .hero {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            min-height: 800px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/sybj.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 1;
-            filter: brightness(1.2);
-            z-index: 1;
-        }
-
-        .hero-bg::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.15) 50%, rgba(0, 0, 0, 0) 100%);
-            z-index: 2;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            padding: 0 48px;
-            width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 80px;
-        }
-
-        .hero-text {
-            flex: 0 0 auto;
-            text-align: left;
-        }
-
-        .hero-image-sequence {
-            flex: 1;
-            position: relative;
-            max-width: 60%;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hero-image-sequence canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-        }
-
-        .hero-title {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(30px, 5vw, 40px);
-            font-weight: 100;
-            line-height: 1;
-            letter-spacing: 0.05em;
-            margin-bottom: 12px;
-            white-space: nowrap;
-        }
-
-        .hero-subtitle {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(50px, 6vw, 70px);
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1;
-            margin-bottom: 8px;
-            letter-spacing: 0.08em;
-        }
-
-        .hero-subtitle-line2 {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(50px, 6vw, 70px);
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.5;
-            margin-bottom: 12px;
-            letter-spacing: 0.08em;
-        }
-
-        .hero-cta-group {
-            display: flex;
-            gap: 16px;
-            justify-content: flex-start;
-            align-items: center;
-            margin-top: 35px;
-        }
-
-        .btn-buy-now-hero {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 32px;
-            background: white;
-            color: #0a0e17;
-            border: none;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-buy-now-hero:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255,255,255,0.3);
-        }
-
-        .btn-primary {
-            padding: 14px 32px;
-            background: white;
-            color: #0a0e17;
-            border: none;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255,255,255,0.25);
-        }
-
-        .btn-link {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 400;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: gap 0.3s;
-        }
-
-        .btn-link:hover {
-            gap: 10px;
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            position: relative;
-            background: var(--bg-secondary);
-            padding: 80px 48px 40px;
-            overflow: hidden;
-        }
-
-        footer::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 400px;
-            background: linear-gradient(to top, 
-                rgba(0, 100, 200, 0.15) 0%, 
-                rgba(0, 150, 255, 0.08) 30%,
-                rgba(0, 200, 255, 0.03) 60%,
-                transparent 100%
-            );
-            pointer-events: none;
-        }
-
-        footer::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(0, 150, 255, 0.5) 20%, 
-                rgba(0, 212, 232, 0.8) 50%, 
-                rgba(0, 150, 255, 0.5) 80%, 
-                transparent 100%
-            );
-            box-shadow: 0 0 40px rgba(0, 150, 255, 0.3), 0 0 80px rgba(0, 212, 232, 0.1);
-        }
-
-        .footer-container {
-            position: relative;
-            z-index: 2;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .footer-top {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
-            gap: 60px;
-            margin-bottom: 60px;
-        }
-
-        .footer-brand {
-            max-width: 280px;
-        }
-
-        .footer-logo {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            margin-bottom: 16px;
-        }
-
-        .footer-desc {
-            font-size: 15px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 24px;
-        }
-
-        .footer-heading {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 24px;
-            color: var(--text-secondary);
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .footer-newsletter {
-            max-width: 300px;
-        }
-
-        .footer-newsletter p {
-            font-size: 15px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        .newsletter-form {
-            display: flex;
-            gap: 8px;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-subtle);
-            border-radius: 100px;
-            color: white;
-            font-size: 13px;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .newsletter-input:focus {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 212, 232, 0.05);
-        }
-
-        .newsletter-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .newsletter-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 20px rgba(255,255,255,0.3);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .social-links a {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .social-links a:hover {
-            background: rgba(0, 212, 232, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .social-links svg {
-            width: 16px;
-            height: 16px;
-            fill: var(--text-muted);
-            transition: fill 0.3s;
-        }
-
-        .social-links a:hover svg {
-            fill: var(--accent-cyan);
-        }
-
-        .footer-bottom {
-            position: relative;
-            z-index: 2;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-top: 40px;
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .footer-copyright {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* ===== PRODUCT SHOWCASE ===== */
-        .product-showcase {
-            padding: 120px 48px 80px;
-            background: var(--bg-primary);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-
-        .showcase-content {
-            max-width: 800px;
-            margin-bottom: 48px;
-        }
-
-        .showcase-title {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(32px, 5vw, 56px);
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.08em;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .showcase-subtitle {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(18px, 2.5vw, 24px);
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 0.05em;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .showcase-description {
-            font-size: clamp(14px, 1.8vw, 16px);
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.8;
-            letter-spacing: 0.02em;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .highlight-blue {
-            color: #5baefe;
-        }
-
-        .showcase-animation-container {
-            width: 100%;
-            max-width: 900px;
-            aspect-ratio: 16 / 9;
-            position: relative;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        .showcase-animation-container canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        @media (max-width: 768px) {
-            .product-showcase {
-                padding: 80px 24px 60px;
-            }
-
-            .showcase-content {
-                margin-bottom: 32px;
-            }
-
-            .showcase-title {
-                font-size: clamp(24px, 6vw, 36px);
-                letter-spacing: 0.05em;
-            }
-
-            .showcase-subtitle {
-                font-size: clamp(16px, 3vw, 20px);
-            }
-
-            .showcase-description {
-                font-size: 14px;
-            }
-        }
-
-        /* ===== 3D MODEL SHOWCASE ===== */
-        .model-showcase {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .model-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .model-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .model-title {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-            margin-bottom: 8px;
-        }
-
-        .model-subtitle {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(32px, 5vw, 56px);
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.08em;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .model-description {
-            font-size: clamp(14px, 1.8vw, 16px);
-            font-weight: 400;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .model-card {
-            background: #0f1216;
-            border-radius: 16px;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-            overflow: hidden;
-        }
-
-        .model-viewer {
-            width: 100%;
-            height: 500px;
-            background: linear-gradient(180deg, #0a0c0f 0%, #0f1216 100%);
-            position: relative;
-        }
-
-        /* ===== HIGHLIGHT BLOCK ===== */
-        .highlight-block {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .highlight-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .highlight-text-section {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .highlight-subtitle {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-            margin-bottom: 12px;
-        }
-
-        .highlight-main-title {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(32px, 5vw, 56px);
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.08em;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .highlight-tagline {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(18px, 2.5vw, 24px);
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 0.05em;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .highlight-description {
-            font-size: 15px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.8;
-            letter-spacing: 0.02em;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .highlight-images {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1500px;
-            margin: 0 auto;
-        }
-
-        .highlight-image-wrapper {
-            background: #0f1216;
-            border-radius: 12px;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            cursor: pointer;
-            position: relative;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            min-height: 100px;
-        }
-
-        .highlight-image-wrapper:hover {
-            transform: translateY(-30px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(91, 174, 254, 0.3);
-        }
-
-        .highlight-image-wrapper img {
-            width: 100%;
-            height: auto;
-            flex: none;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-            filter: brightness(1.1);
-            display: block;
-        }
-
-        .highlight-image-wrapper:hover img {
-            transform: translateY(0);
-        }
-
-        .highlight-image-text {
-            padding: 20px;
-            text-align: center;
-            flex-shrink: 0;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .highlight-image-title {
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 8px;
-        }
-
-        .highlight-image-subtitle {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: 18px;
-            font-weight: 500;
-            color: #ffffff;
-            letter-spacing: 0.02em;
-        }
-
-        @media (max-width: 900px) {
-            .model-showcase {
-                padding: 60px 24px;
-            }
-
-            .model-viewer {
-                height: 350px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .model-showcase {
-                padding: 48px 20px;
-            }
-
-            .model-title {
-                font-size: 22px;
-            }
-
-            .model-subtitle {
-                font-size: 14px;
-            }
-
-            .model-viewer {
-                height: 280px;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .highlight-images {
-                grid-template-columns: repeat(2, 1fr);
-                max-width: 700px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .highlight-block {
-                padding: 60px 24px;
-            }
-
-            .highlight-images {
-                grid-template-columns: 1fr;
-                gap: 12px;
-                max-width: 400px;
-            }
-
-            .highlight-image-wrapper {
-                min-height: 250px;
-            }
-
-            .highlight-image-text {
-                padding: 16px;
-            }
-
-            .highlight-image-subtitle {
-                font-size: 16px;
-            }
-        }
-
-        /* ===== GRIP SECTION ===== */
-        .grip-section {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .grip-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .grip-text-section {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-
-        .grip-subtitle {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-            margin-bottom: 12px;
-        }
-
-        .grip-main-title {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(32px, 5vw, 56px);
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.08em;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .grip-tagline {
-            font-family: 'Source Han Sans SC', 'Noto Sans SC', sans-serif;
-            font-size: clamp(18px, 2.5vw, 24px);
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 0.05em;
-            margin-bottom: 28px;
-            line-height: 1.5;
-        }
-
-        .grip-description {
-            font-size: 15px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.8;
-            letter-spacing: 0.02em;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .grip-image-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .grip-image-wrapper::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 120px;
-            background: linear-gradient(to bottom, transparent, #000000);
-            pointer-events: none;
-        }
-
-        .grip-image-wrapper img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 12px;
-        }
-
-        @media (max-width: 600px) {
-            .grip-section {
-                padding: 60px 24px;
-            }
-        }
-
-        /* ===== COLOR SELECTION ===== */
-        .color-selection {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .color-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .color-title {
-            text-align: center;
-            margin-bottom: 48px;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-        }
-
-        .color-cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        .color-card {
-            background: #0f1216;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: row;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            cursor: pointer;
-            aspect-ratio: 16 / 9;
-            position: relative;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-        }
-
-        .color-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-        .color-card-0::after {
-            background: linear-gradient(135deg, transparent 50%, #708090 100%);
-            opacity: 0.35;
-        }
-
-        .color-card-1::after {
-            background: linear-gradient(135deg, transparent 50%, #000000 100%);
-            opacity: 0.35;
-        }
-
-        .color-card-2::after {
-            background: linear-gradient(135deg, transparent 50%, #5baefe 100%);
-            opacity: 0.35;
-        }
-
-        .color-card-3::after {
-            background: linear-gradient(135deg, transparent 50%, #4B0082 100%);
-            opacity: 0.35;
-        }
-
-        .color-card:hover {
-            transform: translateY(-4px);
-            box-shadow: inset 0 0 0 1px rgba(100, 150, 200, 0.3), 0 12px 32px rgba(0, 0, 0, 0.4);
-            border-color: rgba(100, 150, 200, 0.4);
-        }
-
-        .color-info {
-            flex: 1;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: flex-start;
-            text-align: left;
-        }
-
-        .color-swatch {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .color-swatch.titanium {
-            background: linear-gradient(135deg, #8a8a8a 0%, #6a6a6a 50%, #4a4a4a 100%);
-        }
-
-        .color-swatch.midnight {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 50%, #0d0d0d 100%);
-        }
-
-        .color-swatch.deepblue {
-            background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 50%, #061525 100%);
-        }
-
-        .color-swatch.aurora {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 50%, #4c1d95 100%);
-        }
-
-        .color-name {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .color-name-cn {
-            font-size: 18px;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-        }
-
-        .add-cart-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 9px 18px;
-            background: rgba(255, 255, 255, 0.08);
-            border: none;
-            border-radius: 100px;
-            color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: fit-content;
-        }
-
-        .add-cart-btn:hover {
-            background: #ffffff;
-            color: #000000;
-            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .add-cart-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-container {
-            background: linear-gradient(135deg, #1a1f2e 0%, #0a0e17 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 480px;
-            width: 90%;
-            transform: scale(0.9) translateY(20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-overlay.active .modal-container {
-            transform: scale(1) translateY(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #ffa647;
-            margin: 0;
-        }
-
-        .modal-close {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: rotate(90deg);
-        }
-
-        .modal-content {
-            color: var(--text-secondary);
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 24px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 10px 24px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 100px;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .modal-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .color-image {
-            width: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            perspective: 1000px;
-            flex-shrink: 0;
-            padding: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .color-image canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .color-image img {
-            max-width: 100%;
-            max-height: calc(100% - 16px);
-            height: 100%;
-            object-fit: contain;
-            transform: perspective(800px) rotateY(-10deg) rotateX(3deg);
-            transition: transform 0.3s;
-            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
-        }
-
-        .color-card:hover .color-image img {
-            transform: perspective(800px) rotateY(-5deg) rotateX(1deg) scale(1.02);
-        }
-
-        @media (max-width: 900px) {
-            .color-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .color-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .color-selection {
-                padding: 60px 24px;
-            }
-
-            .color-card {
-                aspect-ratio: 16 / 9;
-            }
-
-            .color-info {
-                padding: 16px;
-            }
-
-            .color-image img {
-                max-height: 100px;
-            }
-        }
-
-        /* ===== PRODUCT DETAILS ===== */
-        .product-details {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .details-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .details-title {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-            margin-bottom: 48px;
-            text-align: center;
-        }
-
-        .details-groups {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .details-group {
-            display: flex;
-            flex-direction: row;
-            gap: 12px;
-            align-items: stretch;
-        }
-
-        .details-card {
-            background: #0f1216;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-        }
-
-        .details-card:hover {
-            transform: translateY(-4px);
-            box-shadow: inset 0 0 0 1px rgba(100, 150, 200, 0.3), 0 12px 32px rgba(0, 0, 0, 0.4);
-            border-color: rgba(100, 150, 200, 0.4);
-        }
-
-        .details-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* xq1: 16:9 ratio, smaller (55% width) */
-        .details-card.xq1 {
-            aspect-ratio: 16 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq2: 21:9 ratio, larger (fills remaining space) */
-        .details-card.xq2 {
-            aspect-ratio: 21 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq3: 21:9 ratio */
-        .details-card.xq3 {
-            aspect-ratio: 21 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq4: 16:9 ratio */
-        .details-card.xq4 {
-            aspect-ratio: 16 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq5: 16:9 ratio */
-        .details-card.xq5 {
-            aspect-ratio: 16 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq6: 21:9 ratio */
-        .details-card.xq6 {
-            aspect-ratio: 21 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq7: 16:9 ratio, left side */
-        .details-card.xq7 {
-            aspect-ratio: 21 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq8: 16:9 ratio, right side */
-        .details-card.xq8 {
-            aspect-ratio: 16 / 9;
-            flex: 1 1 auto;
-        }
-
-        /* xq9: full width, auto height based on image ratio, no cropping */
-        .details-card.xq9 {
-            width: 100%;
-            flex: none;
-            aspect-ratio: auto;
-            height: auto;
-        }
-
-        .details-card.xq9 img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-        }
-
-        @media (max-width: 900px) {
-            .details-group {
-                flex-direction: column;
-            }
-
-            .details-card.xq1,
-            .details-card.xq2,
-            .details-card.xq3,
-            .details-card.xq4,
-            .details-card.xq5,
-            .details-card.xq6,
-            .details-card.xq7,
-            .details-card.xq8,
-            .details-card.xq9 {
-                width: 100%;
-                flex: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .product-details {
-                padding: 60px 24px;
-            }
-        }
-
-        /* ===== CARD 10: 随时随地，电力在线 ===== */
-        .card-10 {
-            margin-top: 12px;
-            background: #0f1216;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-        }
-
-        .card-10:hover {
-            transform: translateY(-4px);
-            box-shadow: inset 0 0 0 1px rgba(100, 150, 200, 0.3), 0 12px 32px rgba(0, 0, 0, 0.4);
-            border-color: rgba(100, 150, 200, 0.4);
-        }
-
-        .card-10-title-area {
-            padding: 24px 24px 16px;
-            max-width: calc(100% - 48px);
-            margin: 0 auto;
-        }
-
-        .card-10-title {
-            font-size: 32px;
-            font-weight: 400;
-            letter-spacing: 0.02em;
-            color: #fff;
-            margin: 0;
-            text-align: left;
-        }
-
-        .card-10-images {
-            display: flex;
-            flex-direction: row;
-            gap: 12px;
-            padding: 0 24px 24px;
-            max-width: calc(100% - 48px);
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-
-        .card-10-images img {
-            flex: 1;
-            max-width: calc(25% - 9px);
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            border-radius: 8px;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .card-10-images img:hover {
-            transform: translateY(-6px);
-        }
-
-        @media (max-width: 767px) {
-            .card-10-images {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                flex-direction: unset;
-                gap: 12px;
-            }
-
-            .card-10-images img {
-                max-width: none;
-                width: 100%;
-                flex: none;
-                aspect-ratio: 1 / 1;
-                object-fit: cover;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .card-10-title {
-                font-size: 20px;
-            }
-
-            .card-10-title-area {
-                padding: 16px 16px 12px;
-            }
-
-            .card-10-images {
-                padding: 0 16px 16px;
-                gap: 8px;
-            }
-
-            .card-10-images img {
-                aspect-ratio: 1 / 1;
-                object-fit: cover;
-            }
-        }
-
-        .video-container {
-            margin: 24px auto 0;
-            width: 80%;
-            aspect-ratio: 16 / 9;
-            background: #0f1216;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-        }
-
-        .product-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        @media (max-width: 767px) {
-            .video-container {
-                width: 100%;
-                aspect-ratio: 16 / 9;
-            }
-        }
-
-        /* ===== PRODUCT PARAMETERS ===== */
-        .product-params {
-            padding: 80px 48px;
-            background: var(--bg-primary);
-        }
-
-        .params-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .params-title {
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: #5baefe;
-            margin-bottom: 48px;
-            text-align: center;
-        }
-
-        .params-card {
-            background: #0f1216;
-            border-radius: 16px;
-            padding: 48px;
-            overflow: hidden;
-            border: 1px solid transparent;
-            background-clip: padding-box;
-            box-shadow: inset 0 0 0 1px rgba(60, 90, 130, 0.15);
-        }
-
-        .params-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .params-table th,
-        .params-table td {
-            padding: 20px 24px;
-            text-align: left;
-            font-size: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .params-table th {
-            color: var(--text-secondary);
-            font-weight: 400;
-            width: 15%;
-        }
-
-        .params-table td {
-            color: var(--text-primary);
-            width: 35%;
-        }
-
-        .params-table tr:last-child th,
-        .params-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .params-table tr:hover th,
-        .params-table tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1024px) {
-            .footer-top {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .params-table th,
-            .params-table td {
-                padding: 16px;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            nav {
-                padding: 16px 24px;
-            }
-
-            .nav-links {
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background: rgba(10, 14, 23, 0.95);
-                backdrop-filter: blur(20px);
-                flex-direction: column;
-                gap: 0;
-                padding: 20px;
-                transform: translateY(-150%);
-                opacity: 0;
-                visibility: hidden;
-                transition: all 0.4s ease;
-                z-index: 999;
-            }
-
-            .nav-links.active {
-                transform: translateY(0);
-                opacity: 1;
-                visibility: visible;
-            }
-
-            .nav-links li {
-                margin-bottom: 16px;
-            }
-
-            .nav-links a {
-                display: block;
-                padding: 12px 0;
-                font-size: 16px;
-            }
-
-            .nav-links .nav-cta {
-                display: inline-block;
-                margin-left: 0;
-                margin-top: 10px;
-                text-align: center;
-            }
-
-            .mobile-menu-btn {
-                display: flex;
-            }
-
-            .hero-content {
-                padding: 0 24px;
-                flex-direction: column;
-                text-align: center;
-                gap: 30px;
-            }
-
-            .hero-text {
-                text-align: center;
-            }
-
-            .hero-image-sequence {
-                max-width: 100%;
-                width: 100%;
-            }
-
-            .footer-top {
-                grid-template-columns: 1fr;
-            }
-
-            .footer-bottom {
-                flex-direction: column;
-                gap: 16px;
-                text-align: center;
-            }
-
-            .product-params {
-                padding: 60px 24px;
-            }
-
-            .params-card {
-                padding: 24px;
-                overflow-x: auto;
-            }
-
-            .params-table {
-                min-width: 600px;
-            }
-
-            .params-table th,
-            .params-table td {
-                padding: 12px 16px;
-                font-size: 13px;
-            }
-        }
-    </style>
+	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf">
+	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张琪 ZHANG QI | 品牌创意视觉总监 Creative Director Portfolio</title>
+<style>
+:root {
+  --accent: #ffffff;
+  --bg: #050505;
+  --text-dim: rgba(255, 255, 255, 0.4);
+  --glass: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.08);
+  --ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --gradient-1: #ffffff;
+  --gradient-2: #a8b0ff;
+  --gradient-3: #ff80b5;
+  --title-gradient-top: #ffffff;
+  --title-gradient-bottom: #a8b0ff;
+  /* Logo矩阵变量 */
+  --logo-base-size: 75px;
+  --logo-gap: 12px;
+  /* 新增：动画控制参数（可自定义） */
+  --scroll-trigger-offset: 50; /* 触发文字切换的滚动距离（像素） */
+  --text-animation-duration: 0.8s; /* 中文文字滑入动画时长（秒） */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background-color: var(--bg);
+  color: var(--accent);
+  font-family: "Inter", "PingFang SC", sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+}
+
+/* 新增：悬浮下载按钮样式 */
+/* 悬浮下载按钮 - 蓝色渐变动态循环效果 */
+.download-btn {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 999;
+  padding: 16px 24px;
+  /* 蓝色渐变动态背景 */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(102, 126, 234, 0.5);
+  border-radius: 12px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.4), 0 8px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.download-btn:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #764ba2 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 2s ease infinite;
+  transform: translateY(-5px);
+  box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 12px 35px rgba(90, 110, 255, 0.3);
+  border-color: rgba(118, 75, 162, 0.6);
+}
+.download-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  transition: transform 0.3s ease;
+}
+.download-btn:hover svg {
+  transform: translateY(-2px);
+}
+
+/* 蓝色渐变动态循环动画 */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+	
+.glow-canvas {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+  background: 
+    radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(90, 110, 255, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 80% 20%, rgba(255, 80, 180, 0.12) 0%, transparent 35%);
+  transition: background-position 0.3s var(--ease);
+}
+
+/* Logo矩阵 - 核心修正：移除最小宽度限制，宽屏贴右、窄屏自适应 */
+.logo-matrix {
+  display: grid;
+  grid-template-columns: repeat(6, var(--logo-base-size));
+  gap: var(--logo-gap);
+  mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
+  background: linear-gradient(135deg, rgba(90, 110, 255, 0.05), rgba(255, 80, 180, 0.05));
+  padding: 20px;
+  border-radius: 8px;
+  margin-left: auto; /* 宽屏贴右侧 */
+  margin-right: auto; /* 窄屏自动居中 */
+  max-width: 100%; /* 关键：不超过容器宽度 */
+  min-width: auto; /* 移除强制最小宽度（核心修正） */
+  overflow: visible;
+}
+
+.logo-item {
+  width: var(--logo-base-size);
+  height: var(--logo-base-size);
+  aspect-ratio: 1/1;
+  border-radius: 0;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+.logo-item:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+.logo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.6) brightness(0.9);
+  opacity: 0.3;
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+.container { 
+  max-width: 1400px; 
+  margin: 0 auto; 
+  padding: 0 24px; 
+  position: relative; 
+  z-index: 1; 
+  width: 100%;
+}
+
+.nav {
+  position: fixed;
+  top: 0; width: 100%; height: 88px;
+  display: flex; align-items: center;
+  backdrop-filter: blur(24px) saturate(120%);
+  background: var(--glass);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  transition: all 0.4s var(--ease);
+}
+.nav.scroll {
+  height: 72px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.nav .container {
+  display: flex; justify-content: space-between; align-items: center; width: 100%;
+}
+.nav-logo { 
+  font-size: 1.3rem; 
+  font-weight: 800; 
+  letter-spacing: 5px; 
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  transition: letter-spacing 0.4s var(--ease);
+}
+.nav-logo:hover {
+  letter-spacing: 7px;
+}
+.nav-links { display: flex; gap: 48px; }
+.nav-links a {
+  text-decoration: none; 
+  color: var(--text-dim); 
+  font-size: 0.88rem; 
+  font-weight: 500;
+  transition: all 0.4s var(--ease); 
+  text-transform: uppercase; 
+  letter-spacing: 1.2px;
+  position: relative;
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gradient-2), var(--gradient-3));
+  transition: width 0.4s var(--ease);
+}
+.nav-links a:hover { 
+  color: var(--accent); 
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.hero {
+  height: 100vh;
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 100px;
+  padding-bottom: 40px;
+  flex-wrap: nowrap;
+  gap: 40px;
+  width: 100%;
+  overflow: visible;
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 300px;
+  padding-right: 20px;
+}
+
+.hero-logo-wrapper {
+  flex: 0 0 auto;
+  min-width: auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  overflow: visible;
+  padding-left: 20px;
+}
+
+.hero-tag {
+  font-size: 0.95rem; 
+  color: var(--text-dim); 
+  letter-spacing: 6px; 
+  margin-bottom: 24px;
+  animation: fadeIn 1s ease forwards;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-tag span {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.2);
+}
+
+/* 新增：中英文标题切换样式 */
+.hero-title-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.hero-title-en {
+  font-size: clamp(3.5rem, 11vw, 8.5rem);
+  line-height: 0.95; 
+  font-weight: 900; 
+  margin-left: 0;
+  padding-bottom: 10px;
+  background: linear-gradient(to bottom, 
+    var(--title-gradient-top), 
+    var(--title-gradient-bottom));
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent;
+  vertical-align: baseline;
+  overflow: visible;
+  display: block;
+  transition: opacity 0.5s var(--ease);
+}
+.hero-title-cn {
+  font-size: clamp(3.5rem, 11vw, 8.5rem);
+  line-height: 0.95; 
+  font-weight: 900; 
+  margin-left: 0;
+  padding-bottom: 10px;
+  background: linear-gradient(to bottom, 
+    var(--title-gradient-top), 
+    var(--title-gradient-bottom));
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent;
+  vertical-align: baseline;
+  overflow: visible;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  opacity: 0;
+  white-space: nowrap;
+  transition: transform var(--text-animation-duration) var(--ease), 
+              opacity var(--text-animation-duration) var(--ease);
+}
+.hero-title-cn.active {
+  opacity: 1;
+  transform: translateY(70%);
+}
+
+.hero-desc {
+  margin-top: 48px; 
+  max-width: 650px; 
+  color: rgba(200, 190, 255, 0.85);
+  font-size: 1.15rem; 
+  border-left: 2px solid rgba(168,176,255,0.6); 
+  padding-left: 24px;
+  line-height: 1.7;
+}
+.hero-desc .en {
+  font-size: 0.95rem;
+  margin-top: 16px;
+  color: rgba(255,255,255,0.18);
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+	
+/* 新增：关于我模块视频+文字布局 */
+.about-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 40px;
+}
+.about-video {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.5);
+}
+.about-video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+	
+.personal-info {
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 30px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+}
+.personal-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.personal-info-label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.personal-info-value {
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.section { 
+  padding: 160px 0; 
+  width: 100%;
+}
+.section-title {
+  font-size: 0.85rem; 
+  text-transform: uppercase; 
+  letter-spacing: 4px;
+  color: var(--text-dim); 
+  margin-bottom: 60px; 
+  display: flex; 
+  align-items: center;
+  width: 100%;
+}
+.section-title span {
+  color: var(--accent);
+  margin-left: 12px;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+.section-title::after {
+  content: ""; 
+  flex: 1; 
+  height: 1px; 
+  background: var(--border); 
+  margin-left: 20px;
+}
+
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  width: 100%;
+}
+.award-card {
+  padding: 40px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.award-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.award-type {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.award-type::before {
+  content: "";
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(var(--gradient-2), var(--gradient-3));
+  display: block;
+}
+.award-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.award-list li {
+  position: relative;
+  padding-left: 24px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.award-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--gradient-2);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.portfolio-grid {
+  display: grid; 
+  grid-template-columns: repeat(12, 1fr); 
+  gap: 30px;
+  width: 100%;
+}
+.portfolio-grid a {
+  text-decoration: none;
+  color: inherit;
+  grid-column: span 6; 
+  position: relative; 
+  overflow: hidden;
+  border-radius: 4px; 
+  transition: transform 0.6s var(--ease);
+  width: 100%;
+}
+.portfolio-grid a:nth-child(even) { margin-top: 80px; }
+
+.pf-image-wrap {
+  width: 100%; 
+  aspect-ratio: 16/10; 
+  background: #111;
+  overflow: hidden; 
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.pf-image-wrap img {
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover;
+  transition: all 1s var(--ease); 
+  filter: grayscale(100%) brightness(0.7);
+}
+.portfolio-grid a:hover img,
+.portfolio-grid a.active img { 
+  transform: scale(1.05); 
+  filter: grayscale(0%) brightness(1);
+}
+
+.pf-info { margin-top: 20px; }
+.pf-category { 
+  font-size: 0.75rem; 
+  color: var(--text-dim); 
+  text-transform: uppercase; 
+  letter-spacing: 2px; 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pf-category .cn {
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgba(255,255,255,0.5);
+}
+.pf-name { 
+  font-size: 1.45rem; 
+  font-weight: 500; 
+  margin-top: 5px; 
+}
+
+.advantage-grid {
+  display: grid; 
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 1px; 
+  background: var(--border);
+  width: 100%;
+}
+.adv-card {
+  background: var(--bg); 
+  padding: 60px 40px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.adv-card:hover { 
+  background: #0a0a0a; 
+  transform: translateY(-8px);
+}
+.adv-num { 
+  font-size: 0.85rem; 
+  color: var(--text-dim); 
+  margin-bottom: 30px; 
+  display: block; 
+}
+.adv-card h3 { 
+  font-size: 1.55rem; 
+  margin-bottom: 15px; 
+  font-weight: 600;
+}
+.adv-card p { 
+  color: var(--text-dim); 
+  line-height: 1.6; 
+  font-size: 0.95rem; 
+}
+
+.experience-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
+.exp-item {
+  padding: 40px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.4s var(--ease);
+  width: 100%;
+}
+.exp-item:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+}
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.exp-company {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.exp-company .en {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-weight: 400;
+}
+.exp-date {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.exp-position {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.exp-position .en {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.exp-desc {
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+.exp-desc ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.exp-desc li {
+  position: relative;
+  padding-left: 20px;
+}
+.exp-desc li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--gradient-2);
+}
+
+.skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+.skill-tag {
+  padding: 12px 24px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: all 0.3s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 1 auto;
+}
+.skill-tag:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--gradient-2);
+  transform: translateY(-3px);
+}
+.skill-tag .en {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+/* 移动端适配 - 核心修正LOGO矩阵 */
+@media (max-width: 968px) {
+  .container {
+    padding: 0 20px !important;
+  }
+  .section {
+    padding: 80px 0 !important;
+  }
+	  /* 新增：移动端关于我模块改为单列 */
+  .about-wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+	  /* 新增：移动端下载按钮适配 */
+	.download-btn {
+  right: 20px;
+  bottom: 20px;
+  padding: 12px 18px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+  .portfolio-grid a { 
+    grid-column: span 12; 
+    margin-top: 0 !important;
+    margin-bottom: 40px !important;
+  }
+  .aurora-featured .aurora-featured-image {
+    aspect-ratio: 16/10;
+  }
+  .aurora-featured .pf-name {
+    font-size: 1.4rem;
+  }
+  .aurora-featured .pf-desc {
+    font-size: 0.95rem;
+  }
+  .advantage-grid { 
+    grid-template-columns: 1fr; 
+    gap: 1px;
+  }
+  .hero {
+    flex-direction: column; /* 强制上下布局 */
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+    height: auto; /* 取消100vh高度限制，避免内容溢出 */
+    padding-top: 120px;
+    padding-bottom: 60px;
+  }
+  .hero-content {
+    width: 100%;
+    padding-right: 0;
+    margin-bottom: 40px; /* 增加和LOGO矩阵的间距 */
+  }
+  .hero-logo-wrapper {
+    width: 100%;
+    justify-content: center; /* 居中展示LOGO矩阵 */
+    margin-top: 20px;
+    padding-left: 0;
+  }
+  .hero-title-en, .hero-title-cn { 
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    line-height: 1.1; 
+    text-align: center;
+  }
+  .hero-title-cn {
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+  }
+  .hero-title-cn.active {
+    transform: translateX(-50%) translateY(0);
+  }
+  .hero-tag {
+    justify-content: center;
+  }
+  .hero-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .nav-links { 
+    gap: 16px !important;
+    overflow-x: auto;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+  .nav-links a {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px !important;
+  }
+  .nav-logo { 
+    letter-spacing: 2px !important; 
+    font-size: 1rem !important;
+  }
+  .exp-header { 
+    flex-direction: column; 
+    gap: 12px; 
+  }
+  .exp-date { 
+    align-self: flex-start; 
+  }
+  .exp-item {
+    padding: 20px !important;
+  }
+  .personal-info {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px !important;
+  }
+  .awards-grid {
+    grid-template-columns: 1fr;
+    gap: 20px !important;
+  }
+  .award-card {
+    padding: 20px !important;
+  }
+  .skills-wrap {
+    gap: 10px !important;
+  }
+  .skill-tag {
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+  }
+  .adv-card {
+    padding: 30px 20px !important;
+  }
+  .hero-desc {
+    font-size: 1rem !important;
+    padding-left: 16px !important;
+    max-width: 100% !important;
+  }
+  .section-title {
+    margin-bottom: 30px !important;
+    font-size: 0.75rem !important;
+  }
+  :root {
+    --logo-base-size: 60px;
+    --logo-gap: 8px;
+  }
+  /* LOGO矩阵移动端核心适配 */
+  .logo-matrix {
+    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
+    max-width: 100%; /* 不超过屏幕宽度 */
+    min-width: auto; /* 彻底移除最小宽度 */
+    margin: 0 auto; /* 居中 */
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    gap: 10px !important;
+  }
+  .hero-tag {
+    font-size: 0.8rem !important;
+    letter-spacing: 2px !important;
+  }
+  .pf-image-wrap {
+    aspect-ratio: 4/3 !important;
+  }
+  :root {
+    --logo-base-size: 40px;
+    --logo-gap: 6px;
+  }
+  /* 手机屏LOGO矩阵适配 */
+  .logo-matrix {
+    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
+    max-width: 100%;
+    min-width: auto;
+  }
+  /* 新增：小屏下载按钮进一步适配 */
+/* 新增：小屏下载按钮进一步适配 + 毛玻璃 */
+.download-btn {
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.download-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal { opacity: 0; transform: translateY(40px); transition: 1s var(--ease); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* 数据统计横条 */
+.stats-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.stat-item {
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+}
+.stat-num {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  background: linear-gradient(to bottom, var(--gradient-1), var(--gradient-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  display: block;
+}
+/* 作品描述行 */
+.pf-desc {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+}
+@media (max-width: 968px) {
+  .stats-strip { gap: 16px; padding: 40px 0; }
+  .stat-num { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+}
+
+/* ===== ENHANCEMENTS v2 ===== */
+
+/* Client name emphasis */
+.client-name { color: #fff; font-weight: 700; }
+
+/* Stats counter */
+.stat-num { transition: all 0.3s ease; }
+
+/* Client brand marquee */
+.brand-marquee-wrap {
+  overflow: hidden;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+.brand-marquee-track {
+  display: flex;
+  gap: 64px;
+  width: max-content;
+  animation: brand-scroll 28s linear infinite;
+  align-items: center;
+}
+.brand-marquee-wrap:hover .brand-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes brand-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.brand-tag {
+  font-size: 0.78rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+  cursor: default;
+}
+.brand-tag:hover { color: rgba(255,255,255,0.8); }
+.brand-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(168,176,255,0.4);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Enhanced portfolio hover */
+.pf-image-wrap::after {
+  content: "查看项目 →";
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  color: white;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.4s var(--ease);
+  pointer-events: none;
+}
+.pf-image-wrap { position: relative; }
+.portfolio-grid a:hover .pf-image-wrap::after,
+.portfolio-grid a.active .pf-image-wrap::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered card reveal */
+.advantage-grid .adv-card:nth-child(1) { transition-delay: 0.05s; }
+.advantage-grid .adv-card:nth-child(2) { transition-delay: 0.1s; }
+.advantage-grid .adv-card:nth-child(3) { transition-delay: 0.15s; }
+.advantage-grid .adv-card:nth-child(4) { transition-delay: 0.2s; }
+.advantage-grid .adv-card:nth-child(5) { transition-delay: 0.25s; }
+.advantage-grid .adv-card:nth-child(6) { transition-delay: 0.3s; }
+
+/* Glowing border on exp-item hover */
+.exp-item:hover {
+  box-shadow: 0 0 0 1px rgba(168,176,255,0.2), 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Portfolio grid reveal stagger */
+.portfolio-grid a:nth-child(1) { transition-delay: 0.05s; }
+.portfolio-grid a:nth-child(2) { transition-delay: 0.15s; }
+.portfolio-grid a:nth-child(3) { transition-delay: 0.1s; }
+.portfolio-grid a:nth-child(4) { transition-delay: 0.2s; }
+.portfolio-grid a:nth-child(5) { transition-delay: 0.15s; }
+.portfolio-grid a:nth-child(6) { transition-delay: 0.25s; }
+
+/* AURORA featured card - 4:1 aspect ratio */
+.aurora-featured {
+  grid-column: span 12 !important;
+  margin-top: 0 !important;
+}
+.aurora-featured .aurora-featured-image {
+  aspect-ratio: 4/1;
+}
+.aurora-featured .pf-info {
+  margin-top: 30px;
+}
+.aurora-featured .pf-name {
+  font-size: 1.45rem;
+}
+.aurora-featured .pf-desc {
+  font-size: 0.82rem;
+}
+
+</style>
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?b00f12adaf5e1212cbfae150084e8f4a";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	
+<!-- 不蒜子统计脚本 -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+	
 </head>
 <body>
-    <!-- Navigation -->
-    <nav id="navbar">
-        <div class="nav-logo">
-            <a href="#" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
-                <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/logo.png" alt="Logo">
-                <span>AURORA</span>
-            </a>
+
+<div class="glow-canvas" id="glow"></div>
+
+	<!-- 新增：悬浮下载按钮 -->
+<button class="download-btn" onclick="downloadResume()">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+  </svg>
+  下载简历作品
+</button>
+	
+<nav class="nav" id="navbar">
+  <div class="container">
+    <div class="nav-logo">张琪 ZHANG QI</div>
+    <div class="nav-links">
+      <a href="#work">作品</a>
+      <a href="#about">关于</a>
+      <a href="#advantages">优势</a>
+      <a href="#experience">经历</a>
+      <a href="#awards">荣誉</a>
+      <a href="#skills">技能</a>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-tag">春晚 · 冬奥 · 全运会 <span>|</span> CREATIVE DIRECTOR · 11 YRS</span>
+      <!-- 修改位置1：替换原h1为中英文标题容器 -->
+      <div class="hero-title-wrapper">
+        <div class="hero-title-en">BEYOND<br>VISUALS.</div>
+        <div class="hero-title-cn">超越视觉</div>
+      </div>
+      <p class="hero-desc">
+        当品牌需要被看见，我让它无处不在。<br>
+        从 LOGO 到万人发布会现场，从三维空间到 XR 虚拟直播 ——<br>
+        这不只是设计，是让视觉为品牌持续说话的系统。
+        <div class="en">From brand strategy to immersive spectacle. Visual systems that make brands impossible to ignore.</div>
+      </p>
+    </div>
+    <div class="hero-logo-wrapper">
+      <div class="logo-matrix" id="matrix"></div>
+    </div>
+  </section>
+
+  <!-- 客户品牌滚动条 -->
+  <div class="brand-marquee-wrap">
+    <div class="brand-marquee-track">
+    <span class="brand-tag">京东</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">腾讯</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">花旗银行</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">习酒</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">长安欧尚</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">星巴克</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">光大银行</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">罗永浩</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">南方航空</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">洲明科技</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">辛巴</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">湖南卫视</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">京东</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">腾讯</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">花旗银行</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">习酒</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">长安欧尚</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">星巴克</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">光大银行</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">罗永浩</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">南方航空</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">洲明科技</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">辛巴</span>
+    <span class="brand-dot"></span>
+    <span class="brand-tag">湖南卫视</span>
+    <span class="brand-dot"></span>
+    </div>
+  </div>
+
+  <!-- 数据统计横条 -->
+  <div class="stats-strip reveal">
+    <div class="stat-item">
+      <span class="stat-num">11</span>
+      <span class="stat-label">年 · 视觉经验</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">20+</span>
+      <span class="stat-label">人 · 创意团队</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">50+</span>
+      <span class="stat-label">场 · 品牌发布会</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">3</span>
+      <span class="stat-label">国家级赛事</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">∞</span>
+      <span class="stat-label">创意野心</span>
+    </div>
+  </div>
+
+  <section id="work" class="section">
+    <h2 class="section-title">Selected Works <span>代表作品</span></h2>
+    <div class="portfolio-grid">
+
+      <a href="aurora.html" target="_blank" class="reveal aurora-featured">
+        <div class="pf-image-wrap aurora-featured-image">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/wyt.jpg" alt="AURORA品牌官网">
         </div>
-        <ul class="nav-links">
-            <li><a href="#design">设计</a></li>
-            <li><a href="#color-selection">色彩</a></li>
-            <li><a href="#product-details">详情</a></li>
-            <li><a href="#product-params">参数</a></li>
-            <li><a href="#color-selection" class="nav-cta">Buy Now</a></li>
+        <div class="pf-info">
+          <span class="pf-category">Brand Web <span class="cn">| 品牌官网搭建</span></span>
+          <div class="pf-name">品牌官网搭建</div>
+          <div class="pf-desc">品牌网页 0-1 全链路搭建 — 网页 · 视觉 · 影像 · 模型 全案统筹</div>
+        </div>
+      </a>
+
+      <a href="work-brand-case.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/brand.jpg" alt="品牌全案视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Brand Identity <span class="cn">| 品牌视觉体系</span></span>
+          <div class="pf-name">品牌全案视觉</div>
+          <div class="pf-desc">从0构建品牌视觉语言 — LOGO · VI系统 · 包装 · 物料全案统筹</div>
+        </div>
+      </a>
+
+      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/stage.jpg" alt="品牌发布会设计">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Brand Launch <span class="cn">| 发布会视觉</span></span>
+          <div class="pf-name">奈丝公主 · 永艺 · AI发布会</div>
+          <div class="pf-desc">空间叙事 × 沉浸体验 × UE实时引擎渲染 — 让发布会成为品牌的最强触点</div>
+        </div>
+      </a>
+
+      <a href="work-live-xr.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/live.jpg" alt="XR品牌直播视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">XR Live Streaming <span class="cn">| 虚拟直播</span></span>
+          <div class="pf-name">XR 品牌直播视觉</div>
+          <div class="pf-desc">罗永浩 · 星巴克 · 光大银行 · 长安欧尚 — 品牌级XR直播全案，重新定义直播质感</div>
+        </div>
+      </a>
+
+      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/ip.jpg" alt="品牌虚拟IP视觉">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Virtual IP <span class="cn">| 虚拟IP视觉</span></span>
+          <div class="pf-name">品牌虚拟 IP</div>
+          <div class="pf-desc">数字人 × 虚拟形象 × 品牌IP化运营 — 让品牌在虚实之间找到新的人格</div>
+        </div>
+      </a>
+		
+      <a href="work-3d-visual.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/3d.jpg" alt="裸眼3D沉浸展厅">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">3D Visual <span class="cn">| 三维视觉</span></span>
+          <div class="pf-name">裸眼 3D × 沉浸展厅</div>
+          <div class="pf-desc">京东MALL外立面 · 汉阳钟家村核心面 · 品牌展厅 — 让三维空间成为品牌的叙事场</div>
+        </div>
+      </a>
+
+      <a href="work-tourism-light.html" target="_blank" class="reveal">
+        <div class="pf-image-wrap">
+          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/tourism.jpg" alt="文旅光影项目">
+        </div>
+        <div class="pf-info">
+          <span class="pf-category">Cultural Tourism <span class="cn">| 文旅光影</span></span>
+          <div class="pf-name">文旅光影秀</div>
+          <div class="pf-desc">城市地标光影叙事 · 空间创意导演 — 用光与影讲述一座城市的品牌故事</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <h2 class="section-title">About Me <span>关于我</span></h2>
+
+    <!-- 新增：视频+文字布局 -->
+    <div class="about-wrapper reveal">
+     <div class="about-video" id="aboutVideo">
+  <iframe 
+    id="bilibiliVideo"
+    data-src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=1&loop=1&muted=1&controls=1"
+    src=""
+    scrolling="no" 
+    allow="autoplay; fullscreen; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+</div>
+    <div class="hero-desc reveal">
+      我不是第一次做设计的人，但我是少数既能把品牌想清楚、又能把现场落下去的人。<br><br>
+      从深圳华强的球幕影院镜头预演，到湖南卫视元宵晚会XR视觉主导，再到<strong style="color:rgba(255,255,255,0.85)">春晚、冬奥、全运会</strong>舞台执行 ——
+      这条路让我相信一件事：视觉最大的价值，不是好看，是让人记住品牌。<br><br>
+      在洲明的4年，我带20人团队服务<strong style="color:#fff;font-weight:700">京东、腾讯、花旗银行、习酒</strong>等头部客户，把视觉做成了可复用、可放大、可传播的体系。平面设计师解决一张图，我解决整个品牌被看见的问题。
+      <div class="en">
+        I don't just design — I build visual systems that make brands impossible to ignore. From pre-vis in dome theaters to leading XR stages at national broadcast events, I've spent 11 years learning that great visuals aren't beautiful, they're unforgettable.
+      </div>
+    </div>
+</div>
+	  
+<div class="personal-info reveal">
+  <div class="personal-info-item">
+    <span class="personal-info-label">出生年月 /</span>
+    <span class="personal-info-value">1991年9月</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">毕业院校 /</span>
+    <span class="personal-info-value">中南民族大学</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">联系电话 /</span>
+    <span class="personal-info-value">15220107783</span>
+  </div>
+  <div class="personal-info-item">
+    <span class="personal-info-label">邮箱 /</span>
+    <span class="personal-info-value">369887709@qq.com</span>
+  </div>
+</div>
+
+  <section id="advantages" class="section">
+    <h2 class="section-title">Core Strengths <span>核心优势</span></h2>
+    <div class="advantage-grid reveal">
+      <div class="adv-card">
+        <span class="adv-num">01/</span>
+        <h3>全栈视觉能力</h3>
+        <p>平面、三维、动效、网页全通——从一张 LOGO 到一套品牌体系，可以独立完成，不依赖外包。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">02/</span>
+        <h3>大型现场操盘</h3>
+        <p>春晚、冬奥、全运会、百人发布会——高压环境下的高规格交付，这是用钱买不到的经验。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">03/</span>
+        <h3>技术 × 创意双驱</h3>
+        <p>Maya + UE + AIGC，三维视效与XR虚拟拍摄打造差异化视觉。会工具不稀奇，用工具创造品牌溢价才稀奇。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">04/</span>
+        <h3>团队与项目统筹</h3>
+        <p>20人创意团队管理，从接单到交付建立了一套可复用的视觉标准体系，不靠堆人，靠流程。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">05/</span>
+        <h3>商业转化导向</h3>
+        <p>服务汽车、快消、金融、文旅多行业——做的每一个视觉决策都指向一个目标：让品牌被更多人记住。</p>
+      </div>
+      <div class="adv-card">
+        <span class="adv-num">06/</span>
+        <h3>空间叙事能力</h3>
+        <p>镜头语言 + 空间感知 + 现场落地的复合能力，让我能把品牌放进三维空间里讲故事——这是大多数平面设计师没有的维度。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="section">
+    <h2 class="section-title">Work Experience <span>工作经历</span></h2>
+    <div class="experience-list">
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            深圳市洲明科技股份有限公司
+            <div class="en">Unilumin Group Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2022.04 – 2026.03</div>
+        </div>
+        <div class="exp-position">
+          品牌创意 | 视觉总监 <span class="en">Brand Creative | Visual Director</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>服务<strong style="color:#fff;font-weight:700">京东、腾讯、花旗银行、习酒</strong>等全球知名品牌的大型商业项目，助力品牌曝光与商业转化</li>
+            <li>统筹品牌视觉全案创意与执行，负责大型活动、发布会、虚拟 IP、文旅光影项目的整体视觉风格把控与落地</li>
+            <li>参与春晚、全运会、冬奥赛事等舞台视觉执行，打造高规格品牌级视效</li>
+            <li>统筹数字资产体系建设，沉淀品牌视觉素材库，提升团队复用效率与统一性</li>
+            <li>管理20人创意团队，主导全流程视觉生产，制定视觉标准与交付规范，建立人才培养体系</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            茄子咔咔科技有限公司
+            <div class="en">Qiezi Kaka Technology Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2019.02 – 2022.04</div>
+        </div>
+        <div class="exp-position">
+          品牌视觉专家 <span class="en">Brand Visual Expert</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>搭建以公司产品为核心的LOGO/VI/包装/官网/物料全渠道视觉体系，统一品牌视觉语言</li>
+            <li>为<strong style="color:#fff;font-weight:700">长安欧尚、南方航空、星巴克、光大银行、罗永浩、辛巴</strong>直播间提供XR直播视觉全案，提升品牌直播质感与用户体验</li>
+            <li>主导湖南卫视元宵喜乐会等大型晚会 XR 视觉创意与落地，保障高规格舞台呈现。</li>
+            <li>参与品牌交互系统与展会视觉设计，优化品牌视觉体验，助力商务曝光与转化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            前海手讯文化传媒有限公司
+            <div class="en">Qianhai Shouxun Culture Media Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2018.01 – 2019.01</div>
+        </div>
+        <div class="exp-position">
+          视觉负责人<span class="en">Visual Designer</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>负责品牌视觉、产品包装、线下活动主KV创意设计、物料等视觉输出</li>
+            <li>完成 50 + 场发布会、访谈节目、科创活动的视觉设计与落地执行，统一品牌栏目视觉形象</li>
+	    <li>配合团队完成三维视觉渲染与平面延展工作</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header">
+          <div class="exp-company">
+            深圳华强数码电影有限公司
+            <div class="en">Shenzhen Huaqiang Digital Film Co., Ltd.</div>
+          </div>
+          <div class="exp-date">2015.07 – 2017.12</div>
+        </div>
+        <div class="exp-position">
+          镜头预演师 <span class="en">Shot Previsualization Artist</span>
+        </div>
+        <div class="exp-desc">
+          <ul>
+            <li>负责球幕、环幕、特种影院项目的镜头语言设计与视觉预演，优化影片叙事节奏与画面呈现</li>
+            <li>参与《飞跃吴哥窟》《大闹天宫》《女娲补天》等项目视觉制作，提升内容视觉冲击力与沉浸体验</li>
+            <li>自研多款流程插件，优化制作效率，提升团队整体出片速度</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="awards" class="section">
+    <h2 class="section-title">Honors & Awards <span>荣誉奖项</span></h2>
+    <div class="awards-grid reveal">
+      <div class="award-card">
+        <h3 class="award-type">工作荣誉</h3>
+        <ul class="award-list">
+          <li>荣获第三届高新视频创新应用大赛一等奖</li>
+          <li>荣获第十届深圳（国际）科技影视周“卓越影视技术贡献奖”</li>
+          <li>获评洲明科技2023上半年度“最佳创意奖”</li>
+          <li>受聘洲明学堂动画制作工程技术导师，发挥专业优势赋能人才培养</li>
         </ul>
-        <button class="mobile-menu-btn" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-bg"></div>
-        <div class="hero-content">
-            <div class="hero-text">
-                <p class="hero-subtitle">Aurora Above</p>
-                <p class="hero-subtitle-line2">Power The Future</p>
-                <h1 class="hero-title">极光之上，驭电未来</h1>
-                <div class="hero-cta-group">
-                    <button class="btn-buy-now-hero">Buy Now</button>
-                    <a href="#features" class="btn-link">Learn More</a>
-                </div>
-            </div>
-            <div class="hero-image-sequence" id="hero-image-sequence"></div>
-        </div>
-    </section>
-
-    <!-- Product Showcase Section -->
-    <section class="product-showcase" id="design">
-        <div class="showcase-content">
-            <span id="design"></span>
-                <p class="highlight-subtitle">设计</p>
-            <h2 class="showcase-title">简美学与硬核实力</h2>
-            <p class="showcase-subtitle">极简一体，内外兼修，实力不彰自显。</p>
-            <p class="showcase-description">这款超薄充电宝，由内而外贯彻科技极简主义美学，将强悍性能藏于纤薄机身之中。全新设计以 CNC 一体成型<span class="highlight-blue">钛合金</span>机身与智能温控快充方案为核心，将颜值、手感与充电效率全面拉满，出行时刻，电量始终在线。</p>
-        </div>
-        <div class="showcase-animation-container" id="showcase-animation"></div>
-    </section>
-
-    <!-- 3D Model Showcase Section -->
-    <section class="model-showcase">
-        <div class="model-container">
-            <div class="model-header">
-                <p class="model-title">外观</p>
-                <h1 class="model-subtitle">方寸之间，尽显格调</h1>
-                <p class="model-description">每一条线条都经过精密打磨，每一处细节都为质感而生。简约而不简单，低调却有分量。</p>
-            </div>
-            <div class="model-card">
-                <div class="model-viewer" id="model-viewer"></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Highlight Block Section -->
-    <section class="highlight-block">
-        <div class="highlight-container">
-            <div class="highlight-text-section">
-                <p class="highlight-subtitle">品牌表达</p>
-                <h2 class="highlight-main-title">能量，重塑于细节之中</h2>
-                <p class="highlight-tagline">轻薄、从容、始终随行</p>
-                <p class="highlight-description">AURORA，让移动电源不再只是设备，而是一种更轻、更顺、更自然的存在。</p>
-            </div>
-            <div class="highlight-images">
-                <div class="highlight-image-wrapper">
-                    <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/hb1.jpg" alt="产品展示 1" loading="lazy">
-                    <div class="highlight-image-text">
-                        <p class="highlight-image-title">Lightness</p>
-                        <p class="highlight-image-subtitle">轻薄无界</p>
-                    </div>
-                </div>
-                <div class="highlight-image-wrapper">
-                    <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/hb2.jpg" alt="产品展示 2" loading="lazy">
-                    <div class="highlight-image-text">
-                        <p class="highlight-image-title">Speed</p>
-                        <p class="highlight-image-subtitle">极速快充</p>
-                    </div>
-                </div>
-                <div class="highlight-image-wrapper">
-                    <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/hb3.jpg" alt="产品展示 3" loading="lazy">
-                    <div class="highlight-image-text">
-                        <p class="highlight-image-title">Portable</p>
-                        <p class="highlight-image-subtitle">便携随行</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Grip & Texture Section -->
-    <section class="grip-section">
-        <div class="grip-container">
-            <div class="grip-text-section">
-                <p class="grip-subtitle">握感体验</p>
-                <h2 class="grip-main-title">握感，即质感</h2>
-                <p class="grip-tagline">随身格调，电量无忧</p>
-                <p class="grip-description">纤薄一体的机身，贴合掌心，日常与商务场景皆显品味。<br>可靠性能加持，让你随时电量满格，从容应对每一次出行。</p>
-            </div>
-            <div class="grip-image-wrapper">
-                <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/hand.webp" alt="握感展示" loading="lazy">
-            </div>
-        </div>
-    </section>
-
-    <!-- Color Selection Section -->
-    <section class="color-selection" id="color-selection">
-        <div class="color-container">
-            <h2 class="color-title">色彩选择</h2>
-            <div class="color-cards">
-                <div class="color-card color-card-0">
-                    <div class="color-info">
-                        <div class="color-name">Titanium Gray</div>
-                        <div class="color-name-cn">钛空灰</div>
-                        <button class="add-cart-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                            加入购物车
-                        </button>
-                    </div>
-                    <div class="color-image">
-                    </div>
-                </div>
-
-                <div class="color-card color-card-1">
-                    <div class="color-info">
-                        <div class="color-name">Void Black</div>
-                        <div class="color-name-cn">虚空黑</div>
-                        <button class="add-cart-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                            加入购物车
-                        </button>
-                    </div>
-                    <div class="color-image">
-                    </div>
-                </div>
-
-                <div class="color-card color-card-2">
-                    <div class="color-info">
-                        <div class="color-name">Deep Blue</div>
-                        <div class="color-name-cn">深海蓝</div>
-                        <button class="add-cart-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                            加入购物车
-                        </button>
-                    </div>
-                    <div class="color-image">
-                    </div>
-                </div>
-
-                <div class="color-card color-card-3">
-                    <div class="color-info">
-                        <div class="color-name">Aurora Purple</div>
-                        <div class="color-name-cn">极光紫</div>
-                        <button class="add-cart-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                            加入购物车
-                        </button>
-                    </div>
-                    <div class="color-image">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="video-container">
-        <video
-            class="product-video"
-            src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/video/xcsp.mp4"
-            muted
-            playsinline
-            preload="auto"
-        ></video>
+      </div>
+      
+      <div class="award-card">
+        <h3 class="award-type">在校荣誉</h3>
+        <ul class="award-list">
+          <li>两度斩获全国大学生计算机设计大赛一等奖（民族组、专业组）</li>
+          <li>荣获全国大学生广告大赛湖北省三等奖</li>
+          <li>荣获ONESHOW国际创意广告优秀奖</li>
+          <li>多次获评校级“创新标兵”</li>
+          <li>凭借优异成绩斩获专业一、二等奖学金，展现扎实的专业功底与创新能力</li>
+        </ul>
+      </div>
     </div>
+  </section>
 
-    <!-- Product Details Section -->
-    <section class="product-details" id="product-details">
-        <div class="details-container">
-        <span id="product-details-anchor"></span>
-            <h2 class="details-title">商品详情</h2>
-            <div class="details-groups">
-                <div class="details-group">
-                    <div class="details-card xq1">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq1.jpg" alt="商品详情 1">
-                    </div>
-                    <div class="details-card xq2">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq2.jpg" alt="商品详情 2">
-                    </div>
-                </div>
-                <div class="details-group">
-                    <div class="details-card xq3">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq3.jpg" alt="商品详情 3">
-                    </div>
-                    <div class="details-card xq4">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq4.jpg" alt="商品详情 4">
-                    </div>
-                </div>
-                <div class="details-group">
-                    <div class="details-card xq5">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq5.jpg" alt="商品详情 5">
-                    </div>
-                    <div class="details-card xq6">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq6.jpg" alt="商品详情 6">
-                    </div>
-                </div>
-                <div class="details-group">
-                    <div class="details-card xq7">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq7.jpg" alt="商品详情 7">
-                    </div>
-                    <div class="details-card xq8">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq8.jpg" alt="商品详情 8">
-                    </div>
-                </div>
-                <div class="details-group">
-                    <div class="details-card xq9">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/xq9.jpg" alt="商品详情 9">
-                    </div>
-                </div>
-
-                <!-- Card 10: 随时随地，电力在线 -->
-                <div class="card-10">
-                    <div class="card-10-title-area">
-                        <h3 class="card-10-title">随时随地，电力在线</h3>
-                    </div>
-                    <div class="card-10-images">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/4-1.jpg" alt="特性展示 1">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/4-2.jpg" alt="特性展示 2">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/4-3.jpg" alt="特性展示 3">
-                        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/4-4.jpg" alt="特性展示 4">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Product Parameters Section -->
-    <section class="product-params" id="product-params">
-        <div class="params-container">
-            <span id="product-params-anchor"></span>
-            <h2 class="params-title">产品参数</h2>
-            <div class="params-card">
-                <table class="params-table">
-                    <tr>
-                        <th>容量</th>
-                        <td>5000mAh / 10000mAh</td>
-                        <th>尺寸</th>
-                        <td>100 × 60 × 6 mm</td>
-                    </tr>
-                    <tr>
-                        <th>电池类型</th>
-                        <td>锂聚合物电池</td>
-                        <th>重量</th>
-                        <td>约 100g</td>
-                    </tr>
-                    <tr>
-                        <th>输入 (Type-C)</th>
-                        <td>5V⎓3A / 9V⎓2A / 12V⎓1.5A</td>
-                        <th>兼容设备</th>
-                        <td>iPhone / Android / Tablet / Others</td>
-                    </tr>
-                    <tr>
-                        <th>输出 (Type-C)</th>
-                        <td>5V⎓3A / 9V⎓2.22A / 12V⎓1.67A</td>
-                        <th>工作温度</th>
-                        <td>0°C ~ 45°C</td>
-                    </tr>
-                    <tr>
-                        <th>无线输出</th>
-                        <td>15W Max</td>
-                        <th>认证</th>
-                        <td>CE / FCC / RoHS</td>
-                    </tr>
-                    <tr>
-                        <th>总输出功率</th>
-                        <td>15W / 45W / 65W</td>
-                        <th>颜色</th>
-                        <td>经典黑 / 深海蓝 / 极光紫</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal -->
-    <div class="modal-overlay" id="cartModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">无法加入购物车！</h3>
-                <button class="modal-close" id="modalCloseBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 6L6 18M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-content">
-                <p>该网页为品牌创意作品展示页，暂未对外开放上架，仅作视觉设计演示使用。</p>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn" id="modalOkBtn">知道了</button>
-            </div>
-        </div>
+  <section id="skills" class="section">
+    <h2 class="section-title">Professional Skills <span>专业技能</span></h2>
+    <div class="skills-wrap reveal">
+      <div class="skill-tag">LOGO/VI设计 <span class="en">LOGO/VI Design</span></div>
+      <div class="skill-tag">品牌全案 <span class="en">Brand Full Case</span></div>
+      <div class="skill-tag">主KV设计 <span class="en">Key Visual</span></div>
+      <div class="skill-tag">产品包装 <span class="en">Product Packaging</span></div>
+      <div class="skill-tag">网页设计 <span class="en">Web Design</span></div>
+      <div class="skill-tag">三维视觉 <span class="en">3D Visual</span></div>
+      <div class="skill-tag">AIGC <span class="en">AIGC</span></div>
+      <div class="skill-tag">发布会舞美 <span class="en">Stage Design</span></div>
+      <div class="skill-tag">XR直播 <span class="en">XR Live</span></div>
+      <div class="skill-tag">虚拟拍摄 <span class="en">Virtual Shooting</span></div>
+      <div class="skill-tag">团队管理 <span class="en">Team Management</span></div>
+      <div class="skill-tag">Maya <span class="en">3D Software</span></div>
+      <div class="skill-tag">UE <span class="en">Unreal Engine</span></div>
+      <div class="skill-tag">Adobe全套 <span class="en">Adobe Suite</span></div>
+      <div class="skill-tag">镜头语言 <span class="en">Cinematography</span></div>
+      <div class="skill-tag">裸眼3D <span class="en">Naked-Eye 3D</span></div>
+      <div class="skill-tag">光影设计 <span class="en">Lighting Design</span></div>
     </div>
+  </section>
+</main>
+
+<footer class="section" style="text-align: center; border-top: 1px solid var(--border); padding: 60px 0;">
+  <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 12px;">
+    张琪 ZHANG QI · 品牌创意视觉总监 · 深圳
+  </p>
+  <p style="color: rgba(255,255,255,0.2); font-size: 0.75rem; letter-spacing: 1px;">
+    15220107783 · 369887709@qq.com · zhangqi.art
+  </p>
+  <p style="color: rgba(255,255,255,0.1); font-size: 0.7rem; margin-top: 24px; letter-spacing: 1px;">
+    © 2026 · 访问: <span id="busuanzi_value_site_uv"></span> · 浏览: <span id="busuanzi_value_site_pv"></span> · 下载: <span id="downloadCount">--</span>
+  </p>
+</footer>
+
+<script>
+// 下载次数统计防抖标志
+let isDownloadCounting = false;
+
+// 初始化下载次数显示
+function initDownloadCount() {
+  const downloadCount = localStorage.getItem('downloadCount') || 7;
+  const countElement = document.getElementById('downloadCount');
+  if (countElement) {
+    countElement.textContent = downloadCount.toLocaleString();
+  }
+}
+
+// 更新下载次数（带防抖机制，确保每次有效点击只记录一次）
+function updateDownloadCount() {
+  if (isDownloadCounting) return;
+  isDownloadCounting = true;
+  
+  const currentCount = parseInt(localStorage.getItem('downloadCount') || 7, 10);
+  const newCount = currentCount + 1;
+  localStorage.setItem('downloadCount', newCount.toString());
+  
+  updateDownloadCountDisplay(newCount);
+  
+  // 3秒内不允许重复计数（与按钮恢复状态同步）
+  setTimeout(() => {
+    isDownloadCounting = false;
+  }, 3000);
+}
+
+// 更新下载次数显示
+function updateDownloadCountDisplay(count) {
+  const countElement = document.getElementById('downloadCount');
+  if (countElement) {
+    countElement.textContent = count.toLocaleString();
+  }
+}
+
+// 监听 localStorage 变化，实现跨标签页同步更新
+window.addEventListener('storage', (e) => {
+  if (e.key === 'downloadCount') {
+    const newCount = parseInt(e.newValue || 7, 10);
+    updateDownloadCountDisplay(newCount);
+  }
+});
+
+// 页面加载完成后初始化下载次数
+document.addEventListener('DOMContentLoaded', () => {
+  initDownloadCount();
+});
+
+// 鼠标光影
+const glow = document.getElementById('glow');
+window.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth) * 100;
+  const y = (e.clientY / window.innerHeight) * 100;
+  glow.style.setProperty('--x', `${x}%`);
+  glow.style.setProperty('--y', `${y}%`);
+});
+
+// 滚动动画
+const observerOptions = { threshold: 0.1 };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, observerOptions);
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// 作品微动效
+document.querySelectorAll('.portfolio-grid a').forEach(item => {
+  item.addEventListener('mousemove', (e) => {
+    const { left, top, width, height } = item.getBoundingClientRect();
+    const x = (e.clientX - left - width/2) * 0.1;
+    const y = (e.clientY - top - height/2) * 0.1;
+    item.style.transform = `translate(${x}px, ${y}px)`;
+  });
+  item.addEventListener('mouseleave', () => {
+    item.style.transform = `translate(0, 0)`;
+  });
+});
+
+// 导航栏
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.classList.add('scroll');
+  } else {
+    navbar.classList.remove('scroll');
+  }
+});
+
+// 平滑滚动
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 100,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+//  Logo 矩阵 ======================
+const matrix = document.getElementById('matrix');
+const totalLogos = 30;
+
+for (let i = 0; i < totalLogos; i++) {
+  const item = document.createElement('div');
+  item.className = 'logo-item';
+  // 自动加载 1.jpg、2.jpg、3.jpg...
+  const imgNum = (i % 30) + 1;
+  // 懒加载格式（保留）
+  item.innerHTML = `<img data-src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/logo/${imgNum}.jpg" src="" alt="LOGO">`;
+  matrix.appendChild(item);
+}
+
+// LOGO 懒加载（保留，不影响高亮）
+const logoItems = document.querySelectorAll('.logo-item img');
+const logoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      img.src = img.dataset.src;
+      logoObserver.unobserve(img);
+    }
+  });
+});
+logoItems.forEach(img => logoObserver.observe(img));
+
+// 你原来的鼠标光效逻辑（修复高亮参数，强化视觉效果）
+const items = document.querySelectorAll('.logo-item');
+
+matrix.addEventListener('mousemove', (e) => {
+  const { clientX: mouseX, clientY: mouseY } = e;
+
+  items.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const distance = Math.hypot(mouseX - centerX, mouseY - centerY);
+    
+    const radius = 160;
+    const strength = Math.max(0, 1 - distance / radius); 
+
+    // 👇 核心修复：强化高亮参数，让效果更明显
+    const opacity = 0.4 + strength * 0.6; // 基础透明度提高，高亮时更亮
+    const grayscale = 0.8 * (1 - strength); // 灰度弱化更多，高亮时几乎无灰度
+    const brightness = 1 + strength * 0.4; // 亮度提升幅度加大
+
+    // 背景和边框高亮强化
+    item.style.background = `rgba(255, 255, 255, ${0.05 + strength * 0.15})`;
+    item.style.borderColor = `rgba(168, 176, 255, ${strength * 0.6})`;
+    
+    const img = item.querySelector('img');
+    img.style.filter = `grayscale(${grayscale}) brightness(${brightness})`;
+    img.style.opacity = opacity;
+  });
+});
+
+matrix.addEventListener('mouseleave', () => {
+  items.forEach(item => {
+    item.style.background = '';
+    item.style.borderColor = '';
+    const img = item.querySelector('img');
+    img.style.filter = '';
+    img.style.opacity = '';
+  });
+});
+	function downloadResume() {
+  // 禁用按钮+提示
+  const btn = document.querySelector('.download-btn');
+  btn.disabled = true;
+  btn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+    </svg>
+    下载中...
+  `;
+
+  // 更新下载次数
+  updateDownloadCount();
+
+  // 下载逻辑
+  const resumeUrl = 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/%E5%BC%A0%E7%90%AA-%E5%93%81%E7%89%8C%E8%A7%86%E8%A7%89%E5%88%9B%E6%84%8F.zip';
+  const link = document.createElement('a');
+  link.href = resumeUrl;
+  link.download = '张琪-品牌创意视觉总监-简历作品.pdf';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // 恢复按钮状态（3秒后）
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
+      </svg>
+      下载简历作品
+    `;
+  }, 3000);
+}
+
+// 视频滚动触发播放/暂停功能（支持播放位置记忆）
+(function() {
+  const videoContainer = document.getElementById('aboutVideo');
+  const videoIframe = document.getElementById('bilibiliVideo');
+  const videoSrc = videoIframe.getAttribute('data-src');
+  
+  let isVideoLoaded = false;
+  let isVideoPlaying = false;
+  let videoObserver = null;
+  let startTime = 0;
+  let savedTime = 0;
+  
+  const STORAGE_KEY = 'bilibili_video_time';
+  
+  function loadVideo() {
+    if (!isVideoLoaded) {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      savedTime = saved ? parseInt(saved, 10) : 0;
+      
+      let url = videoSrc;
+      if (savedTime > 0) {
+        const separator = videoSrc.includes('?') ? '&' : '?';
+        url = videoSrc + separator + `t=${savedTime}`;
+      }
+      
+      videoIframe.src = url;
+      isVideoLoaded = true;
+      isVideoPlaying = true;
+      startTime = Date.now();
+    }
+  }
+  
+  function unloadVideo() {
+    if (isVideoLoaded) {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      savedTime = savedTime + elapsed;
+      localStorage.setItem(STORAGE_KEY, savedTime.toString());
+      
+      videoIframe.src = '';
+      isVideoLoaded = false;
+      isVideoPlaying = false;
+    }
+  }
+  
+  function handleVideoVisibility(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        loadVideo();
+      } else if (!entry.isIntersecting) {
+        unloadVideo();
+      }
+    });
+  }
+  
+  function initVideoObserver() {
+    if ('IntersectionObserver' in window) {
+      videoObserver = new IntersectionObserver(handleVideoVisibility, {
+        threshold: [0, 0.5, 1],
+        rootMargin: '0px'
+      });
+      videoObserver.observe(videoContainer);
+    } else {
+      loadVideo();
+    }
+  }
+  
+  if (videoContainer && videoIframe) {
+    initVideoObserver();
+  }
+
+// ===== COUNTER ANIMATION =====
+function animateCounter(el, targetStr, duration = 1800) {
+  const isInfinity = targetStr === '∞';
+  if (isInfinity) return;
+  const hasPlus = targetStr.includes('+');
+  const num = parseInt(targetStr.replace('+',''));
+  let start = 0;
+  const startTime = performance.now();
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // easeOutExpo
+    const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+    const current = Math.floor(eased * num);
+    el.textContent = current + (hasPlus ? '+' : '') + (targetStr.includes('年') ? '' : '');
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = targetStr;
+  }
+  requestAnimationFrame(update);
+}
+
+const statNums = document.querySelectorAll('.stat-num');
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const original = el.textContent.trim();
+      animateCounter(el, original);
+      statsObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+statNums.forEach(el => statsObserver.observe(el));
+
+
+})();
+
+// 修改位置2：新增滚动切换中英文标题逻辑
+const heroTitleEn = document.querySelector('.hero-title-en');
+const heroTitleCn = document.querySelector('.hero-title-cn');
+const scrollTriggerOffset = getComputedStyle(document.documentElement).getPropertyValue('--scroll-trigger-offset');
+
+window.addEventListener('scroll', function() {
+  const scrollTop = window.scrollY;
+  // 当滚动距离超过设定值时，显示中文，隐藏英文
+  if (scrollTop > scrollTriggerOffset) {
+    heroTitleEn.style.opacity = 0;
+    heroTitleCn.classList.add('active');
+  } else {
+    heroTitleEn.style.opacity = 1;
+    heroTitleCn.classList.remove('active');
+  }
+});
+
+// 移动端作品栏滑动点亮功能
+(function() {
+  const portfolioGrid = document.querySelector('.portfolio-grid');
+  if (!portfolioGrid) return;
+  
+  const portfolioItems = portfolioGrid.querySelectorAll('a');
+  let activeItem = null;
+  let isTouching = false;
+  
+  function getTouchTarget(e) {
+    const touch = e.touches ? e.touches[0] : e;
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+  }
+  
+  function findPortfolioItem(element) {
+    let current = element;
+    while (current) {
+      if (current.classList && current.classList.contains('reveal') && current.tagName === 'A') {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return null;
+  }
+  
+  function activateItem(item) {
+    if (activeItem === item) return;
+    
+    if (activeItem) {
+      activeItem.classList.remove('active');
+    }
+    
+    if (item) {
+      item.classList.add('active');
+      activeItem = item;
+    } else {
+      activeItem = null;
+    }
+  }
+  
+  function handleTouchStart(e) {
+    isTouching = true;
+    const target = getTouchTarget(e);
+    const item = findPortfolioItem(target);
+    activateItem(item);
+  }
+  
+  function handleTouchMove(e) {
+    if (!isTouching) return;
+    
+    const target = getTouchTarget(e);
+    const item = findPortfolioItem(target);
+    activateItem(item);
+  }
+  
+  function handleTouchEnd() {
+    isTouching = false;
+    activateItem(null);
+  }
+  
+  portfolioGrid.addEventListener('touchstart', handleTouchStart, { passive: true });
+  portfolioGrid.addEventListener('touchmove', handleTouchMove, { passive: true });
+  portfolioGrid.addEventListener('touchend', handleTouchEnd, { passive: true });
+})();
+
+</script>
+<style>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <div class="footer-logo">AURORA</div>
-                    <p class="footer-desc">
-                        重新定义便携电源，为你的数字生活提供持久动力支持。
-                    </p>
-                    <div class="social-links">
-                        <a href="#">
-                            <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                        </a>
-                        <a href="#">
-                            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                        </a>
-                        <a href="#">
-                            <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
-                        </a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h4 class="footer-heading">产品</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Aurora Pro</a></li>
-                        <li><a href="#">Aurora Mini</a></li>
-                        <li><a href="#">配件</a></li>
-                        <li><a href="#">对比</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4 class="footer-heading">公司</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">关于我们</a></li>
-                        <li><a href="#">新闻动态</a></li>
-                        <li><a href="#">加入我们</a></li>
-                        <li><a href="#">联系我们</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4 class="footer-heading">支持</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">帮助中心</a></li>
-                        <li><a href="#">配送信息</a></li>
-                        <li><a href="#">退换政策</a></li>
-                        <li><a href="#">保修服务</a></li>
-                    </ul>
-                </div>
-                <div class="footer-newsletter">
-                    <h4 class="footer-heading">订阅</h4>
-                    <p>订阅我们的新闻通讯</p>
-                    <form class="newsletter-form">
-                        <input type="email" class="newsletter-input" placeholder="您的邮箱地址" required>
-                        <button type="submit" class="newsletter-button">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0e17" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">访问次数：<span id="visit-count">0</span> | 作者：张先生 | 联系方式：15220107783</p>
-            </div>
-        </div>
-    </footer>
-    <script>
-        class TouchInteractionHandler {
-            constructor(element, options = {}) {
-                this.element = element;
-                this.tapThreshold = options.tapThreshold || 20;
-                this.tapDuration = options.tapDuration || 300;
-                this.touchStartTime = 0;
-                this.touchStartPos = { x: 0, y: 0 };
-                this.isTouching = false;
-                this.hasTriggeredOnMove = false;
-                this.triggerDelay = options.triggerDelay || 100;
-                this.triggerTimeout = null;
-
-                this.tapCallback = options.onTap || null;
-                this.swipeCallback = options.onSwipe || null;
-                this.touchStartCallback = options.onTouchStart || null;
-                this.touchEndCallback = options.onTouchEnd || null;
-                this.touchMoveCallback = options.onTouchMove || null;
-
-                this.setupEventListeners();
-            }
-
-            setupEventListeners() {
-                this.element.addEventListener('touchstart', (e) => {
-                    this.handleTouchStart(e);
-                }, { passive: true });
-
-                this.element.addEventListener('touchmove', (e) => {
-                    this.handleTouchMove(e);
-                }, { passive: true });
-
-                this.element.addEventListener('touchend', (e) => {
-                    this.handleTouchEnd(e);
-                }, { passive: true });
-
-                this.element.addEventListener('touchcancel', () => {
-                    this.handleTouchCancel();
-                }, { passive: true });
-            }
-
-            handleTouchStart(e) {
-                this.isTouching = true;
-                this.hasTriggeredOnMove = false;
-                this.touchStartTime = Date.now();
-                this.touchStartPos = { 
-                    x: e.touches[0].clientX, 
-                    y: e.touches[0].clientY 
-                };
-
-                if (this.touchStartCallback) {
-                    this.touchStartCallback(e);
-                }
-
-                if (this.touchMoveCallback && !this.hasTriggeredOnMove) {
-                    this.triggerTimeout = setTimeout(() => {
-                        if (this.isTouching && !this.hasTriggeredOnMove) {
-                            this.hasTriggeredOnMove = true;
-                            this.touchMoveCallback(e);
-                        }
-                    }, this.triggerDelay);
-                }
-            }
-
-            handleTouchMove(e) {
-                if (!this.isTouching) return;
-
-                const touch = e.touches[0];
-                const rect = this.element.getBoundingClientRect();
-                
-                const isInside = touch.clientX >= rect.left && 
-                                touch.clientX <= rect.right && 
-                                touch.clientY >= rect.top && 
-                                touch.clientY <= rect.bottom;
-
-                if (isInside && this.touchMoveCallback && !this.hasTriggeredOnMove) {
-                    if (this.triggerTimeout) {
-                        clearTimeout(this.triggerTimeout);
-                    }
-                    this.hasTriggeredOnMove = true;
-                    this.touchMoveCallback(e);
-                }
-            }
-
-            handleTouchEnd(e) {
-                if (this.triggerTimeout) {
-                    clearTimeout(this.triggerTimeout);
-                    this.triggerTimeout = null;
-                }
-
-                if (!this.isTouching) return;
-                this.isTouching = false;
-
-                const touchDuration = Date.now() - this.touchStartTime;
-                const touchEndPos = { 
-                    x: e.changedTouches[0].clientX, 
-                    y: e.changedTouches[0].clientY 
-                };
-                const moveDistance = Math.sqrt(
-                    Math.pow(touchEndPos.x - this.touchStartPos.x, 2) +
-                    Math.pow(touchEndPos.y - this.touchStartPos.y, 2)
-                );
-
-                if (touchDuration < this.tapDuration && moveDistance < this.tapThreshold) {
-                    if (this.tapCallback) {
-                        this.tapCallback(e);
-                    }
-                } else if (moveDistance >= this.tapThreshold && this.swipeCallback) {
-                    const direction = this.getSwipeDirection(touchEndPos);
-                    this.swipeCallback(direction, e);
-                }
-
-                if (this.touchEndCallback) {
-                    this.touchEndCallback(e);
-                }
-
-                this.hasTriggeredOnMove = false;
-            }
-
-            handleTouchCancel() {
-                if (this.triggerTimeout) {
-                    clearTimeout(this.triggerTimeout);
-                    this.triggerTimeout = null;
-                }
-                this.isTouching = false;
-                this.hasTriggeredOnMove = false;
-                if (this.touchEndCallback) {
-                    this.touchEndCallback();
-                }
-            }
-
-            getSwipeDirection(endPos) {
-                const deltaX = endPos.x - this.touchStartPos.x;
-                const deltaY = endPos.y - this.touchStartPos.y;
-
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    return deltaX > 0 ? 'right' : 'left';
-                } else {
-                    return deltaY > 0 ? 'down' : 'up';
-                }
-            }
-
-            destroy() {
-                this.element.removeEventListener('touchstart', this.handleTouchStart.bind(this));
-                this.element.removeEventListener('touchmove', this.handleTouchMove.bind(this));
-                this.element.removeEventListener('touchend', this.handleTouchEnd.bind(this));
-                this.element.removeEventListener('touchcancel', this.handleTouchCancel.bind(this));
-            }
-        }
-
-        class WebpSequenceAnimator {
-            constructor(container, framePaths, options = {}) {
-                this.container = container;
-                this.frames = [];
-                this.currentFrameIndex = 0;
-                this.frameRate = options.frameRate || 60;
-                this.frameDuration = 1000 / this.frameRate;
-                this.isPlaying = false;
-                this.isReversing = false;
-                this.animationId = null;
-                this.lastFrameTime = 0;
-                this.loaded = false;
-
-                this.loadFrames(framePaths);
-                this.setupEventListeners();
-            }
-
-            loadFrames(framePaths) {
-                let loadedCount = 0;
-                framePaths.forEach((path, index) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        this.frames[index] = img;
-                        loadedCount++;
-                        if (loadedCount === framePaths.length) {
-                            this.loaded = true;
-                            this.renderFrame();
-                        }
-                    };
-                    img.src = path;
-                });
-            }
-
-            setupEventListeners() {
-                this.container.addEventListener('mouseenter', () => this.playForward());
-                this.container.addEventListener('mouseleave', () => this.playReverse());
-
-                new TouchInteractionHandler(this.container, {
-                    onTouchMove: () => this.playForward(),
-                    onTouchEnd: () => this.playReverse()
-                });
-            }
-
-            playForward() {
-                if (!this.loaded || this.isPlaying) return;
-                
-                this.isReversing = false;
-                this.isPlaying = true;
-                this.lastFrameTime = performance.now();
-                this.animate();
-            }
-
-            playReverse() {
-                if (!this.loaded) return;
-                
-                this.isPlaying = false;
-                this.isReversing = true;
-                
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                }
-                
-                this.animateReverse();
-            }
-
-            animate() {
-                if (!this.isPlaying) return;
-
-                const now = performance.now();
-                const elapsed = now - this.lastFrameTime;
-
-                if (elapsed >= this.frameDuration) {
-                    this.lastFrameTime = now - (elapsed % this.frameDuration);
-                    
-                    if (this.currentFrameIndex < this.frames.length - 1) {
-                        this.currentFrameIndex++;
-                        this.renderFrame();
-                    } else {
-                        this.isPlaying = false;
-                        return;
-                    }
-                }
-
-                this.animationId = requestAnimationFrame(() => this.animate());
-            }
-
-            animateReverse() {
-                if (!this.isReversing) return;
-
-                const now = performance.now();
-                const elapsed = now - this.lastFrameTime;
-
-                if (elapsed >= this.frameDuration) {
-                    this.lastFrameTime = now - (elapsed % this.frameDuration);
-                    
-                    if (this.currentFrameIndex > 0) {
-                        this.currentFrameIndex--;
-                        this.renderFrame();
-                        this.animationId = requestAnimationFrame(() => this.animateReverse());
-                    } else {
-                        this.isReversing = false;
-                        return;
-                    }
-                } else {
-                    this.animationId = requestAnimationFrame(() => this.animateReverse());
-                }
-            }
-
-            renderFrame() {
-                const containerRect = this.container.getBoundingClientRect();
-                // Set canvas to 2x size for high quality rendering
-                const displayWidth = containerRect.width;
-                const displayHeight = containerRect.height;
-                const renderWidth = displayWidth * 2;
-                const renderHeight = displayHeight * 2;
-                
-                if (!this.canvas || this.canvas.width !== renderWidth || this.canvas.height !== renderHeight) {
-                    this.setCanvasSize(renderWidth, renderHeight, displayWidth, displayHeight);
-                }
-                const ctx = this.canvas.getContext('2d');
-                const frame = this.frames[this.currentFrameIndex];
-                if (frame && frame.complete) {
-                    ctx.clearRect(0, 0, renderWidth, renderHeight);
-                    const scale = Math.min(
-                        renderWidth / frame.width,
-                        renderHeight / frame.height
-                    );
-                    const x = (renderWidth - frame.width * scale) / 2;
-                    const y = (renderHeight - frame.height * scale) / 2;
-                    ctx.drawImage(frame, x, y, frame.width * scale, frame.height * scale);
-                }
-            }
-
-            setCanvasSize(renderWidth, renderHeight, displayWidth, displayHeight) {
-                if (!this.canvas) {
-                    this.canvas = document.createElement('canvas');
-                    this.canvas.style.width = '100%';
-                    this.canvas.style.height = '100%';
-                    this.container.appendChild(this.canvas);
-                }
-                this.canvas.width = renderWidth;
-                this.canvas.height = renderHeight;
-            }
-        }
-
-        document.querySelectorAll('.color-card').forEach((card, index) => {
-            const colorImageContainer = card.querySelector('.color-image');
-            if (!colorImageContainer) return;
-
-            const colorNum = index;
-            const frameCount = 30;
-            const startIndex = colorNum === 0 || colorNum === 3 ? 0 : 1;
-            const framePaths = [];
-            
-            for (let i = startIndex; i < startIndex + frameCount; i++) {
-                const frameNumber = String(i).padStart(4, '0');
-                framePaths.push(`https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/color${colorNum}/color${colorNum}_1_${frameNumber}.webp`);
-            }
-
-            const animator = new WebpSequenceAnimator(colorImageContainer, framePaths, {
-                frameRate: 30
-            });
-
-            animator.setupEventListenersForCard = function(cardElement) {
-                cardElement.addEventListener('mouseenter', () => this.playForward());
-                cardElement.addEventListener('mouseleave', () => this.playReverse());
-
-                new TouchInteractionHandler(cardElement, {
-                    onTouchMove: () => this.playForward(),
-                    onTouchEnd: () => this.playReverse()
-                });
-            };
-
-            animator.setupEventListenersForCard(card);
-
-            const resizeObserver = new ResizeObserver(() => {
-                const rect = colorImageContainer.getBoundingClientRect();
-                animator.setCanvasSize(rect.width * 2, rect.height * 2, rect.width, rect.height);
-                if (animator.loaded) {
-                    animator.renderFrame();
-                }
-            });
-            resizeObserver.observe(colorImageContainer);
-        });
-
-        const showcaseSection = document.getElementById('design');
-        const showcaseAnimationContainer = document.getElementById('showcase-animation');
-        
-        if (showcaseSection && showcaseAnimationContainer) {
-            const showcaseFramePaths = [];
-            for (let i = 1; i <= 30; i++) {
-                const frameNumber = String(i).padStart(4, '0');
-                showcaseFramePaths.push(`https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/sy/power_${frameNumber}.webp`);
-            }
-
-            const showcaseAnimator = new WebpSequenceAnimator(showcaseAnimationContainer, showcaseFramePaths, {
-                frameRate: 30
-            });
-
-            showcaseAnimator.setupEventListenersForSection = function(section) {
-                section.addEventListener('mouseenter', () => this.playForward());
-                section.addEventListener('mouseleave', () => this.playReverse());
-
-                new TouchInteractionHandler(section, {
-                    onTouchMove: () => this.playForward(),
-                    onTouchEnd: () => this.playReverse()
-                });
-            };
-
-            showcaseAnimator.setupEventListenersForSection(showcaseSection);
-
-            const showcaseResizeObserver = new ResizeObserver(() => {
-                const rect = showcaseAnimationContainer.getBoundingClientRect();
-                showcaseAnimator.setCanvasSize(rect.width * 2, rect.height * 2, rect.width, rect.height);
-                if (showcaseAnimator.loaded) {
-                    showcaseAnimator.renderFrame();
-                }
-            });
-            showcaseResizeObserver.observe(showcaseAnimationContainer);
-        }
-
-        // ===== Hero Image Sequence Animation =====
-        const heroSequenceContainer = document.getElementById('hero-image-sequence');
-        
-        if (heroSequenceContainer) {
-            const heroFramePaths = [];
-            for (let i = 2; i <= 30; i++) {
-                const frameNumber = String(i).padStart(4, '0');
-                heroFramePaths.push(`https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/power/power2_1_${frameNumber}.webp`);
-            }
-
-            const heroAnimator = new WebpSequenceAnimator(heroSequenceContainer, heroFramePaths, {
-                frameRate: 30
-            });
-
-            // Override event listeners for hero section
-            heroAnimator.setupEventListeners = function() {
-                this.container.addEventListener('mouseenter', () => this.playForward());
-                this.container.addEventListener('mouseleave', () => this.playReverse());
-
-                new TouchInteractionHandler(this.container, {
-                    onTouchMove: () => this.playForward(),
-                    onTouchEnd: () => this.playReverse()
-                });
-            };
-            heroAnimator.setupEventListeners();
-
-            const heroResizeObserver = new ResizeObserver(() => {
-                const rect = heroSequenceContainer.getBoundingClientRect();
-                heroAnimator.setCanvasSize(rect.width * 2, rect.height * 2, rect.width, rect.height);
-                if (heroAnimator.loaded) {
-                    heroAnimator.renderFrame();
-                }
-            });
-            heroResizeObserver.observe(heroSequenceContainer);
-
-            // Auto-play on page load
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    if (heroAnimator.loaded) {
-                        heroAnimator.playForward();
-                    }
-                }, 500);
-            });
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const videoContainer = document.querySelector('.video-container');
-            const video = videoContainer ? videoContainer.querySelector('.product-video') : null;
-
-            if (video && videoContainer) {
-                let isInViewport = false;
-                let debounceTimeout = null;
-
-                const playVideo = () => {
-                    if (video.paused && isInViewport) {
-                        video.play().catch(() => {});
-                    }
-                };
-
-                const pauseVideo = () => {
-                    if (!video.paused) {
-                        video.pause();
-                    }
-                };
-
-                const resetVideo = () => {
-                    video.pause();
-                    video.currentTime = 0;
-                };
-
-                const debouncePlay = () => {
-                    if (debounceTimeout) {
-                        clearTimeout(debounceTimeout);
-                    }
-                    debounceTimeout = setTimeout(() => {
-                        playVideo();
-                    }, 100);
-                };
-
-                const observerOptions = {
-                    root: null,
-                    rootMargin: '-50px',
-                    threshold: 0.3
-                };
-
-                const viewportObserver = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        isInViewport = entry.isIntersecting;
-                        if (isInViewport) {
-                            debouncePlay();
-                        } else {
-                            if (debounceTimeout) {
-                                clearTimeout(debounceTimeout);
-                            }
-                            pauseVideo();
-                        }
-                    });
-                }, observerOptions);
-
-                viewportObserver.observe(videoContainer);
-
-                video.addEventListener('ended', () => {
-                    video.currentTime = 0;
-                });
-            }
-        });
-
-        const cartModal = document.getElementById('cartModal');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-        const modalOkBtn = document.getElementById('modalOkBtn');
-
-        const openModal = () => {
-            cartModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        const closeModal = () => {
-            cartModal.classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        document.querySelectorAll('.add-cart-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                openModal();
-            });
-        });
-
-        if (modalCloseBtn) {
-            modalCloseBtn.addEventListener('click', closeModal);
-        }
-
-        if (modalOkBtn) {
-            modalOkBtn.addEventListener('click', closeModal);
-        }
-
-        if (cartModal) {
-            cartModal.addEventListener('click', function(e) {
-                if (e.target === cartModal) {
-                    closeModal();
-                }
-            });
-        }
-
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
-
-        if (mobileMenuBtn && navLinks) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenuBtn.classList.toggle('active');
-                navLinks.classList.toggle('active');
-            });
-
-            navLinks.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenuBtn.classList.remove('active');
-                    navLinks.classList.remove('active');
-                });
-            });
-        }
-
-        const visitCountElement = document.getElementById('visit-count');
-        if (visitCountElement) {
-            let visitCount = parseInt(localStorage.getItem('aurora_visit_count') || '0');
-            visitCount++;
-            localStorage.setItem('aurora_visit_count', visitCount.toString());
-            visitCountElement.textContent = visitCount.toLocaleString();
-        }
-    </script>
-
-    <!-- 3D Model Viewer Script -->
-    <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initModelViewer();
-        });
-
-        function initModelViewer() {
-            const container = document.getElementById('model-viewer');
-            if (!container) {
-                console.error('Model viewer container not found');
-                return;
-            }
-
-            // Add loading indicator
-            const loadingDiv = document.createElement('div');
-            loadingDiv.style.cssText = `
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                color: rgba(255,255,255,0.6);
-                font-size: 14px;
-                z-index: 10;
-            `;
-            loadingDiv.textContent = 'Loading model...';
-            container.appendChild(loadingDiv);
-
-            // Scene setup
-            const scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0f1216);
-
-            // Camera setup
-            const camera = new THREE.PerspectiveCamera(
-                45,
-                container.clientWidth / container.clientHeight,
-                0.1,
-                1000
-            );
-            camera.position.set(0, 0, 3);
-
-            // Renderer setup
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            container.appendChild(renderer.domElement);
-
-            // Lights setup
-            // Left main light (5500K - 6500K) - increased intensity
-            const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
-            mainLight.position.set(-2, 2, 2);
-            mainLight.castShadow = true;
-            mainLight.shadow.mapSize.width = 1024;
-            mainLight.shadow.mapSize.height = 1024;
-            scene.add(mainLight);
-
-            // Right fill light (4500K - 5500K) - increased intensity
-            const fillLight = new THREE.DirectionalLight(0xf0e6d2, 2.5);
-            fillLight.position.set(2, 1, -1);
-            scene.add(fillLight);
-
-            // Back rim light (轮廓光) - significantly enhanced for better outline
-            const rimLight = new THREE.DirectionalLight(0xffffff, 4);
-            rimLight.position.set(0, 1, 6);
-            scene.add(rimLight);
-
-            // Additional back rim light from different angle for better coverage
-            const rimLight2 = new THREE.DirectionalLight(0xffffff, 3.8);
-            rimLight2.position.set(1, -0.5, 2.5);
-            scene.add(rimLight2);
-
-            // Ambient light - increased for better visibility
-            const ambientLight = new THREE.AmbientLight(0x8080a0, 1.6);
-            scene.add(ambientLight);
-
-            // Model rotation
-            let model = null;
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            let targetRotationY = 0;
-            let currentRotationY = 0;
-
-            // Load texture first
-            const textureLoader = new THREE.TextureLoader();
-            const baseColorTexture = textureLoader.load('https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/models/cdbcolor.jpg', (texture) => {
-                texture.colorSpace = THREE.SRGBColorSpace;
-                texture.flipY = false;
-                texture.generateMipmaps = true;
-                console.log('Texture loaded successfully');
-            }, undefined, (error) => {
-                console.warn('Texture loading failed, using default material:', error);
-            });
-
-            // Load GLB model
-            const loader = new GLTFLoader();
-            loader.load(
-                'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/models/aurora.glb',
-                (gltf) => {
-                    model = gltf.scene;
-                    console.log('Model loaded successfully:', gltf);
-
-                    // Apply texture to all meshes
-                    model.traverse((child) => {
-                        if (child.isMesh) {
-                            console.log('Found mesh:', child.name);
-                            const material = new THREE.MeshStandardMaterial({
-                                map: baseColorTexture,
-                                roughness: 0.4,
-                                metalness: 0.7,
-                                color: 0x888888
-                            });
-                            child.material = material;
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-
-                    // Center and scale model
-                    const box = new THREE.Box3().setFromObject(model);
-                    const center = box.getCenter(new THREE.Vector3());
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    
-                    console.log('Model bounds:', { center, size, maxDim });
-                    
-                    // If model is very small, apply more aggressive scaling
-                    const scale = maxDim > 0 ? 2.0 / maxDim : 1.0;
-                    console.log('Applying scale:', scale);
-
-                    model.position.sub(center);
-                    model.scale.multiplyScalar(scale);
-                    model.position.y = 0; // Center vertically
-
-                    scene.add(model);
-                    loadingDiv.style.display = 'none';
-                    console.log('Model added to scene');
-                },
-                (xhr) => {
-                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
-                    loadingDiv.textContent = `Loading... ${percent}%`;
-                    console.log(`Model loading: ${percent}%`);
-                },
-                (error) => {
-                    console.error('Error loading model:', error);
-                    loadingDiv.textContent = 'Failed to load model';
-                    
-                    // Create a fallback cube if model loading fails
-                    createFallbackModel();
-                }
-            );
-
-            // Fallback model creation
-            function createFallbackModel() {
-                const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
-                const material = new THREE.MeshStandardMaterial({
-                    color: 0x5baefe,
-                    roughness: 0.3,
-                    metalness: 0.8
-                });
-                model = new THREE.Mesh(geometry, material);
-                model.castShadow = true;
-                model.receiveShadow = true;
-                scene.add(model);
-                loadingDiv.style.display = 'none';
-                console.log('Created fallback cube');
-            }
-
-            // Mouse drag interaction
-            container.addEventListener('mousedown', (event) => {
-                isDragging = true;
-                previousMousePosition = {
-                    x: event.clientX,
-                    y: event.clientY
-                };
-            });
-
-            container.addEventListener('mousemove', (event) => {
-                if (!isDragging) return;
-
-                const deltaX = event.clientX - previousMousePosition.x;
-                targetRotationY += deltaX * 0.005;
-
-                previousMousePosition = {
-                    x: event.clientX,
-                    y: event.clientY
-                };
-            });
-
-            container.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-
-            container.addEventListener('mouseleave', () => {
-                isDragging = false;
-            });
-
-            // Touch interaction
-            container.addEventListener('touchstart', (event) => {
-                if (event.touches.length === 1) {
-                    isDragging = true;
-                    previousMousePosition = {
-                        x: event.touches[0].clientX,
-                        y: event.touches[0].clientY
-                    };
-                }
-            });
-
-            container.addEventListener('touchmove', (event) => {
-                if (!isDragging || event.touches.length !== 1) return;
-
-                const deltaX = event.touches[0].clientX - previousMousePosition.x;
-                targetRotationY += deltaX * 0.005;
-
-                previousMousePosition = {
-                    x: event.touches[0].clientX,
-                    y: event.touches[0].clientY
-                };
-            });
-
-            container.addEventListener('touchend', () => {
-                isDragging = false;
-            });
-
-            // Animation loop
-            const animate = () => {
-                requestAnimationFrame(animate);
-
-                // Smooth rotation interpolation
-                if (model) {
-                    currentRotationY += (targetRotationY - currentRotationY) * 0.1;
-                    model.rotation.y = currentRotationY;
-
-                    // Auto-rotate when not dragging
-                    if (!isDragging) {
-                        targetRotationY += 0.002;
-                    }
-                }
-
-                renderer.render(scene, camera);
-            };
-
-            // Start animation
-            animate();
-
-            // Handle window resize
-            const resizeObserver = new ResizeObserver((entries) => {
-                for (const entry of entries) {
-                    const width = entry.contentRect.width;
-                    const height = entry.contentRect.height;
-
-                    camera.aspect = width / height;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(width, height);
-                }
-            });
-
-            resizeObserver.observe(container);
-
-            console.log('Model viewer initialized');
-        }
-
-        const handleNavClick = function(e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            if (href === '#' || !href) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                const targetId = href.substring(1);
-                const target = document.getElementById(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        };
-
-        document.querySelectorAll('.nav-logo a, .nav-links a').forEach(link => {
-            link.addEventListener('click', handleNavClick);
-            new TouchInteractionHandler(link, {
-                onTap: handleNavClick.bind(link)
-            });
-        });
-
-        const handleBuyNowClick = function(e) {
-            e.preventDefault();
-            const target = document.getElementById('color-selection');
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        };
-
-        document.querySelectorAll('.btn-buy-now-hero').forEach(btn => {
-            btn.addEventListener('click', handleBuyNowClick);
-            new TouchInteractionHandler(btn, {
-                onTap: handleBuyNowClick.bind(btn)
-            });
-        });
-    </script>
 </body>
 </html>
