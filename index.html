@@ -793,10 +793,14 @@ body {
   .material-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 1200px) {
+  .top-nav .brand-info { display: none; }
+  .sidebar-right { width: 260px; }
+  .category-bar { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 1024px) {
   .sidebar-right { display: none; }
   .content-main { margin-right: 0; }
   .footer { margin-right: 0; }
-  .category-bar { grid-template-columns: repeat(4, 1fr); }
 }
 @media (max-width: 900px) {
   .sidebar-left { display: none; }
@@ -833,7 +837,6 @@ body {
     <a onclick="switchTab('home')">素材库</a>
     <a onclick="switchTab('custom')">定制服务</a>
     <a onclick="switchTab('vip')">VIP专区</a>
-    <a href="#">解决方案</a>
     <a href="#">帮助中心</a>
   </div>
   <div class="nav-right">
