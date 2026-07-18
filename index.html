@@ -379,45 +379,6 @@ body {
   margin-top: 8px;
 }
 
-/* 精选推荐 & 右侧卡片布局 */
-.featured-row {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 20px;
-}
-.featured-left {
-  display: flex;
-  flex-direction: column;
-}
-.featured-right {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.featured-right .album-panel {
-  padding: 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-}
-.featured-right .album-panel h4 {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.featured-right .album-panel .panel-sub {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-.featured-right .album-panel .upload-zone {
-  margin-top: 0;
-}
-
 /* 分类快捷入口 */
 .category-bar {
   display: grid;
@@ -525,7 +486,7 @@ body {
 /* 素材网格 */
 .material-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 16px;
 }
 .material-card {
@@ -717,68 +678,6 @@ body {
   background: var(--primary); color: white;
 }
 
-/* VIP客服专线卡片 */
-.service-card-wider {
-  position: relative;
-  background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.06) 30%, rgba(37,99,235,0.04) 60%, rgba(29,78,216,0.06) 100%);
-  border: 1px solid rgba(37,99,235,0.18);
-  border-radius: 16px;
-  padding: 20px;
-  overflow: hidden;
-}
-.service-card-wider::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  background: linear-gradient(to left, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.1) 50%, rgba(37,99,235,0) 100%);
-}
-.service-card-wider h5 {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  position: relative;
-  z-index: 1;
-}
-.service-card-wider .phone {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 1;
-}
-.service-card-wider .time {
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
-}
-.service-card-wider .online-btn {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--primary);
-  background: transparent;
-  color: var(--primary-light);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.service-card-wider .online-btn:hover {
-  background: var(--primary); color: white;
-}
-
 /* ===== 页脚 ===== */
 .footer {
   width: 100%;
@@ -906,10 +805,6 @@ body {
 }
 
 /* ===== 响应式 ===== */
-@media (max-width: 1400px) {
-  .material-grid { grid-template-columns: repeat(3, 1fr); }
-  .category-bar { grid-template-columns: repeat(6, 1fr); }
-}
 @media (max-width: 1200px) {
   .top-nav .brand-info { display: none; }
   .category-bar { grid-template-columns: repeat(4, 1fr); }
@@ -920,9 +815,9 @@ body {
   .material-card .card-info .title { font-size: 13px; }
   .material-card .card-info .meta .cat { font-size: 10px; }
   .banner-row { grid-template-columns: 2fr 1fr; }
-  .featured-row { grid-template-columns: 2fr 1fr; }
 }
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
+  .material-grid { grid-template-columns: repeat(4, 1fr); }
   .content-main { padding: 18px; }
   .sidebar-left { width: 200px; }
   .content-main { margin-left: 200px; }
@@ -952,11 +847,10 @@ body {
   .top-nav .search-box input { width: 180px; padding: 7px 10px 7px 28px; font-size: 11px; }
   .top-nav .icon-btn { width: 32px; height: 32px; font-size: 14px; }
   .banner-row { grid-template-columns: 1fr; }
-  .featured-row { grid-template-columns: 1fr; }
   .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
   .custom-features { justify-content: center; }
 }
-@media (max-width: 900px) {
+@media (max-width: 767px) {
   .sidebar-left { display: none; }
   .content-main { margin-left: 0; }
   .footer { margin-left: 0; }
@@ -965,7 +859,6 @@ body {
   .category-bar { grid-template-columns: repeat(3, 1fr); }
   .banner-overlay h2 { font-size: 22px; }
   .banner-row { grid-template-columns: 1fr; }
-  .featured-row { grid-template-columns: 1fr; }
   .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
   .custom-features { justify-content: center; }
 }
@@ -975,7 +868,6 @@ body {
   .banner { height: 200px; }
   .banner-overlay { padding: 0 24px; }
   .banner-row { grid-template-columns: 1fr; }
-  .featured-row { grid-template-columns: 1fr; }
   .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
   .custom-features { justify-content: center; }
 }
@@ -1168,50 +1060,23 @@ body {
       </div>
     </div>
 
-    <!-- 精选推荐 & 右侧卡片 -->
-    <div class="featured-row">
-      <div class="featured-left">
-        <!-- 精选推荐 -->
-        <div class="section-header">
-          <div class="left">
-            <h3>精选推荐</h3>
-            <div class="tabs">
-              <span class="active">最新</span>
-              <span>最热</span>
-              <span>精选</span>
-            </div>
-          </div>
-          <div class="more" onclick="showToast('查看更多', 'success')">
-            查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-          </div>
-        </div>
-
-        <div class="material-grid" id="materialGrid">
-          <!-- JS生成 -->
+    <!-- 精选推荐 -->
+    <div class="section-header">
+      <div class="left">
+        <h3>精选推荐</h3>
+        <div class="tabs">
+          <span class="active">最新</span>
+          <span>最热</span>
+          <span>精选</span>
         </div>
       </div>
-
-      <!-- 右侧卡片：自制相册 & VIP客服专线 -->
-      <div class="featured-right">
-        <!-- 自制相册 -->
-        <div class="panel album-panel">
-          <h4><i class="fas fa-images"></i> 自制相册</h4>
-          <p class="panel-sub">上传您的图片，打造专属视觉空间</p>
-          <div class="upload-zone" onclick="switchTab('upload')">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <div class="upload-text">点击上传文件</div>
-            <div class="upload-hint">支持 JPG、PNG、MP4 格式</div>
-          </div>
-        </div>
-
-        <!-- VIP客服专线 -->
-        <div class="service-card-wider">
-          <h5><i class="fas fa-headset"></i> VIP客服专线</h5>
-          <div class="phone">4006-300162</div>
-          <div class="time">服务时间：9:00-18:00</div>
-          <button class="online-btn" onclick="openModal('vipModal')">在线咨询</button>
-        </div>
+      <div class="more" onclick="showToast('查看更多', 'success')">
+        查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
       </div>
+    </div>
+
+    <div class="material-grid" id="materialGrid">
+      <!-- JS生成 -->
     </div>
   </main>
 
@@ -1426,6 +1291,10 @@ const materials = [
   { id: 6, title: "未来都市", cat: "城市景观", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
   { id: 7, title: "海底世界", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
   { id: 8, title: "几何空间", cat: "抽象艺术", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 9, title: "春日樱花", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 10, title: "极简线条", cat: "抽象艺术", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 11, title: "城市夜景", cat: "城市景观", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 12, title: "花鸟山水", cat: "艺术画廊", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
 ];
 
 function renderGrid() {
