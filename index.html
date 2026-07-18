@@ -1,1911 +1,1365 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf">
-	<link rel="prefetch" href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>张琪 ZHANG QI | 品牌创意视觉总监 Creative Director Portfolio</title>
+<title>雷曼内容云 | LEDMAN Content Cloud</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
 :root {
-  --accent: #ffffff;
-  --bg: #050505;
-  --text-dim: rgba(255, 255, 255, 0.4);
-  --glass: rgba(255, 255, 255, 0.03);
-  --border: rgba(255, 255, 255, 0.08);
-  --ease: cubic-bezier(0.23, 1, 0.32, 1);
-  --gradient-1: #ffffff;
-  --gradient-2: #a8b0ff;
-  --gradient-3: #ff80b5;
-  --title-gradient-top: #ffffff;
-  --title-gradient-bottom: #a8b0ff;
-  /* Logo矩阵变量 */
-  --logo-base-size: 75px;
-  --logo-gap: 12px;
-  /* 新增：动画控制参数（可自定义） */
-  --scroll-trigger-offset: 50; /* 触发文字切换的滚动距离（像素） */
-  --text-animation-duration: 0.8s; /* 中文文字滑入动画时长（秒） */
+  --bg: #0b0f1a;
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-card-hover: rgba(255,255,255,0.07);
+  --bg-sidebar: #0d1220;
+  --border: rgba(255,255,255,0.06);
+  --border-light: rgba(255,255,255,0.1);
+  --text: #e8eaf6;
+  --text-muted: #8b92a8;
+  --text-dim: #5a6078;
+  --primary: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-glow: rgba(37,99,235,0.25);
+  --accent: #f59e0b;
+  --accent-glow: rgba(245,158,11,0.3);
+  --success: #10b981;
+  --danger: #ef4444;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-  background-color: var(--bg);
-  color: var(--accent);
-  font-family: "Inter", "PingFang SC", sans-serif;
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
+  background: var(--bg); color: var(--text); min-height: 100vh;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  width: 100%;
 }
 
-/* 新增：悬浮下载按钮样式 */
-/* 悬浮下载按钮 - 蓝色渐变动态循环效果 */
-.download-btn {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-  z-index: 999;
-  padding: 16px 24px;
-  /* 蓝色渐变动态背景 */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(102, 126, 234, 0.5);
-  border-radius: 12px;
-  color: white;
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 0 30px rgba(102, 126, 234, 0.4), 0 8px 30px rgba(0, 0, 0, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ===== 顶部导航 ===== */
+.top-nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px;
+  background: rgba(11,15,26,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border); z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
 }
-.download-btn:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 50%, #764ba2 100%);
-  background-size: 200% 200%;
-  animation: gradient-shift 2s ease infinite;
-  transform: translateY(-5px);
-  box-shadow: 0 0 40px rgba(102, 126, 234, 0.6), 0 12px 35px rgba(90, 110, 255, 0.3);
-  border-color: rgba(118, 75, 162, 0.6);
+.top-nav .nav-left {
+  display: flex; align-items: center; gap: 16px;
 }
-.download-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: white;
-  transition: transform 0.3s ease;
+.top-nav .brand {
+  display: flex; align-items: center; gap: 10px;
 }
-.download-btn:hover svg {
-  transform: translateY(-2px);
+.top-nav .brand-logo {
+  font-size: 20px; font-weight: 900; color: white; letter-spacing: 1px;
+}
+.top-nav .brand-logo span { color: var(--primary-light); }
+.top-nav .brand-info {
+  display: flex; flex-direction: column;
+}
+.top-nav .brand-info .name { font-size: 14px; font-weight: 700; color: var(--text); }
+.top-nav .brand-info .sub { font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; }
+
+.top-nav .nav-center {
+  display: flex; align-items: center; gap: 4px;
+}
+.top-nav .nav-center a {
+  padding: 8px 16px; border-radius: 8px; color: var(--text-muted);
+  font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; cursor: pointer;
+}
+.top-nav .nav-center a:hover, .top-nav .nav-center a.active {
+  color: var(--text); background: var(--bg-card);
+}
+.top-nav .nav-center a.active {
+  position: relative;
+}
+.top-nav .nav-center a.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 20%; right: 20%;
+  height: 2px; background: var(--primary); border-radius: 1px;
 }
 
-/* 蓝色渐变动态循环动画 */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.top-nav .nav-right {
+  display: flex; align-items: center; gap: 14px;
 }
-	
-.glow-canvas {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 0; pointer-events: none;
-  background: 
-    radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(90, 110, 255, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 80% 20%, rgba(255, 80, 180, 0.12) 0%, transparent 35%);
-  transition: background-position 0.3s var(--ease);
+.top-nav .search-box {
+  position: relative;
 }
-
-/* Logo矩阵 - 核心修正：移除最小宽度限制，宽屏贴右、窄屏自适应 */
-.logo-matrix {
-  display: grid;
-  grid-template-columns: repeat(6, var(--logo-base-size));
-  gap: var(--logo-gap);
-  mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle, black 40%, rgba(0,0,0,0.3) 80%, transparent 100%);
-  background: linear-gradient(135deg, rgba(90, 110, 255, 0.05), rgba(255, 80, 180, 0.05));
-  padding: 20px;
-  border-radius: 8px;
-  margin-left: auto; /* 宽屏贴右侧 */
-  margin-right: auto; /* 窄屏自动居中 */
-  max-width: 100%; /* 关键：不超过容器宽度 */
-  min-width: auto; /* 移除强制最小宽度（核心修正） */
-  overflow: visible;
+.top-nav .search-box input {
+  width: 220px; padding: 8px 12px 8px 32px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text); font-size: 12px; outline: none; transition: all 0.3s;
 }
-
-.logo-item {
-  width: var(--logo-base-size);
-  height: var(--logo-base-size);
-  aspect-ratio: 1/1;
-  border-radius: 0;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.top-nav .search-box input::placeholder { color: var(--text-dim); }
+.top-nav .search-box input:focus {
+  border-color: var(--primary-light); width: 280px;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.top-nav .search-box i {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-dim); font-size: 12px;
+}
+.top-nav .icon-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: none;
+  background: transparent; color: var(--text-muted); font-size: 15px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; position: relative;
+}
+.top-nav .icon-btn:hover { background: var(--bg-card); color: var(--text); }
+.top-nav .icon-btn .dot {
+  position: absolute; top: 6px; right: 6px; width: 7px; height: 7px;
+  background: var(--danger); border-radius: 50%; border: 2px solid var(--bg);
+}
+.top-nav .user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  font-size: 13px;
+  color: white;
   cursor: pointer;
-  transition: all 0.4s ease;
+  border: 2px solid var(--border-light);
   overflow: hidden;
 }
-
-.logo-item:hover {
-  transform: scale(1.1);
-  z-index: 10;
-}
-
-.logo-item img {
+.top-nav .user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(0.6) brightness(0.9);
-  opacity: 0.3;
-  transition: all 0.4s ease;
-  pointer-events: none;
 }
 
-.container { 
-  max-width: 1400px; 
-  margin: 0 auto; 
-  padding: 0 24px; 
-  position: relative; 
-  z-index: 1; 
-  width: 100%;
+/* ===== 主布局 ===== */
+.main-layout {
+  display: flex; margin-top: 60px; min-height: calc(100vh - 60px);
 }
 
-.nav {
-  position: fixed;
-  top: 0; width: 100%; height: 88px;
-  display: flex; align-items: center;
-  backdrop-filter: blur(24px) saturate(120%);
-  background: var(--glass);
+/* ===== 左侧边栏 ===== */
+.sidebar-left {
+  width: 240px; background: var(--bg-sidebar);
+  border-right: 1px solid var(--border); flex-shrink: 0;
+  display: flex; flex-direction: column; position: fixed;
+  top: 60px; bottom: 0; left: 0; overflow-y: auto;
+}
+.sidebar-left .user-profile {
+  padding: 20px; display: flex; align-items: center; gap: 12px;
   border-bottom: 1px solid var(--border);
-  z-index: 100;
-  transition: all 0.4s var(--ease);
 }
-.nav.scroll {
-  height: 72px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-.nav .container {
-  display: flex; justify-content: space-between; align-items: center; width: 100%;
-}
-.nav-logo { 
-  font-size: 1.3rem; 
-  font-weight: 800; 
-  letter-spacing: 5px; 
-  text-transform: uppercase;
-  background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  transition: letter-spacing 0.4s var(--ease);
-}
-.nav-logo:hover {
-  letter-spacing: 7px;
-}
-.nav-links { display: flex; gap: 48px; }
-.nav-links a {
-  text-decoration: none; 
-  color: var(--text-dim); 
-  font-size: 0.88rem; 
-  font-weight: 500;
-  transition: all 0.4s var(--ease); 
-  text-transform: uppercase; 
-  letter-spacing: 1.2px;
-  position: relative;
-}
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--gradient-2), var(--gradient-3));
-  transition: width 0.4s var(--ease);
-}
-.nav-links a:hover { 
-  color: var(--accent); 
-}
-.nav-links a:hover::after {
-  width: 100%;
-}
-
-.hero {
-  height: 100vh;
-  display: flex; 
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 100px;
-  padding-bottom: 40px;
-  flex-wrap: nowrap;
-  gap: 40px;
-  width: 100%;
-  overflow: visible;
-}
-
-.hero-content {
-  flex: 1;
-  min-width: 300px;
-  padding-right: 20px;
-}
-
-.hero-logo-wrapper {
-  flex: 0 0 auto;
-  min-width: auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  overflow: visible;
-  padding-left: 20px;
-}
-
-.hero-tag {
-  font-size: 0.95rem; 
-  color: var(--text-dim); 
-  letter-spacing: 6px; 
-  margin-bottom: 24px;
-  animation: fadeIn 1s ease forwards;
-  text-transform: uppercase;
+.sidebar-left .user-profile .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-.hero-tag span {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.2);
-}
-
-/* 新增：中英文标题切换样式 */
-.hero-title-wrapper {
-  position: relative;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
   overflow: hidden;
+  border: 2px solid var(--border-light);
 }
-.hero-title-en {
-  font-size: clamp(3.5rem, 11vw, 8.5rem);
-  line-height: 0.95; 
-  font-weight: 900; 
-  margin-left: 0;
-  padding-bottom: 10px;
-  background: linear-gradient(to bottom, 
-    var(--title-gradient-top), 
-    var(--title-gradient-bottom));
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent;
-  vertical-align: baseline;
-  overflow: visible;
-  display: block;
-  transition: opacity 0.5s var(--ease);
+.sidebar-left .user-profile .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.hero-title-cn {
-  font-size: clamp(3.5rem, 11vw, 8.5rem);
-  line-height: 0.95; 
-  font-weight: 900; 
-  margin-left: 0;
-  padding-bottom: 10px;
-  background: linear-gradient(to bottom, 
-    var(--title-gradient-top), 
-    var(--title-gradient-bottom));
-  -webkit-background-clip: text; 
-  -webkit-text-fill-color: transparent;
-  vertical-align: baseline;
-  overflow: visible;
-  display: block;
+.sidebar-left .user-profile .info {
+  flex: 1; min-width: 0;
+}
+.sidebar-left .user-profile .info .name {
+  font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px;
+  display: flex; align-items: center; gap: 6px;
+}
+.sidebar-left .user-profile .info .name .vip-badge {
+  font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 4px;
+  background: linear-gradient(135deg, var(--accent), #fbbf24); color: #1a1a2e;
+}
+.sidebar-left .user-profile .info .expire {
+  font-size: 11px; color: var(--text-dim);
+}
+
+.sidebar-menu {
+  padding: 12px 0; flex: 1;
+}
+.sidebar-menu .menu-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; margin: 2px 12px; border-radius: 10px;
+  color: var(--text-muted); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.4s ease, color 0.3s ease; text-decoration: none;
+}
+.sidebar-menu .menu-item:hover {
+  background: var(--bg-card); color: var(--text);
+}
+.sidebar-menu .menu-item.active {
+  background: linear-gradient(to right, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.15) 40%, rgba(37,99,235,0.05) 70%, transparent 100%);
+  color: var(--primary-light);
+  position: relative;
+}
+.sidebar-menu .menu-item.active::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 3px; background: var(--primary); border-radius: 0 2px 2px 0;
+}
+.sidebar-menu .menu-item i {
+  width: 20px; text-align: center; font-size: 15px;
+}
+.sidebar-menu .menu-item .new-tag {
+  margin-left: auto; font-size: 9px; font-weight: 700; padding: 1px 5px;
+  border-radius: 4px; background: var(--danger); color: white;
+}
+
+.sidebar-vip {
+  padding: 16px; margin: 0 12px 16px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(251,191,36,0.06));
+  border: 1px solid rgba(245,158,11,0.15); border-radius: 16px;
+}
+.sidebar-vip h4 {
+  font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;
+}
+.sidebar-vip p {
+  font-size: 11px; color: var(--text-muted); margin-bottom: 12px;
+}
+.sidebar-vip .vip-btn {
+  width: 100%; padding: 9px; border-radius: 10px; border: none;
+  background: linear-gradient(135deg, var(--accent), #fbbf24);
+  color: #1a1a2e; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all 0.25s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.sidebar-vip .vip-btn:hover {
+  transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+/* ===== 中间内容区 ===== */
+.content-main {
+  flex: 1; margin-left: 240px; margin-right: 300px; padding: 24px;
+  min-width: 0;
+}
+
+/* Banner轮播 */
+.banner {
+  position: relative;
+  height: 280px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+.banner-slides {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.banner-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.banner-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  transform: translateY(100%);
-  opacity: 0;
-  white-space: nowrap;
-  transition: transform var(--text-animation-duration) var(--ease), 
-              opacity var(--text-animation-duration) var(--ease);
-}
-.hero-title-cn.active {
-  opacity: 1;
-  transform: translateY(70%);
-}
-
-.hero-desc {
-  margin-top: 48px; 
-  max-width: 650px; 
-  color: rgba(200, 190, 255, 0.85);
-  font-size: 1.15rem; 
-  border-left: 2px solid rgba(168,176,255,0.6); 
-  padding-left: 24px;
-  line-height: 1.7;
-}
-.hero-desc .en {
-  font-size: 0.95rem;
-  margin-top: 16px;
-  color: rgba(255,255,255,0.18);
-  padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,0.05);
-}
-	
-/* 新增：关于我模块视频+文字布局 */
-.about-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 40px;
-}
-.about-video {
-  width: 100%;
-  aspect-ratio: 16/9;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.5);
-}
-.about-video iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-	
-.personal-info {
-  margin-top: 40px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 30px;
-  padding: 30px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  width: 100%;
-}
-.personal-info-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.personal-info-label {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.personal-info-value {
-  font-size: 1rem;
-  color: var(--accent);
-}
-
-.section { 
-  padding: 160px 0; 
-  width: 100%;
-}
-.section-title {
-  font-size: 0.85rem; 
-  text-transform: uppercase; 
-  letter-spacing: 4px;
-  color: var(--text-dim); 
-  margin-bottom: 60px; 
-  display: flex; 
-  align-items: center;
-  width: 100%;
-}
-.section-title span {
-  color: var(--accent);
-  margin-left: 12px;
-  font-size: 1rem;
-  letter-spacing: 1px;
-}
-.section-title::after {
-  content: ""; 
-  flex: 1; 
-  height: 1px; 
-  background: var(--border); 
-  margin-left: 20px;
-}
-
-.awards-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-  width: 100%;
-}
-.award-card {
-  padding: 40px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  transition: all 0.4s var(--ease);
-  width: 100%;
-}
-.award-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
-}
-.award-type {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.award-type::before {
-  content: "";
-  width: 4px;
-  height: 20px;
-  background: linear-gradient(var(--gradient-2), var(--gradient-3));
-  display: block;
-}
-.award-list {
-  list-style: none;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(11,15,26,0.9) 0%, rgba(11,15,26,0.5) 50%, rgba(11,15,26,0.2) 100%);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  justify-content: center;
+  padding: 0 48px;
 }
-.award-list li {
-  position: relative;
-  padding-left: 24px;
-  color: var(--text-dim);
-  line-height: 1.6;
-}
-.award-list li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--gradient-2);
-  font-size: 1.2rem;
-  line-height: 1;
-}
-
-.portfolio-grid {
-  display: grid; 
-  grid-template-columns: repeat(12, 1fr); 
-  gap: 30px;
-  width: 100%;
-}
-.portfolio-grid a {
-  text-decoration: none;
-  color: inherit;
-  grid-column: span 6; 
-  position: relative; 
-  overflow: hidden;
-  border-radius: 4px; 
-  transition: transform 0.6s var(--ease);
-  width: 100%;
-}
-.portfolio-grid a:nth-child(even) { margin-top: 80px; }
-
-.pf-image-wrap {
-  width: 100%; 
-  aspect-ratio: 16/10; 
-  background: #111;
-  overflow: hidden; 
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
-.pf-image-wrap img {
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover;
-  transition: all 1s var(--ease); 
-  filter: grayscale(100%) brightness(0.7);
-}
-.portfolio-grid a:hover img,
-.portfolio-grid a.active img { 
-  transform: scale(1.05); 
-  filter: grayscale(0%) brightness(1);
-}
-
-.pf-info { margin-top: 20px; }
-.pf-category { 
-  font-size: 0.75rem; 
-  color: var(--text-dim); 
-  text-transform: uppercase; 
-  letter-spacing: 2px; 
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.pf-category .cn {
-  text-transform: none;
-  letter-spacing: 0;
-  color: rgba(255,255,255,0.5);
-}
-.pf-name { 
-  font-size: 1.45rem; 
-  font-weight: 500; 
-  margin-top: 5px; 
-}
-
-.advantage-grid {
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 1px; 
-  background: var(--border);
-  width: 100%;
-}
-.adv-card {
-  background: var(--bg); 
-  padding: 60px 40px;
-  transition: all 0.4s var(--ease);
-  width: 100%;
-}
-.adv-card:hover { 
-  background: #0a0a0a; 
-  transform: translateY(-8px);
-}
-.adv-num { 
-  font-size: 0.85rem; 
-  color: var(--text-dim); 
-  margin-bottom: 30px; 
-  display: block; 
-}
-.adv-card h3 { 
-  font-size: 1.55rem; 
-  margin-bottom: 15px; 
-  font-weight: 600;
-}
-.adv-card p { 
-  color: var(--text-dim); 
-  line-height: 1.6; 
-  font-size: 0.95rem; 
-}
-
-.experience-list {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  width: 100%;
-}
-.exp-item {
-  padding: 40px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  transition: all 0.4s var(--ease);
-  width: 100%;
-}
-.exp-item:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.05);
-}
-.exp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.exp-company {
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-.exp-company .en {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-top: 4px;
-  font-weight: 400;
-}
-.exp-date {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  white-space: nowrap;
-}
-.exp-position {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.exp-position .en {
-  font-size: 0.85rem;
-  color: var(--text-dim);
-}
-.exp-desc {
-  color: var(--text-dim);
-  line-height: 1.7;
-}
-.exp-desc ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.exp-desc li {
-  position: relative;
-  padding-left: 20px;
-}
-.exp-desc li::before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: var(--gradient-2);
-}
-
-.skills-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  width: 100%;
-}
-.skill-tag {
-  padding: 12px 24px;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font-size: 0.95rem;
-  transition: all 0.3s var(--ease);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 1 auto;
-}
-.skill-tag:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: var(--gradient-2);
-  transform: translateY(-3px);
-}
-.skill-tag .en {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-}
-
-/* 移动端适配 - 核心修正LOGO矩阵 */
-@media (max-width: 968px) {
-  .container {
-    padding: 0 20px !important;
-  }
-  .section {
-    padding: 80px 0 !important;
-  }
-	  /* 新增：移动端关于我模块改为单列 */
-  .about-wrapper {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-	  /* 新增：移动端下载按钮适配 */
-	.download-btn {
-  right: 20px;
-  bottom: 20px;
-  padding: 12px 18px;
-  font-size: 0.85rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-  .portfolio-grid a { 
-    grid-column: span 12; 
-    margin-top: 0 !important;
-    margin-bottom: 40px !important;
-  }
-  .aurora-featured .aurora-featured-image {
-    aspect-ratio: 16/10;
-  }
-  .aurora-featured .pf-name {
-    font-size: 1.4rem;
-  }
-  .aurora-featured .pf-desc {
-    font-size: 0.95rem;
-  }
-  .advantage-grid { 
-    grid-template-columns: 1fr; 
-    gap: 1px;
-  }
-  .hero {
-    flex-direction: column; /* 强制上下布局 */
-    justify-content: center;
-    text-align: center;
-    flex-wrap: wrap;
-    height: auto; /* 取消100vh高度限制，避免内容溢出 */
-    padding-top: 120px;
-    padding-bottom: 60px;
-  }
-  .hero-content {
-    width: 100%;
-    padding-right: 0;
-    margin-bottom: 40px; /* 增加和LOGO矩阵的间距 */
-  }
-  .hero-logo-wrapper {
-    width: 100%;
-    justify-content: center; /* 居中展示LOGO矩阵 */
-    margin-top: 20px;
-    padding-left: 0;
-  }
-  .hero-title-en, .hero-title-cn { 
-    font-size: clamp(2.5rem, 10vw, 4rem);
-    line-height: 1.1; 
-    text-align: center;
-  }
-  .hero-title-cn {
-    left: 50%;
-    transform: translateX(-50%) translateY(100%);
-  }
-  .hero-title-cn.active {
-    transform: translateX(-50%) translateY(0);
-  }
-  .hero-tag {
-    justify-content: center;
-  }
-  .hero-desc {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .nav-links { 
-    gap: 16px !important;
-    overflow-x: auto;
-    padding: 0 10px;
-    white-space: nowrap;
-  }
-  .nav-links a {
-    font-size: 0.75rem !important;
-    letter-spacing: 0.5px !important;
-  }
-  .nav-logo { 
-    letter-spacing: 2px !important; 
-    font-size: 1rem !important;
-  }
-  .exp-header { 
-    flex-direction: column; 
-    gap: 12px; 
-  }
-  .exp-date { 
-    align-self: flex-start; 
-  }
-  .exp-item {
-    padding: 20px !important;
-  }
-  .personal-info {
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px !important;
-  }
-  .awards-grid {
-    grid-template-columns: 1fr;
-    gap: 20px !important;
-  }
-  .award-card {
-    padding: 20px !important;
-  }
-  .skills-wrap {
-    gap: 10px !important;
-  }
-  .skill-tag {
-    padding: 8px 16px !important;
-    font-size: 0.85rem !important;
-  }
-  .adv-card {
-    padding: 30px 20px !important;
-  }
-  .hero-desc {
-    font-size: 1rem !important;
-    padding-left: 16px !important;
-    max-width: 100% !important;
-  }
-  .section-title {
-    margin-bottom: 30px !important;
-    font-size: 0.75rem !important;
-  }
-  :root {
-    --logo-base-size: 60px;
-    --logo-gap: 8px;
-  }
-  /* LOGO矩阵移动端核心适配 */
-  .logo-matrix {
-    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
-    max-width: 100%; /* 不超过屏幕宽度 */
-    min-width: auto; /* 彻底移除最小宽度 */
-    margin: 0 auto; /* 居中 */
-    padding: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-links {
-    gap: 10px !important;
-  }
-  .hero-tag {
-    font-size: 0.8rem !important;
-    letter-spacing: 2px !important;
-  }
-  .pf-image-wrap {
-    aspect-ratio: 4/3 !important;
-  }
-  :root {
-    --logo-base-size: 40px;
-    --logo-gap: 6px;
-  }
-  /* 手机屏LOGO矩阵适配 */
-  .logo-matrix {
-    grid-template-columns: repeat(5, var(--logo-base-size)); /* 5列 */
-    max-width: 100%;
-    min-width: auto;
-  }
-  /* 新增：小屏下载按钮进一步适配 */
-/* 新增：小屏下载按钮进一步适配 + 毛玻璃 */
-.download-btn {
-  padding: 10px 16px;
-  font-size: 0.8rem;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-.download-btn svg {
-  width: 16px;
-  height: 16px;
-  fill: #fff;
-}
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.reveal { opacity: 0; transform: translateY(40px); transition: 1s var(--ease); }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-
-/* 数据统计横条 */
-.stats-strip {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 60px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.stat-item {
-  text-align: center;
-  flex: 1;
-  min-width: 120px;
-}
-.stat-num {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  font-weight: 900;
-  background: linear-gradient(to bottom, var(--gradient-1), var(--gradient-2));
+.banner-overlay h2 {
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #fff, #c7d2fe);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  display: block;
-  line-height: 1;
-  letter-spacing: -1px;
+  max-width: 450px;
 }
-.stat-label {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-top: 10px;
-  display: block;
+.banner-overlay p {
+  font-size: 14px; color: var(--text-muted); margin-bottom: 20px; max-width: 360px;
 }
-/* 作品描述行 */
-.pf-desc {
-  font-size: 0.82rem;
-  color: var(--text-dim);
-  margin-top: 6px;
-  line-height: 1.5;
-  letter-spacing: 0.3px;
+.banner-overlay .explore-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 12px; border: 1px solid var(--border-light);
+  background: var(--bg-card); color: var(--text); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.25s; width: fit-content;
+  backdrop-filter: blur(10px);
 }
-@media (max-width: 968px) {
-  .stats-strip { gap: 16px; padding: 40px 0; }
-  .stat-num { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+.banner-overlay .explore-btn:hover {
+  background: var(--bg-card-hover); border-color: var(--primary-light);
 }
+.banner-dots {
+  position: absolute; bottom: 16px; left: 48px; display: flex; gap: 6px;
+}
+.banner-dots .dot {
+  width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3);
+  cursor: pointer; transition: all 0.3s;
+}
+.banner-dots .dot.active { width: 20px; border-radius: 4px; background: var(--primary-light); }
 
-/* ===== ENHANCEMENTS v2 ===== */
-
-/* Client name emphasis */
-.client-name { color: #fff; font-weight: 700; }
-
-/* Stats counter */
-.stat-num { transition: all 0.3s ease; }
-
-/* Client brand marquee */
-.brand-marquee-wrap {
+/* 分类快捷入口 */
+.category-bar {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.category-item {
+  position: relative;
+  aspect-ratio: 3/2;
+  border-radius: 16px;
   overflow: hidden;
-  padding: 28px 0;
-  border-bottom: 1px solid var(--border);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid var(--border);
 }
-.brand-marquee-track {
+.category-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+}
+.category-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+.category-item:hover img {
+  transform: scale(1.08);
+}
+.category-item .cat-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
   display: flex;
-  gap: 64px;
-  width: max-content;
-  animation: brand-scroll 28s linear infinite;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 14px;
+}
+.category-item .cat-overlay .cat-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.category-item .cat-overlay .cat-count {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+.category-item.all-cats {
+  background: var(--bg-card);
+  display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px dashed var(--border-light);
 }
-.brand-marquee-wrap:hover .brand-marquee-track {
-  animation-play-state: paused;
+.category-item.all-cats:hover {
+  background: var(--bg-card-hover);
 }
-@keyframes brand-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.category-item.all-cats i {
+  font-size: 24px;
+  color: var(--text-muted);
 }
-.brand-tag {
-  font-size: 0.78rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
-  white-space: nowrap;
-  transition: color 0.3s ease;
-  cursor: default;
+.category-item.all-cats span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
 }
-.brand-tag:hover { color: rgba(255,255,255,0.8); }
-.brand-dot {
-  width: 4px; height: 4px;
+
+/* 精选推荐 */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+}
+.section-header .left {
+  display: flex; align-items: center; gap: 16px;
+}
+.section-header .left h3 {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.section-header .left h3::before {
+  content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 2px;
+}
+.section-header .tabs {
+  display: flex; gap: 4px;
+}
+.section-header .tabs span {
+  padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+}
+.section-header .tabs span:hover { color: var(--text); }
+.section-header .tabs span.active {
+  background: var(--bg-card); color: var(--primary-light);
+}
+.section-header .more {
+  font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex;
+  align-items: center; gap: 4px; transition: color 0.2s;
+}
+.section-header .more:hover { color: var(--primary-light); }
+
+/* 素材网格 */
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.material-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.35s;
+  border: 1px solid var(--border);
+}
+.material-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.material-card .card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+}
+.material-card .card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+.material-card:hover .card-img-wrap img {
+  transform: scale(1.08);
+}
+.material-card .card-img-wrap .heart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: rgba(168,176,255,0.4);
-  display: inline-block;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  opacity: 0;
+}
+.material-card:hover .card-img-wrap .heart-btn {
+  opacity: 1;
+}
+.material-card .card-img-wrap .heart-btn:hover {
+  background: rgba(239,68,68,0.8);
+  border-color: rgba(239,68,68,0.4);
+}
+.material-card .card-img-wrap .heart-btn.liked {
+  background: rgba(239,68,68,0.8);
+  opacity: 1;
+}
+.material-card .card-img-wrap .res-tag {
+  position: absolute;
+  bottom: 48px;
+  right: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.material-card .card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 14px;
+  padding-top: 40px;
+  background: -webkit-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
+  background: -moz-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
+  background: -o-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
+}
+.material-card .card-info .title {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.material-card .card-info .meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.material-card .card-info .meta .cat {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ===== 右侧边栏 ===== */
+.sidebar-right {
+  width: 300px; background: var(--bg-sidebar);
+  border-left: 1px solid var(--border); flex-shrink: 0;
+  position: fixed; top: 60px; right: 0; bottom: 0; overflow-y: auto;
+  padding: 20px;
+}
+
+.sidebar-right .panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px; margin-bottom: 16px;
+}
+.sidebar-right .panel h4 {
+  font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;
+}
+.sidebar-right .panel .panel-sub {
+  font-size: 12px; color: var(--text-muted); margin-bottom: 16px;
+}
+.sidebar-right .panel .feature-list {
+  display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
+}
+.sidebar-right .panel .feature-list .feature {
+  display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted);
+}
+.sidebar-right .panel .feature-list .feature i {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: var(--bg-card-hover); display: flex; align-items: center;
+  justify-content: center; font-size: 11px; color: var(--primary-light);
   flex-shrink: 0;
 }
+.action-btn {
+  width: 100%; padding: 11px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  color: white; font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all 0.25s; display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+}
+.action-btn:hover {
+  transform: translateY(-1px); box-shadow: 0 8px 24px var(--primary-glow);
+}
 
-/* Enhanced portfolio hover */
-.pf-image-wrap::after {
-  content: "查看项目 →";
+/* 上传区域 */
+.upload-zone {
+  border: 1px solid rgba(37,99,235,0.2); border-radius: 16px;
+  padding: 28px 16px; text-align: center; cursor: pointer;
+  transition: all 0.3s; background: rgba(37,99,235,0.04);
+}
+.upload-zone:hover {
+  border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.08);
+}
+.upload-zone i { font-size: 28px; color: var(--primary-light); margin-bottom: 8px; }
+.upload-zone .upload-text { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.upload-zone .upload-hint { font-size: 11px; color: var(--text-dim); }
+
+/* 客服卡片 */
+.service-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.06) 30%, rgba(37,99,235,0.04) 60%, rgba(29,78,216,0.06) 100%);
+  border: 1px solid rgba(37,99,235,0.18);
+  border-radius: 14px;
+  padding: 16px;
+  overflow: hidden;
+}
+.service-card::after {
+  content: '';
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  color: white;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.4s var(--ease);
-  pointer-events: none;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 100px;
+  background: linear-gradient(to left, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.1) 50%, rgba(37,99,235,0) 100%);
 }
-.pf-image-wrap { position: relative; }
-.portfolio-grid a:hover .pf-image-wrap::after,
-.portfolio-grid a.active .pf-image-wrap::after {
-  opacity: 1;
-  transform: translateY(0);
+.service-card h5 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
 }
-
-/* Staggered card reveal */
-.advantage-grid .adv-card:nth-child(1) { transition-delay: 0.05s; }
-.advantage-grid .adv-card:nth-child(2) { transition-delay: 0.1s; }
-.advantage-grid .adv-card:nth-child(3) { transition-delay: 0.15s; }
-.advantage-grid .adv-card:nth-child(4) { transition-delay: 0.2s; }
-.advantage-grid .adv-card:nth-child(5) { transition-delay: 0.25s; }
-.advantage-grid .adv-card:nth-child(6) { transition-delay: 0.3s; }
-
-/* Glowing border on exp-item hover */
-.exp-item:hover {
-  box-shadow: 0 0 0 1px rgba(168,176,255,0.2), 0 20px 60px rgba(0,0,0,0.3);
+.service-card .phone {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
 }
-
-/* Portfolio grid reveal stagger */
-.portfolio-grid a:nth-child(1) { transition-delay: 0.05s; }
-.portfolio-grid a:nth-child(2) { transition-delay: 0.15s; }
-.portfolio-grid a:nth-child(3) { transition-delay: 0.1s; }
-.portfolio-grid a:nth-child(4) { transition-delay: 0.2s; }
-.portfolio-grid a:nth-child(5) { transition-delay: 0.15s; }
-.portfolio-grid a:nth-child(6) { transition-delay: 0.25s; }
-
-/* AURORA featured card - 4:1 aspect ratio */
-.aurora-featured {
-  grid-column: span 12 !important;
-  margin-top: 0 !important;
+.service-card .time {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
-.aurora-featured .aurora-featured-image {
-  aspect-ratio: 4/1;
+.service-card .online-btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary-light);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
 }
-.aurora-featured .pf-info {
-  margin-top: 30px;
-}
-.aurora-featured .pf-name {
-  font-size: 1.45rem;
-}
-.aurora-featured .pf-desc {
-  font-size: 0.82rem;
+.service-card .online-btn:hover {
+  background: var(--primary); color: white;
 }
 
+/* 专属定制服务面板 */
+.custom-panel {
+  position: relative;
+  overflow: hidden;
+}
+.custom-panel .custom-panel-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://img1.baidu.com/it/u=3532458412,2994987847&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.4;
+}
+.custom-panel .custom-panel-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(13,18,32,0.9) 0%, rgba(13,18,32,0.95) 100%);
+}
+.custom-panel .custom-panel-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== 页脚 ===== */
+.footer {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  background: var(--bg);
+}
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  gap: 32px;
+}
+.footer-brand .logo {
+  font-size: 18px; font-weight: 900; color: white; letter-spacing: 1px; margin-bottom: 4px;
+}
+.footer-brand .logo span { color: var(--primary-light); }
+.footer-brand .company {
+  font-size: 13px; color: var(--text); margin-bottom: 2px;
+}
+.footer-brand .company-en {
+  font-size: 11px; color: var(--text-dim);
+}
+.footer-col h5 {
+  font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 12px;
+}
+.footer-col a {
+  display: block; font-size: 12px; color: var(--text-muted); text-decoration: none;
+  margin-bottom: 8px; transition: color 0.2s;
+}
+.footer-col a:hover { color: var(--primary-light); }
+.footer-qr {
+  text-align: center;
+}
+.footer-qr .qr-placeholder {
+  width: 80px; height: 80px; background: var(--bg-card); border-radius: 10px;
+  border: 1px solid var(--border); margin: 0 auto 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  color: var(--text-dim);
+}
+.footer-qr p {
+  font-size: 11px; color: var(--text-muted);
+}
+.footer-bottom {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(15,23,42,0.95); backdrop-filter: blur(20px);
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 14px 24px; color: var(--text); font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow); z-index: 3000; opacity: 0;
+  transition: all 0.3s; pointer-events: none; display: flex; align-items: center; gap: 8px;
+}
+.toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.toast i { font-size: 16px; }
+.toast.success i { color: var(--success); }
+
+/* ===== 弹窗 ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  z-index: 2000; display: none; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s;
+}
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal {
+  background: linear-gradient(135deg, #0f172a, #0b0f1a);
+  border: 1px solid var(--border); border-radius: 20px;
+  width: 90%; max-width: 480px; padding: 28px; position: relative;
+  box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.3s;
+}
+.modal-overlay.active .modal { transform: scale(1); }
+.modal .close-btn {
+  position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
+  border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text-muted); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 14px; transition: all 0.25s;
+}
+.modal .close-btn:hover { background: rgba(239,68,68,0.2); color: var(--danger); }
+.modal h3 {
+  font-size: 18px; font-weight: 700; margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff, #c7d2fe);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.modal .form-group { margin-bottom: 14px; }
+.modal .form-group label {
+  display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;
+}
+.modal .form-group input,
+.modal .form-group textarea,
+.modal .form-group select {
+  width: 100%; padding: 11px 14px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--bg-card);
+  color: var(--text); font-size: 13px; outline: none; transition: all 0.3s;
+  font-family: inherit;
+}
+.modal .form-group input:focus,
+.modal .form-group textarea:focus,
+.modal .form-group select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow);
+}
+.modal .form-group textarea { min-height: 90px; resize: vertical; }
+.modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal .submit-btn {
+  width: 100%; padding: 13px; border-radius: 14px; border: none;
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  color: white; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: all 0.25s; margin-top: 6px;
+}
+.modal .submit-btn:hover {
+  transform: translateY(-2px); box-shadow: 0 8px 24px var(--primary-glow);
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 1400px) {
+  .material-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 1200px) {
+  .sidebar-right { display: none; }
+  .content-main { margin-right: 0; }
+  .footer { margin-right: 0; }
+  .category-bar { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 900px) {
+  .sidebar-left { display: none; }
+  .content-main { margin-left: 0; }
+  .footer { margin-left: 0; }
+  .top-nav .nav-center { display: none; }
+  .material-grid { grid-template-columns: repeat(2, 1fr); }
+  .category-bar { grid-template-columns: repeat(3, 1fr); }
+  .banner-overlay h2 { font-size: 22px; }
+}
+@media (max-width: 600px) {
+  .material-grid { grid-template-columns: 1fr; }
+  .category-bar { grid-template-columns: repeat(2, 1fr); }
+  .banner { height: 200px; }
+  .banner-overlay { padding: 0 24px; }
+}
 </style>
-
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?b00f12adaf5e1212cbfae150084e8f4a";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-	
-<!-- 不蒜子统计脚本 -->
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-	
 </head>
 <body>
 
-<div class="glow-canvas" id="glow"></div>
-
-	<!-- 新增：悬浮下载按钮 -->
-<button class="download-btn" onclick="downloadResume()">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
-  </svg>
-  下载简历作品
-</button>
-	
-<nav class="nav" id="navbar">
-  <div class="container">
-    <div class="nav-logo">张琪 ZHANG QI</div>
-    <div class="nav-links">
-      <a href="#work">作品</a>
-      <a href="#about">关于</a>
-      <a href="#advantages">优势</a>
-      <a href="#experience">经历</a>
-      <a href="#awards">荣誉</a>
-      <a href="#skills">技能</a>
+<!-- ===== 顶部导航 ===== -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <div class="brand">
+      <div class="brand-logo">LEYAR<span>D</span> 雷曼</div>
+      <div class="brand-info">
+        <div class="name">雷曼光电科技有限公司</div>
+        <div class="sub">Leyard Optoelectronic Co., Ltd.</div>
+      </div>
     </div>
+  </div>
+  <div class="nav-center">
+    <a class="active" onclick="switchTab('home')">首页</a>
+    <a onclick="switchTab('home')">素材库</a>
+    <a onclick="switchTab('custom')">定制服务</a>
+    <a onclick="switchTab('vip')">VIP专区</a>
+    <a href="#">解决方案</a>
+    <a href="#">帮助中心</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="搜索素材关键词" id="searchInput">
+    </div>
+    <button class="icon-btn"><i class="far fa-envelope"></i><div class="dot"></div></button>
+    <button class="icon-btn"><i class="far fa-heart"></i></button>
+    <div class="user-avatar"><img src="https://q5.itc.cn/q_70/images03/20250715/c1e8a6700622431583e103bc9ac17e1e.jpeg" alt="用户头像"></div>
   </div>
 </nav>
 
-<main class="container">
-  <section class="hero">
-    <div class="hero-content">
-      <span class="hero-tag">春晚 · 冬奥 · 全运会 <span>|</span> CREATIVE DIRECTOR · 11 YRS</span>
-      <!-- 修改位置1：替换原h1为中英文标题容器 -->
-      <div class="hero-title-wrapper">
-        <div class="hero-title-en">BEYOND<br>VISUALS.</div>
-        <div class="hero-title-cn">超越视觉</div>
+<!-- ===== 主布局 ===== -->
+<div class="main-layout">
+
+  <!-- 左侧边栏 -->
+  <aside class="sidebar-left">
+    <div class="user-profile">
+      <div class="avatar"><img src="https://q5.itc.cn/q_70/images03/20250715/c1e8a6700622431583e103bc9ac17e1e.jpeg" alt="用户头像"></div>
+      <div class="info">
+        <div class="name">李先生 <span class="vip-badge">VIP</span></div>
+        <div class="expire">高级会员 | 2035-12-31到期</div>
       </div>
-      <p class="hero-desc">
-        当品牌需要被看见，我让它无处不在。<br>
-        从 LOGO 到万人发布会现场，从三维空间到 XR 虚拟直播 ——<br>
-        这不只是设计，是让视觉为品牌持续说话的系统。
-        <div class="en">From brand strategy to immersive spectacle. Visual systems that make brands impossible to ignore.</div>
-      </p>
     </div>
-    <div class="hero-logo-wrapper">
-      <div class="logo-matrix" id="matrix"></div>
-    </div>
-  </section>
-
-  <!-- 客户品牌滚动条 -->
-  <div class="brand-marquee-wrap">
-    <div class="brand-marquee-track">
-    <span class="brand-tag">京东</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">腾讯</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">花旗银行</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">习酒</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">长安欧尚</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">星巴克</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">光大银行</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">罗永浩</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">南方航空</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">洲明科技</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">辛巴</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">湖南卫视</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">京东</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">腾讯</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">花旗银行</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">习酒</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">长安欧尚</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">星巴克</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">光大银行</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">罗永浩</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">南方航空</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">洲明科技</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">辛巴</span>
-    <span class="brand-dot"></span>
-    <span class="brand-tag">湖南卫视</span>
-    <span class="brand-dot"></span>
-    </div>
-  </div>
-
-  <!-- 数据统计横条 -->
-  <div class="stats-strip reveal">
-    <div class="stat-item">
-      <span class="stat-num">11</span>
-      <span class="stat-label">年 · 视觉经验</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">20+</span>
-      <span class="stat-label">人 · 创意团队</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">50+</span>
-      <span class="stat-label">场 · 品牌发布会</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">3</span>
-      <span class="stat-label">国家级赛事</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-num">∞</span>
-      <span class="stat-label">创意野心</span>
-    </div>
-  </div>
-
-  <section id="work" class="section">
-    <h2 class="section-title">Selected Works <span>代表作品</span></h2>
-    <div class="portfolio-grid">
-
-      <a href="aurora.html" target="_blank" class="reveal aurora-featured">
-        <div class="pf-image-wrap aurora-featured-image">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/wyt.jpg" alt="AURORA品牌官网">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">Brand Web <span class="cn">| 品牌官网搭建</span></span>
-          <div class="pf-name">品牌官网搭建</div>
-          <div class="pf-desc">品牌网页 0-1 全链路搭建 — 网页 · 视觉 · 影像 · 模型 全案统筹</div>
-        </div>
+    <nav class="sidebar-menu">
+      <a class="menu-item active" onclick="switchTab('home')">
+        <i class="fas fa-home"></i> 首页推荐
       </a>
-
-      <a href="work-brand-case.html" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/brand.jpg" alt="品牌全案视觉">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">Brand Identity <span class="cn">| 品牌视觉体系</span></span>
-          <div class="pf-name">品牌全案视觉</div>
-          <div class="pf-desc">从0构建品牌视觉语言 — LOGO · VI系统 · 包装 · 物料全案统筹</div>
-        </div>
+      <a class="menu-item" onclick="setActiveMenu('category'); showToast('进入素材分类', 'success')">
+        <i class="fas fa-th-large"></i> 素材分类
       </a>
-
-      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/stage-design.pdf" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/stage.jpg" alt="品牌发布会设计">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">Brand Launch <span class="cn">| 发布会视觉</span></span>
-          <div class="pf-name">奈丝公主 · 永艺 · AI发布会</div>
-          <div class="pf-desc">空间叙事 × 沉浸体验 × UE实时引擎渲染 — 让发布会成为品牌的最强触点</div>
-        </div>
+      <a class="menu-item" onclick="setActiveMenu('favorite'); showToast('我的收藏 38项', 'success')">
+        <i class="far fa-heart"></i> 我的收藏
       </a>
-
-      <a href="work-live-xr.html" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/live.jpg" alt="XR品牌直播视觉">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">XR Live Streaming <span class="cn">| 虚拟直播</span></span>
-          <div class="pf-name">XR 品牌直播视觉</div>
-          <div class="pf-desc">罗永浩 · 星巴克 · 光大银行 · 长安欧尚 — 品牌级XR直播全案，重新定义直播质感</div>
-        </div>
+      <a class="menu-item" onclick="setActiveMenu('download'); showToast('我的下载 12项', 'success')">
+        <i class="fas fa-download"></i> 我的下载
       </a>
-
-      <a href="https://cdn.jsdelivr.net/gh/zhanglucker-sketch/zhang@main/assets/pdf/virtual-ip.pdf" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/ip.jpg" alt="品牌虚拟IP视觉">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">Virtual IP <span class="cn">| 虚拟IP视觉</span></span>
-          <div class="pf-name">品牌虚拟 IP</div>
-          <div class="pf-desc">数字人 × 虚拟形象 × 品牌IP化运营 — 让品牌在虚实之间找到新的人格</div>
-        </div>
+      <a class="menu-item" onclick="switchTab('custom')">
+        <i class="fas fa-paint-brush"></i> 专属定制
       </a>
-		
-      <a href="work-3d-visual.html" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/3d.jpg" alt="裸眼3D沉浸展厅">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">3D Visual <span class="cn">| 三维视觉</span></span>
-          <div class="pf-name">裸眼 3D × 沉浸展厅</div>
-          <div class="pf-desc">京东MALL外立面 · 汉阳钟家村核心面 · 品牌展厅 — 让三维空间成为品牌的叙事场</div>
-        </div>
+      <a class="menu-item" onclick="setActiveMenu('album'); showToast('进入我的相册', 'success')">
+        <i class="far fa-images"></i> 我的相册 <span class="new-tag">NEW</span>
       </a>
-
-      <a href="work-tourism-light.html" target="_blank" class="reveal">
-        <div class="pf-image-wrap">
-          <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/images/tourism.jpg" alt="文旅光影项目">
-        </div>
-        <div class="pf-info">
-          <span class="pf-category">Cultural Tourism <span class="cn">| 文旅光影</span></span>
-          <div class="pf-name">文旅光影秀</div>
-          <div class="pf-desc">城市地标光影叙事 · 空间创意导演 — 用光与影讲述一座城市的品牌故事</div>
-        </div>
+      <a class="menu-item" onclick="switchTab('upload')">
+        <i class="fas fa-cloud-upload-alt"></i> 上传文件
       </a>
+      <div style="height:1px; background:var(--border); margin:8px 16px;"></div>
+      <a class="menu-item" onclick="switchTab('vip')">
+        <i class="fas fa-crown" style="color:var(--accent)"></i> VIP专享
+      </a>
+      <a class="menu-item" onclick="openModal('vipModal')">
+        <i class="fas fa-headset"></i> 客服中心
+      </a>
+    </nav>
+  </aside>
 
+  <!-- 中间内容区 -->
+  <main class="content-main" id="homeTab">
+    <!-- Banner -->
+    <div class="banner" onclick="showToast('探索更多精选内容', 'success')">
+      <div class="banner-slides" id="bannerSlides">
+        <div class="banner-slide">
+          <img class="banner-img" src="https://img0.baidu.com/it/u=4163947130,2187883906&fm=253&fmt=auto&app=138&f=JPEG?w=951&h=500" alt="Banner 1">
+          <div class="banner-overlay">
+            <h2>让每一次点亮<br>都成为视觉盛宴</h2>
+            <p>雷曼家庭巨幕专属视觉内容平台</p>
+            <button class="explore-btn">
+              探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
+            </button>
+          </div>
+        </div>
+        <div class="banner-slide">
+          <img class="banner-img" src="https://p3-pc-sign.douyinpic.com/obj/tos-cn-p-0015c000-ce/o8rADfzMDJbOFHXBIeEnpwQ5fC8Qzm7g7F7h9A?x-expires=2092496400&x-signature=k9UaqstMVXpAupuCQ%2FW0Q1zwWDY%3D&from=1516005123" alt="Banner 2">
+          <div class="banner-overlay">
+            <h2>一屏藏万象<br>点亮即美学</h2>
+            <p>雷曼家庭巨幕专属视觉内容平台</p>
+            <button class="explore-btn">
+              探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="banner-dots">
+        <div class="dot active" onclick="switchSlide(0)"></div>
+        <div class="dot" onclick="switchSlide(1)"></div>
+      </div>
     </div>
-  </section>
 
-  <section id="about" class="section">
-    <h2 class="section-title">About Me <span>关于我</span></h2>
+    <!-- 分类快捷入口 -->
+    <div class="category-bar">
+      <div class="category-item" onclick="filterByCat('art')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="艺术画廊">
+        <div class="cat-overlay">
+          <div class="cat-name">艺术画廊</div>
+          <div class="cat-count">1280+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('nature')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="自然风光">
+        <div class="cat-overlay">
+          <div class="cat-name">自然风光</div>
+          <div class="cat-count">2560+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('window')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="城市景观">
+        <div class="cat-overlay">
+          <div class="cat-name">城市景观</div>
+          <div class="cat-count">1890+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('geometry')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="抽象艺术">
+        <div class="cat-overlay">
+          <div class="cat-name">抽象艺术</div>
+          <div class="cat-count">980+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('family')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="亲子互动">
+        <div class="cat-overlay">
+          <div class="cat-name">亲子互动</div>
+          <div class="cat-count">760+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('festival')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="节日主题">
+        <div class="cat-overlay">
+          <div class="cat-name">节日主题</div>
+          <div class="cat-count">530+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('business')">
+        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="商务办公">
+        <div class="cat-overlay">
+          <div class="cat-name">商务办公</div>
+          <div class="cat-count">680+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item all-cats" onclick="showToast('查看全部分类', 'success')">
+        <i class="fas fa-th"></i>
+        <span>全部分类</span>
+      </div>
+    </div>
 
-    <!-- 新增：视频+文字布局 -->
-    <div class="about-wrapper reveal">
-     <div class="about-video" id="aboutVideo">
-  <iframe 
-    id="bilibiliVideo"
-    data-src="https://player.bilibili.com/player.html?bvid=BV1JFoXBpEew&autoplay=1&loop=1&muted=1&controls=1"
-    src=""
-    scrolling="no" 
-    allow="autoplay; fullscreen; picture-in-picture" 
-    allowfullscreen>
-  </iframe>
+    <!-- 精选推荐 -->
+    <div class="section-header">
+      <div class="left">
+        <h3>精选推荐</h3>
+        <div class="tabs">
+          <span class="active">最新</span>
+          <span>最热</span>
+          <span>精选</span>
+        </div>
+      </div>
+      <div class="more" onclick="showToast('查看更多', 'success')">
+        查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+      </div>
+    </div>
+
+    <div class="material-grid" id="materialGrid">
+      <!-- JS生成 -->
+    </div>
+  </main>
+
+  <!-- 定制服务页 -->
+  <main class="content-main" id="customTab" style="display:none">
+    <div style="text-align:center; padding:40px 0 32px">
+      <div style="font-size:48px; margin-bottom:16px">✨</div>
+      <h2 style="font-size:28px; font-weight:800; margin-bottom:10px; background:linear-gradient(135deg,#fff,#c7d2fe); -webkit-background-clip:text; -webkit-text-fill-color:transparent">专属定制服务</h2>
+      <p style="color:var(--text-muted); font-size:14px; max-width:480px; margin:0 auto">为企业、私宅、酒店等高端客户提供独一无二的待机内容定制</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:800px; margin:0 auto 24px">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
+        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,var(--primary),#60a5fa); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏢</div>
+        <h4 style="font-size:15px; margin-bottom:6px">企业品牌定制</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">LOGO动态演绎、数据看板、企业愿景可视化</p>
+        <button class="action-btn" onclick="openModal('customModal')">
+          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        </button>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
+        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,var(--accent),#fbbf24); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏠</div>
+        <h4 style="font-size:15px; margin-bottom:6px">私宅专属定制</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">家族徽标、个人IP动画、纪念日主题、私人相册</p>
+        <button class="action-btn" onclick="openModal('customModal')">
+          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        </button>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
+        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#ec4899,#f472b6); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏨</div>
+        <h4 style="font-size:15px; margin-bottom:6px">酒店文旅定制</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">欢迎画面、城市窗景、品牌主题、节日氛围</p>
+        <button class="action-btn" onclick="openModal('customModal')">
+          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- 上传页 -->
+  <main class="content-main" id="uploadTab" style="display:none">
+    <div style="max-width:600px; margin:0 auto; padding:40px 0">
+      <div style="text-align:center; margin-bottom:32px">
+        <div style="font-size:48px; margin-bottom:16px">📤</div>
+        <h2 style="font-size:26px; font-weight:800; margin-bottom:10px">自制相册上传</h2>
+        <p style="color:var(--text-muted); font-size:14px">上传您的私人照片，我们将为您生成专属待机画面</p>
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()" style="padding:48px 24px">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <div class="upload-text">点击或拖拽文件到此处上传</div>
+        <div class="upload-hint">支持 JPG、PNG、MP4、MOV 格式，单个文件不超过 500MB</div>
+        <input type="file" id="fileInput" style="display:none" multiple onchange="handleUpload(this)">
+      </div>
+    </div>
+  </main>
+
+  <!-- VIP页 -->
+  <main class="content-main" id="vipTab" style="display:none">
+    <div style="text-align:center; padding:40px 0 32px">
+      <div style="font-size:48px; margin-bottom:16px">👑</div>
+      <h2 style="font-size:28px; font-weight:800; margin-bottom:10px; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent">VIP 尊享会员</h2>
+      <p style="color:var(--text-muted); font-size:14px">解锁全部典藏级素材、优先定制通道、专属客服支持</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:800px; margin:0 auto">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
+        <div style="font-size:12px; font-weight:700; color:var(--text-dim); margin-bottom:8px">基础版</div>
+        <div style="font-size:36px; font-weight:800; margin-bottom:4px">免费</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">永久免费</div>
+        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>100+ 基础静态素材</div>
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>标准清晰度下载</div>
+          <div><i class="fas fa-times" style="color:var(--text-dim); margin-right:8px"></i>动态/视频素材</div>
+        </div>
+        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center">当前方案</button>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.3); border-radius:16px; padding:28px 20px; text-align:center; position:relative">
+        <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); padding:3px 12px; border-radius:8px; background:linear-gradient(135deg,var(--accent),#fbbf24); color:#1a1a2e; font-size:10px; font-weight:800">最受欢迎</div>
+        <div style="font-size:12px; font-weight:700; color:var(--accent); margin-bottom:8px">专业版</div>
+        <div style="font-size:36px; font-weight:800; margin-bottom:4px">¥999</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">/ 年</div>
+        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>2,400+ 全部素材</div>
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>4K/8K 超清下载</div>
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>AI 智能场景调度</div>
+        </div>
+        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center; background:linear-gradient(135deg,var(--accent),#fbbf24); color:#1a1a2e; border:none" onclick="showToast('已选择专业版，请前往支付', 'success')">立即开通</button>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
+        <div style="font-size:12px; font-weight:700; color:var(--primary); margin-bottom:8px">企业版</div>
+        <div style="font-size:36px; font-weight:800; margin-bottom:4px">定制</div>
+        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">按需求报价</div>
+        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>专业版全部权益</div>
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>企业IP专属定制</div>
+          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>API 对接支持</div>
+        </div>
+        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center" onclick="openModal('customModal')">联系销售</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- 右侧边栏 -->
+  <aside class="sidebar-right">
+    <div class="panel custom-panel">
+      <div class="custom-panel-bg"></div>
+      <div class="custom-panel-content">
+        <h4>专属定制服务</h4>
+        <p class="panel-sub">为您打造独一无二的视觉体验</p>
+        <div class="feature-list">
+          <div class="feature"><i class="fas fa-user-tie"></i> 1V1 专属设计</div>
+          <div class="feature"><i class="fas fa-palette"></i> 个性化定制</div>
+          <div class="feature"><i class="fas fa-gem"></i> 高清品质保障</div>
+          <div class="feature"><i class="fas fa-bolt"></i> 快速交付</div>
+        </div>
+        <button class="action-btn" onclick="openModal('customModal')">
+          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel" style="padding:0; overflow:hidden">
+      <div style="padding:20px 20px 12px">
+        <h4 style="font-size:14px">自制相册</h4>
+        <p class="panel-sub" style="margin-bottom:0">上传您的图片，打造专属视觉空间</p>
+      </div>
+      <div class="upload-zone" style="border:none; border-radius:0; margin:0 12px 12px" onclick="switchTab('upload')">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <div class="upload-text">点击上传文件</div>
+        <div class="upload-hint">支持 JPG、PNG、MP4 格式</div>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <h5><i class="fas fa-headset"></i> VIP客服专线</h5>
+      <div class="phone">4006-300162</div>
+      <div class="time">服务时间：9:00-18:00</div>
+      <button class="online-btn" onclick="openModal('vipModal')">在线咨询</button>
+    </div>
+  </aside>
+
 </div>
-    <div class="hero-desc reveal">
-      我不是第一次做设计的人，但我是少数既能把品牌想清楚、又能把现场落下去的人。<br><br>
-      从深圳华强的球幕影院镜头预演，到湖南卫视元宵晚会XR视觉主导，再到<strong style="color:rgba(255,255,255,0.85)">春晚、冬奥、全运会</strong>舞台执行 ——
-      这条路让我相信一件事：视觉最大的价值，不是好看，是让人记住品牌。<br><br>
-      在洲明的4年，我带20人团队服务<strong style="color:#fff;font-weight:700">京东、腾讯、花旗银行、习酒</strong>等头部客户，把视觉做成了可复用、可放大、可传播的体系。平面设计师解决一张图，我解决整个品牌被看见的问题。
-      <div class="en">
-        I don't just design — I build visual systems that make brands impossible to ignore. From pre-vis in dome theaters to leading XR stages at national broadcast events, I've spent 11 years learning that great visuals aren't beautiful, they're unforgettable.
-      </div>
+
+<!-- ===== 页脚 ===== -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <div class="logo">LEYAR<span>D</span> 雷曼</div>
+      <div class="company">雷曼光电科技有限公司</div>
+      <div class="company-en">Leyard Optoelectronic Co., Ltd.</div>
     </div>
-</div>
-	  
-<div class="personal-info reveal">
-  <div class="personal-info-item">
-    <span class="personal-info-label">出生年月 /</span>
-    <span class="personal-info-value">1991年9月</span>
+    <div class="footer-col">
+      <h5>关于我们</h5>
+      <a href="#">公司简介</a>
+      <a href="#">新闻中心</a>
+      <a href="#">联系我们</a>
+    </div>
+    <div class="footer-col">
+      <h5>服务支持</h5>
+      <a href="#">帮助中心</a>
+      <a href="#">使用条款</a>
+      <a href="#">隐私政策</a>
+    </div>
+    <div class="footer-col">
+      <h5>商务合作</h5>
+      <a href="#">渠道合作</a>
+      <a href="#">品牌合作</a>
+      <a href="#">投资者关系</a>
+    </div>
+    <div class="footer-qr">
+      <div class="qr-placeholder"><i class="fas fa-qrcode"></i></div>
+      <p>关注雷曼光电<br>获取更多资讯和优惠</p>
+    </div>
   </div>
-  <div class="personal-info-item">
-    <span class="personal-info-label">毕业院校 /</span>
-    <span class="personal-info-value">中南民族大学</span>
+  <div class="footer-bottom">
+    © 2026 雷曼光电科技有限公司 版权所有 | 粤ICP备xxxxxxxx号
   </div>
-  <div class="personal-info-item">
-    <span class="personal-info-label">联系电话 /</span>
-    <span class="personal-info-value">15220107783</span>
-  </div>
-  <div class="personal-info-item">
-    <span class="personal-info-label">邮箱 /</span>
-    <span class="personal-info-value">369887709@qq.com</span>
-  </div>
-</div>
-
-  <section id="advantages" class="section">
-    <h2 class="section-title">Core Strengths <span>核心优势</span></h2>
-    <div class="advantage-grid reveal">
-      <div class="adv-card">
-        <span class="adv-num">01/</span>
-        <h3>全栈视觉能力</h3>
-        <p>平面、三维、动效、网页全通——从一张 LOGO 到一套品牌体系，可以独立完成，不依赖外包。</p>
-      </div>
-      <div class="adv-card">
-        <span class="adv-num">02/</span>
-        <h3>大型现场操盘</h3>
-        <p>春晚、冬奥、全运会、百人发布会——高压环境下的高规格交付，这是用钱买不到的经验。</p>
-      </div>
-      <div class="adv-card">
-        <span class="adv-num">03/</span>
-        <h3>技术 × 创意双驱</h3>
-        <p>Maya + UE + AIGC，三维视效与XR虚拟拍摄打造差异化视觉。会工具不稀奇，用工具创造品牌溢价才稀奇。</p>
-      </div>
-      <div class="adv-card">
-        <span class="adv-num">04/</span>
-        <h3>团队与项目统筹</h3>
-        <p>20人创意团队管理，从接单到交付建立了一套可复用的视觉标准体系，不靠堆人，靠流程。</p>
-      </div>
-      <div class="adv-card">
-        <span class="adv-num">05/</span>
-        <h3>商业转化导向</h3>
-        <p>服务汽车、快消、金融、文旅多行业——做的每一个视觉决策都指向一个目标：让品牌被更多人记住。</p>
-      </div>
-      <div class="adv-card">
-        <span class="adv-num">06/</span>
-        <h3>空间叙事能力</h3>
-        <p>镜头语言 + 空间感知 + 现场落地的复合能力，让我能把品牌放进三维空间里讲故事——这是大多数平面设计师没有的维度。</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="experience" class="section">
-    <h2 class="section-title">Work Experience <span>工作经历</span></h2>
-    <div class="experience-list">
-      <div class="exp-item reveal">
-        <div class="exp-header">
-          <div class="exp-company">
-            深圳市洲明科技股份有限公司
-            <div class="en">Unilumin Group Co., Ltd.</div>
-          </div>
-          <div class="exp-date">2022.04 – 2026.03</div>
-        </div>
-        <div class="exp-position">
-          品牌创意 | 视觉总监 <span class="en">Brand Creative | Visual Director</span>
-        </div>
-        <div class="exp-desc">
-          <ul>
-            <li>服务<strong style="color:#fff;font-weight:700">京东、腾讯、花旗银行、习酒</strong>等全球知名品牌的大型商业项目，助力品牌曝光与商业转化</li>
-            <li>统筹品牌视觉全案创意与执行，负责大型活动、发布会、虚拟 IP、文旅光影项目的整体视觉风格把控与落地</li>
-            <li>参与春晚、全运会、冬奥赛事等舞台视觉执行，打造高规格品牌级视效</li>
-            <li>统筹数字资产体系建设，沉淀品牌视觉素材库，提升团队复用效率与统一性</li>
-            <li>管理20人创意团队，主导全流程视觉生产，制定视觉标准与交付规范，建立人才培养体系</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="exp-item reveal">
-        <div class="exp-header">
-          <div class="exp-company">
-            茄子咔咔科技有限公司
-            <div class="en">Qiezi Kaka Technology Co., Ltd.</div>
-          </div>
-          <div class="exp-date">2019.02 – 2022.04</div>
-        </div>
-        <div class="exp-position">
-          品牌视觉专家 <span class="en">Brand Visual Expert</span>
-        </div>
-        <div class="exp-desc">
-          <ul>
-            <li>搭建以公司产品为核心的LOGO/VI/包装/官网/物料全渠道视觉体系，统一品牌视觉语言</li>
-            <li>为<strong style="color:#fff;font-weight:700">长安欧尚、南方航空、星巴克、光大银行、罗永浩、辛巴</strong>直播间提供XR直播视觉全案，提升品牌直播质感与用户体验</li>
-            <li>主导湖南卫视元宵喜乐会等大型晚会 XR 视觉创意与落地，保障高规格舞台呈现。</li>
-            <li>参与品牌交互系统与展会视觉设计，优化品牌视觉体验，助力商务曝光与转化</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="exp-item reveal">
-        <div class="exp-header">
-          <div class="exp-company">
-            前海手讯文化传媒有限公司
-            <div class="en">Qianhai Shouxun Culture Media Co., Ltd.</div>
-          </div>
-          <div class="exp-date">2018.01 – 2019.01</div>
-        </div>
-        <div class="exp-position">
-          视觉负责人<span class="en">Visual Designer</span>
-        </div>
-        <div class="exp-desc">
-          <ul>
-            <li>负责品牌视觉、产品包装、线下活动主KV创意设计、物料等视觉输出</li>
-            <li>完成 50 + 场发布会、访谈节目、科创活动的视觉设计与落地执行，统一品牌栏目视觉形象</li>
-	    <li>配合团队完成三维视觉渲染与平面延展工作</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="exp-item reveal">
-        <div class="exp-header">
-          <div class="exp-company">
-            深圳华强数码电影有限公司
-            <div class="en">Shenzhen Huaqiang Digital Film Co., Ltd.</div>
-          </div>
-          <div class="exp-date">2015.07 – 2017.12</div>
-        </div>
-        <div class="exp-position">
-          镜头预演师 <span class="en">Shot Previsualization Artist</span>
-        </div>
-        <div class="exp-desc">
-          <ul>
-            <li>负责球幕、环幕、特种影院项目的镜头语言设计与视觉预演，优化影片叙事节奏与画面呈现</li>
-            <li>参与《飞跃吴哥窟》《大闹天宫》《女娲补天》等项目视觉制作，提升内容视觉冲击力与沉浸体验</li>
-            <li>自研多款流程插件，优化制作效率，提升团队整体出片速度</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="awards" class="section">
-    <h2 class="section-title">Honors & Awards <span>荣誉奖项</span></h2>
-    <div class="awards-grid reveal">
-      <div class="award-card">
-        <h3 class="award-type">工作荣誉</h3>
-        <ul class="award-list">
-          <li>荣获第三届高新视频创新应用大赛一等奖</li>
-          <li>荣获第十届深圳（国际）科技影视周“卓越影视技术贡献奖”</li>
-          <li>获评洲明科技2023上半年度“最佳创意奖”</li>
-          <li>受聘洲明学堂动画制作工程技术导师，发挥专业优势赋能人才培养</li>
-        </ul>
-      </div>
-      
-      <div class="award-card">
-        <h3 class="award-type">在校荣誉</h3>
-        <ul class="award-list">
-          <li>两度斩获全国大学生计算机设计大赛一等奖（民族组、专业组）</li>
-          <li>荣获全国大学生广告大赛湖北省三等奖</li>
-          <li>荣获ONESHOW国际创意广告优秀奖</li>
-          <li>多次获评校级“创新标兵”</li>
-          <li>凭借优异成绩斩获专业一、二等奖学金，展现扎实的专业功底与创新能力</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="skills" class="section">
-    <h2 class="section-title">Professional Skills <span>专业技能</span></h2>
-    <div class="skills-wrap reveal">
-      <div class="skill-tag">LOGO/VI设计 <span class="en">LOGO/VI Design</span></div>
-      <div class="skill-tag">品牌全案 <span class="en">Brand Full Case</span></div>
-      <div class="skill-tag">主KV设计 <span class="en">Key Visual</span></div>
-      <div class="skill-tag">产品包装 <span class="en">Product Packaging</span></div>
-      <div class="skill-tag">网页设计 <span class="en">Web Design</span></div>
-      <div class="skill-tag">三维视觉 <span class="en">3D Visual</span></div>
-      <div class="skill-tag">AIGC <span class="en">AIGC</span></div>
-      <div class="skill-tag">发布会舞美 <span class="en">Stage Design</span></div>
-      <div class="skill-tag">XR直播 <span class="en">XR Live</span></div>
-      <div class="skill-tag">虚拟拍摄 <span class="en">Virtual Shooting</span></div>
-      <div class="skill-tag">团队管理 <span class="en">Team Management</span></div>
-      <div class="skill-tag">Maya <span class="en">3D Software</span></div>
-      <div class="skill-tag">UE <span class="en">Unreal Engine</span></div>
-      <div class="skill-tag">Adobe全套 <span class="en">Adobe Suite</span></div>
-      <div class="skill-tag">镜头语言 <span class="en">Cinematography</span></div>
-      <div class="skill-tag">裸眼3D <span class="en">Naked-Eye 3D</span></div>
-      <div class="skill-tag">光影设计 <span class="en">Lighting Design</span></div>
-    </div>
-  </section>
-</main>
-
-<footer class="section" style="text-align: center; border-top: 1px solid var(--border); padding: 60px 0;">
-  <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 12px;">
-    张琪 ZHANG QI · 品牌创意视觉总监 · 深圳
-  </p>
-  <p style="color: rgba(255,255,255,0.2); font-size: 0.75rem; letter-spacing: 1px;">
-    15220107783 · 369887709@qq.com · zhangqi.art
-  </p>
-  <p style="color: rgba(255,255,255,0.1); font-size: 0.7rem; margin-top: 24px; letter-spacing: 1px;">
-    © 2026 · 访问: <span id="busuanzi_value_site_uv"></span> · 浏览: <span id="busuanzi_value_site_pv"></span> · 下载: <span id="downloadCount">--</span>
-  </p>
 </footer>
 
+<!-- ===== 定制弹窗 ===== -->
+<div class="modal-overlay" id="customModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('customModal')"><i class="fas fa-times"></i></button>
+    <h3>提交定制需求</h3>
+    <p>填写您的需求信息，专属客户经理将在 24 小时内与您联系</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>您的姓名</label>
+        <input type="text" placeholder="请输入姓名">
+      </div>
+      <div class="form-group">
+        <label>联系电话</label>
+        <input type="tel" placeholder="请输入手机号">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>企业/机构名称（选填）</label>
+      <input type="text" placeholder="如为个人定制可留空">
+    </div>
+    <div class="form-group">
+      <label>定制类型</label>
+      <select>
+        <option>企业品牌定制</option>
+        <option>私宅专属定制</option>
+        <option>酒店文旅定制</option>
+        <option>其他需求</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>需求描述</label>
+      <textarea placeholder="请详细描述您的定制需求..."></textarea>
+    </div>
+    <button class="submit-btn" onclick="submitCustom()">提交需求</button>
+  </div>
+</div>
+
+<!-- ===== 客服弹窗 ===== -->
+<div class="modal-overlay" id="vipModal">
+  <div class="modal" style="text-align:center">
+    <button class="close-btn" onclick="closeModal('vipModal')"><i class="fas fa-times"></i></button>
+    <div style="font-size:42px; margin-bottom:12px">👑</div>
+    <h3>VIP 专属客服</h3>
+    <p>1 对 1 专属服务，快速响应您的所有需求</p>
+    <div style="margin:20px 0; display:flex; flex-direction:column; gap:10px">
+      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">服务热线</div>
+        <div style="font-size:18px; font-weight:700; color:var(--accent)">4006-300162</div>
+      </div>
+      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">企业微信</div>
+        <div style="font-size:15px; font-weight:600">LEDman_VIP</div>
+      </div>
+      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
+        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">邮箱</div>
+        <div style="font-size:15px; font-weight:600">vip@ledman.com</div>
+      </div>
+    </div>
+    <p style="font-size:12px; color:var(--text-dim)">服务时间：周一至周日 9:00-21:00</p>
+  </div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">操作成功</span></div>
+
 <script>
-// Counter API 配置
-const namespace = "lucker";
-const key = "resume-download";
+// ===== 素材数据 =====
+const materials = [
+  { id: 1, title: "星空银河", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 2, title: "落日余晖", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 3, title: "数字艺术空间", cat: "抽象艺术", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 4, title: "极光之境", cat: "自然风光", res: "", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 5, title: "水墨山水", cat: "艺术画廊", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 6, title: "未来都市", cat: "城市景观", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 7, title: "海底世界", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 8, title: "几何空间", cat: "抽象艺术", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+];
 
-// 初始化下载次数显示
-function initDownloadCount() {
-  // 先显示本地缓存的计数
-  const cachedCount = localStorage.getItem('downloadCountCache');
-  const countElement = document.getElementById('downloadCount');
-  if (countElement) {
-    countElement.textContent = cachedCount ? parseInt(cachedCount).toLocaleString() : '--';
-  }
-  
-  // 然后尝试从 API 获取最新计数
-  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`, {
-    method: 'GET',
-    mode: 'cors',
-    cache: 'no-cache'
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data && typeof data.count === 'number') {
-        const count = data.count;
-        // 更新显示
-        if (countElement) {
-          countElement.textContent = count.toLocaleString();
-        }
-        // 更新本地缓存
-        localStorage.setItem('downloadCountCache', count.toString());
-      }
-    })
-    .catch(error => {
-      console.log('获取下载计数失败，使用本地缓存:', error.message);
-      // 如果没有缓存且API失败，显示默认值
-      if (!cachedCount && countElement) {
-        countElement.textContent = '0';
-      }
-    });
+function renderGrid() {
+  const grid = document.getElementById('materialGrid');
+  grid.innerHTML = materials.map(m => `
+    <div class="material-card">
+      <div class="card-img-wrap">
+        <img src="${m.img}" alt="${m.title}">
+        <button class="heart-btn" onclick="toggleLike(this)"><i class="far fa-heart"></i></button>
+        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
+      </div>
+      <div class="card-info">
+        <div class="title">${m.title}</div>
+        <div class="meta">
+          <span class="cat">${m.cat}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
 
-// 更新下载次数
-function updateDownloadCount() {
-  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache'
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data && typeof data.count === 'number') {
-        const count = data.count;
-        const countElement = document.getElementById('downloadCount');
-        if (countElement) {
-          countElement.textContent = count.toLocaleString();
-        }
-        // 更新本地缓存
-        localStorage.setItem('downloadCountCache', count.toString());
-      }
-    })
-    .catch(error => {
-      console.log('更新下载计数失败:', error.message);
-      // 失败时尝试本地计数+1作为降级
-      const cachedCount = parseInt(localStorage.getItem('downloadCountCache') || '0', 10);
-      const newCount = cachedCount + 1;
-      localStorage.setItem('downloadCountCache', newCount.toString());
-      const countElement = document.getElementById('downloadCount');
-      if (countElement) {
-        countElement.textContent = newCount.toLocaleString();
-      }
-    });
+function toggleLike(btn) {
+  btn.classList.toggle('liked');
+  const icon = btn.querySelector('i');
+  icon.classList.toggle('far');
+  icon.classList.toggle('fas');
+  showToast(btn.classList.contains('liked') ? '已添加到喜欢' : '已取消喜欢');
 }
 
-// 页面加载完成后初始化下载次数
-document.addEventListener('DOMContentLoaded', () => {
-  initDownloadCount();
-});
-
-// 鼠标光影
-const glow = document.getElementById('glow');
-window.addEventListener('mousemove', (e) => {
-  const x = (e.clientX / window.innerWidth) * 100;
-  const y = (e.clientY / window.innerHeight) * 100;
-  glow.style.setProperty('--x', `${x}%`);
-  glow.style.setProperty('--y', `${y}%`);
-});
-
-// 滚动动画
-const observerOptions = { threshold: 0.1 };
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+let currentSlide = 0;
+let slideTimer;
+function switchSlide(index) {
+  const slides = document.getElementById('bannerSlides');
+  const dots = document.querySelectorAll('.banner-dots .dot');
+  currentSlide = index;
+  slides.style.transform = `translateX(-${index * 100}%)`;
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
   });
-}, observerOptions);
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// 作品微动效
-document.querySelectorAll('.portfolio-grid a').forEach(item => {
-  item.addEventListener('mousemove', (e) => {
-    const { left, top, width, height } = item.getBoundingClientRect();
-    const x = (e.clientX - left - width/2) * 0.1;
-    const y = (e.clientY - top - height/2) * 0.1;
-    item.style.transform = `translate(${x}px, ${y}px)`;
+}
+function nextSlide() {
+  currentSlide = (currentSlide + 1) % 2;
+  switchSlide(currentSlide);
+}
+function startSlideTimer() {
+  slideTimer = setInterval(nextSlide, 5000);
+}
+function stopSlideTimer() {
+  clearInterval(slideTimer);
+}
+function switchTab(tab) {
+  const tabs = ['home', 'custom', 'upload', 'vip'];
+  tabs.forEach(t => {
+    document.getElementById(t + 'Tab').style.display = t === tab ? 'block' : 'none';
   });
-  item.addEventListener('mouseleave', () => {
-    item.style.transform = `translate(0, 0)`;
-  });
-});
-
-// 导航栏
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 50) {
-    navbar.classList.add('scroll');
-  } else {
-    navbar.classList.remove('scroll');
-  }
-});
-
-// 平滑滚动
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const targetId = this.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-    if (targetElement) {
-      window.scrollTo({
-        top: targetElement.offsetTop - 100,
-        behavior: 'smooth'
-      });
-    }
-  });
-});
-
-//  Logo 矩阵 ======================
-const matrix = document.getElementById('matrix');
-const totalLogos = 30;
-
-for (let i = 0; i < totalLogos; i++) {
-  const item = document.createElement('div');
-  item.className = 'logo-item';
-  // 自动加载 1.jpg、2.jpg、3.jpg...
-  const imgNum = (i % 30) + 1;
-  // 懒加载格式（保留）
-  item.innerHTML = `<img data-src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/logo/${imgNum}.jpg" src="" alt="LOGO">`;
-  matrix.appendChild(item);
+  setActiveMenu(tab);
 }
 
-// LOGO 懒加载（保留，不影响高亮）
-const logoItems = document.querySelectorAll('.logo-item img');
-const logoObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const img = entry.target;
-      img.src = img.dataset.src;
-      logoObserver.unobserve(img);
-    }
+function setActiveMenu(tab) {
+  document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+    item.classList.remove('active');
   });
-});
-logoItems.forEach(img => logoObserver.observe(img));
-
-// 你原来的鼠标光效逻辑（修复高亮参数，强化视觉效果）
-const items = document.querySelectorAll('.logo-item');
-
-matrix.addEventListener('mousemove', (e) => {
-  const { clientX: mouseX, clientY: mouseY } = e;
-
-  items.forEach(item => {
-    const rect = item.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const distance = Math.hypot(mouseX - centerX, mouseY - centerY);
-    
-    const radius = 160;
-    const strength = Math.max(0, 1 - distance / radius); 
-
-    // 👇 核心修复：强化高亮参数，让效果更明显
-    const opacity = 0.4 + strength * 0.6; // 基础透明度提高，高亮时更亮
-    const grayscale = 0.8 * (1 - strength); // 灰度弱化更多，高亮时几乎无灰度
-    const brightness = 1 + strength * 0.4; // 亮度提升幅度加大
-
-    // 背景和边框高亮强化
-    item.style.background = `rgba(255, 255, 255, ${0.05 + strength * 0.15})`;
-    item.style.borderColor = `rgba(168, 176, 255, ${strength * 0.6})`;
-    
-    const img = item.querySelector('img');
-    img.style.filter = `grayscale(${grayscale}) brightness(${brightness})`;
-    img.style.opacity = opacity;
-  });
-});
-
-matrix.addEventListener('mouseleave', () => {
-  items.forEach(item => {
-    item.style.background = '';
-    item.style.borderColor = '';
-    const img = item.querySelector('img');
-    img.style.filter = '';
-    img.style.opacity = '';
-  });
-});
-	function downloadResume() {
-  // 禁用按钮+提示
-  const btn = document.querySelector('.download-btn');
-  btn.disabled = true;
-  btn.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
-    </svg>
-    下载中...
-  `;
-
-  // 更新下载次数
-  updateDownloadCount();
-
-  // 下载逻辑
-  const resumeUrl = 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/%E5%BC%A0%E7%90%AA-%E5%93%81%E7%89%8C%E8%A7%86%E8%A7%89%E5%88%9B%E6%84%8F.zip';
-  const link = document.createElement('a');
-  link.href = resumeUrl;
-  link.download = '张琪-品牌创意视觉总监-简历作品.pdf';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  // 恢复按钮状态（3秒后）
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"></path>
-      </svg>
-      下载简历作品
-    `;
-  }, 3000);
+  const menuItems = {
+    'home': document.querySelector('.sidebar-menu .menu-item:nth-child(1)'),
+    'category': document.querySelector('.sidebar-menu .menu-item:nth-child(2)'),
+    'favorite': document.querySelector('.sidebar-menu .menu-item:nth-child(3)'),
+    'download': document.querySelector('.sidebar-menu .menu-item:nth-child(4)'),
+    'custom': document.querySelector('.sidebar-menu .menu-item:nth-child(5)'),
+    'album': document.querySelector('.sidebar-menu .menu-item:nth-child(6)'),
+    'upload': document.querySelector('.sidebar-menu .menu-item:nth-child(7)'),
+    'vip': document.querySelector('.sidebar-menu .menu-item:nth-child(9)')
+  };
+  if (menuItems[tab]) {
+    menuItems[tab].classList.add('active');
+  }
 }
 
-// 视频滚动触发播放/暂停功能（支持播放位置记忆）
-(function() {
-  const videoContainer = document.getElementById('aboutVideo');
-  const videoIframe = document.getElementById('bilibiliVideo');
-  const videoSrc = videoIframe.getAttribute('data-src');
-  
-  let isVideoLoaded = false;
-  let isVideoPlaying = false;
-  let videoObserver = null;
-  let startTime = 0;
-  let savedTime = 0;
-  
-  const STORAGE_KEY = 'bilibili_video_time';
-  
-  function loadVideo() {
-    if (!isVideoLoaded) {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      savedTime = saved ? parseInt(saved, 10) : 0;
-      
-      let url = videoSrc;
-      if (savedTime > 0) {
-        const separator = videoSrc.includes('?') ? '&' : '?';
-        url = videoSrc + separator + `t=${savedTime}`;
-      }
-      
-      videoIframe.src = url;
-      isVideoLoaded = true;
-      isVideoPlaying = true;
-      startTime = Date.now();
-    }
-  }
-  
-  function unloadVideo() {
-    if (isVideoLoaded) {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      savedTime = savedTime + elapsed;
-      localStorage.setItem(STORAGE_KEY, savedTime.toString());
-      
-      videoIframe.src = '';
-      isVideoLoaded = false;
-      isVideoPlaying = false;
-    }
-  }
-  
-  function handleVideoVisibility(entries) {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-        loadVideo();
-      } else if (!entry.isIntersecting) {
-        unloadVideo();
-      }
-    });
-  }
-  
-  function initVideoObserver() {
-    if ('IntersectionObserver' in window) {
-      videoObserver = new IntersectionObserver(handleVideoVisibility, {
-        threshold: [0, 0.5, 1],
-        rootMargin: '0px'
-      });
-      videoObserver.observe(videoContainer);
-    } else {
-      loadVideo();
-    }
-  }
-  
-  if (videoContainer && videoIframe) {
-    initVideoObserver();
-  }
-
-// ===== COUNTER ANIMATION =====
-function animateCounter(el, targetStr, duration = 1800) {
-  const isInfinity = targetStr === '∞';
-  if (isInfinity) return;
-  const hasPlus = targetStr.includes('+');
-  const num = parseInt(targetStr.replace('+',''));
-  let start = 0;
-  const startTime = performance.now();
-  function update(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    // easeOutExpo
-    const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-    const current = Math.floor(eased * num);
-    el.textContent = current + (hasPlus ? '+' : '') + (targetStr.includes('年') ? '' : '');
-    if (progress < 1) requestAnimationFrame(update);
-    else el.textContent = targetStr;
-  }
-  requestAnimationFrame(update);
+function filterByCat(cat) {
+  showToast('已筛选：' + cat, 'success');
 }
 
-const statNums = document.querySelectorAll('.stat-num');
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const el = entry.target;
-      const original = el.textContent.trim();
-      animateCounter(el, original);
-      statsObserver.unobserve(el);
-    }
-  });
-}, { threshold: 0.5 });
-statNums.forEach(el => statsObserver.observe(el));
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+function submitCustom() {
+  closeModal('customModal');
+  showToast('需求已提交，专属客户经理将在24小时内联系您');
+}
+function handleUpload(input) {
+  if (input.files.length > 0) showToast('已选择 ' + input.files.length + ' 个文件');
+}
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
 
-
-})();
-
-// 修改位置2：新增滚动切换中英文标题逻辑
-const heroTitleEn = document.querySelector('.hero-title-en');
-const heroTitleCn = document.querySelector('.hero-title-cn');
-const scrollTriggerOffset = getComputedStyle(document.documentElement).getPropertyValue('--scroll-trigger-offset');
-
-window.addEventListener('scroll', function() {
-  const scrollTop = window.scrollY;
-  // 当滚动距离超过设定值时，显示中文，隐藏英文
-  if (scrollTop > scrollTriggerOffset) {
-    heroTitleEn.style.opacity = 0;
-    heroTitleCn.classList.add('active');
-  } else {
-    heroTitleEn.style.opacity = 1;
-    heroTitleCn.classList.remove('active');
-  }
+// 搜索
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  if (e.target.value) showToast('搜索: ' + e.target.value);
 });
 
-// 移动端作品栏滑动点亮功能
-(function() {
-  const portfolioGrid = document.querySelector('.portfolio-grid');
-  if (!portfolioGrid) return;
-  
-  const portfolioItems = portfolioGrid.querySelectorAll('a');
-  let activeItem = null;
-  let isTouching = false;
-  
-  function getTouchTarget(e) {
-    const touch = e.touches ? e.touches[0] : e;
-    return document.elementFromPoint(touch.clientX, touch.clientY);
-  }
-  
-  function findPortfolioItem(element) {
-    let current = element;
-    while (current) {
-      if (current.classList && current.classList.contains('reveal') && current.tagName === 'A') {
-        return current;
-      }
-      current = current.parentElement;
-    }
-    return null;
-  }
-  
-  function activateItem(item) {
-    if (activeItem === item) return;
-    
-    if (activeItem) {
-      activeItem.classList.remove('active');
-    }
-    
-    if (item) {
-      item.classList.add('active');
-      activeItem = item;
-    } else {
-      activeItem = null;
-    }
-  }
-  
-  function handleTouchStart(e) {
-    isTouching = true;
-    const target = getTouchTarget(e);
-    const item = findPortfolioItem(target);
-    activateItem(item);
-  }
-  
-  function handleTouchMove(e) {
-    if (!isTouching) return;
-    
-    const target = getTouchTarget(e);
-    const item = findPortfolioItem(target);
-    activateItem(item);
-  }
-  
-  function handleTouchEnd() {
-    isTouching = false;
-    activateItem(null);
-  }
-  
-  portfolioGrid.addEventListener('touchstart', handleTouchStart, { passive: true });
-  portfolioGrid.addEventListener('touchmove', handleTouchMove, { passive: true });
-  portfolioGrid.addEventListener('touchend', handleTouchEnd, { passive: true });
-})();
-
+renderGrid();
+startSlideTimer();
+document.querySelector('.banner').addEventListener('mouseenter', stopSlideTimer);
+document.querySelector('.banner').addEventListener('mouseleave', startSlideTimer);
 </script>
-<style>
-
 </body>
 </html>
