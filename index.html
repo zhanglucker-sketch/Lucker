@@ -58,11 +58,6 @@ body {
   font-size: 20px; font-weight: 900; color: white; letter-spacing: 1px;
 }
 .top-nav .brand-logo span { color: var(--primary-light); }
-.top-nav .brand-info {
-  display: flex; flex-direction: column;
-}
-.top-nav .brand-info .name { font-size: 14px; font-weight: 700; color: var(--text); }
-.top-nav .brand-info .sub { font-size: 10px; color: var(--text-dim); letter-spacing: 0.5px; }
 
 .top-nav .nav-center {
   display: flex; align-items: center; gap: 4px;
@@ -806,7 +801,6 @@ body {
 
 /* ===== 响应式 ===== */
 @media (max-width: 1200px) {
-  .top-nav .brand-info { display: none; }
   .category-bar { grid-template-columns: repeat(4, 1fr); }
   .content-main { padding: 20px; }
   .banner { height: 240px; }
@@ -817,7 +811,7 @@ body {
   .banner-row { grid-template-columns: 2fr 1fr; }
 }
 @media (max-width: 1023px) {
-  .material-grid { grid-template-columns: repeat(4, 1fr); }
+  .material-grid { grid-template-columns: repeat(3, 1fr); }
   .content-main { padding: 18px; }
   .sidebar-left { width: 200px; }
   .content-main { margin-left: 200px; }
@@ -880,10 +874,6 @@ body {
   <div class="nav-left">
     <div class="brand">
       <div class="brand-logo">LEYAR<span>D</span> 雷曼</div>
-      <div class="brand-info">
-        <div class="name">雷曼光电科技有限公司</div>
-        <div class="sub">Leyard Optoelectronic Co., Ltd.</div>
-      </div>
     </div>
   </div>
   <div class="nav-center">
