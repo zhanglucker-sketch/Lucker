@@ -236,8 +236,16 @@ body {
 
 /* ===== 中间内容区 ===== */
 .content-main {
-  flex: 1; margin-left: 240px; margin-right: 300px; padding: 24px;
+  flex: 1; margin-left: 240px; margin-right: 0; padding: 24px;
   min-width: 0;
+}
+
+/* Banner & 专属定制服务并排 */
+.banner-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 /* Banner轮播 */
@@ -246,7 +254,6 @@ body {
   height: 280px;
   border-radius: 20px;
   overflow: hidden;
-  margin-bottom: 24px;
   cursor: pointer;
 }
 .banner-slides {
@@ -309,6 +316,107 @@ body {
   cursor: pointer; transition: all 0.3s;
 }
 .banner-dots .dot.active { width: 20px; border-radius: 4px; background: var(--primary-light); }
+
+/* 专属定制服务卡片 */
+.custom-panel-banner {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.08) 50%, rgba(29,78,216,0.1) 100%);
+  border: 1px solid rgba(37,99,235,0.2);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.custom-panel-banner-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://img0.baidu.com/it/u=1516685968,3520341842&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+}
+.custom-panel-banner-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.custom-panel-banner-text h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-light);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.custom-panel-banner-text p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.custom-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.custom-features span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+}
+.custom-action-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+/* 精选推荐 & 右侧卡片布局 */
+.featured-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 20px;
+}
+.featured-left {
+  display: flex;
+  flex-direction: column;
+}
+.featured-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.featured-right .album-panel {
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.featured-right .album-panel h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.featured-right .album-panel .panel-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.featured-right .album-panel .upload-zone {
+  margin-top: 0;
+}
 
 /* 分类快捷入口 */
 .category-bar {
@@ -522,36 +630,7 @@ body {
   color: rgba(255,255,255,0.7);
 }
 
-/* ===== 右侧边栏 ===== */
-.sidebar-right {
-  width: 300px; background: var(--bg-sidebar);
-  border-left: 1px solid var(--border); flex-shrink: 0;
-  position: fixed; top: 60px; right: 0; bottom: 0; overflow-y: auto;
-  padding: 20px;
-}
-
-.sidebar-right .panel {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 20px; margin-bottom: 16px;
-}
-.sidebar-right .panel h4 {
-  font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px;
-}
-.sidebar-right .panel .panel-sub {
-  font-size: 12px; color: var(--text-muted); margin-bottom: 16px;
-}
-.sidebar-right .panel .feature-list {
-  display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;
-}
-.sidebar-right .panel .feature-list .feature {
-  display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted);
-}
-.sidebar-right .panel .feature-list .feature i {
-  width: 24px; height: 24px; border-radius: 6px;
-  background: var(--bg-card-hover); display: flex; align-items: center;
-  justify-content: center; font-size: 11px; color: var(--primary-light);
-  flex-shrink: 0;
-}
+/* 通用按钮 */
 .action-btn {
   width: 100%; padding: 11px; border-radius: 12px; border: none;
   background: linear-gradient(135deg, var(--primary), #1d4ed8);
@@ -638,28 +717,66 @@ body {
   background: var(--primary); color: white;
 }
 
-/* 专属定制服务面板 */
-.custom-panel {
+/* VIP客服专线卡片 */
+.service-card-wider {
   position: relative;
+  background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.06) 30%, rgba(37,99,235,0.04) 60%, rgba(29,78,216,0.06) 100%);
+  border: 1px solid rgba(37,99,235,0.18);
+  border-radius: 16px;
+  padding: 20px;
   overflow: hidden;
 }
-.custom-panel .custom-panel-bg {
-  position: absolute;
-  inset: 0;
-  background-image: url('https://img1.baidu.com/it/u=3532458412,2994987847&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.4;
-}
-.custom-panel .custom-panel-bg::after {
+.service-card-wider::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(13,18,32,0.9) 0%, rgba(13,18,32,0.95) 100%);
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(to left, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.1) 50%, rgba(37,99,235,0) 100%);
 }
-.custom-panel .custom-panel-content {
+.service-card-wider h5 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   position: relative;
   z-index: 1;
+}
+.service-card-wider .phone {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 1;
+}
+.service-card-wider .time {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+.service-card-wider .online-btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--primary);
+  background: transparent;
+  color: var(--primary-light);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.service-card-wider .online-btn:hover {
+  background: var(--primary); color: white;
 }
 
 /* ===== 页脚 ===== */
@@ -791,22 +908,22 @@ body {
 /* ===== 响应式 ===== */
 @media (max-width: 1400px) {
   .material-grid { grid-template-columns: repeat(3, 1fr); }
+  .category-bar { grid-template-columns: repeat(6, 1fr); }
 }
 @media (max-width: 1200px) {
   .top-nav .brand-info { display: none; }
-  .sidebar-right { width: 260px; }
   .category-bar { grid-template-columns: repeat(4, 1fr); }
   .content-main { padding: 20px; }
-  .banner { height: 240px; margin-bottom: 20px; }
+  .banner { height: 240px; }
   .banner-overlay h2 { font-size: 26px; }
   .banner-overlay p { font-size: 13px; }
   .material-card .card-info .title { font-size: 13px; }
   .material-card .card-info .meta .cat { font-size: 10px; }
+  .banner-row { grid-template-columns: 2fr 1fr; }
+  .featured-row { grid-template-columns: 2fr 1fr; }
 }
 @media (max-width: 1024px) {
-  .sidebar-right { display: none; }
-  .content-main { margin-right: 0; padding: 18px; }
-  .footer { margin-right: 0; }
+  .content-main { padding: 18px; }
   .sidebar-left { width: 200px; }
   .content-main { margin-left: 200px; }
   .footer { margin-left: 200px; }
@@ -815,7 +932,7 @@ body {
   .sidebar-left .user-profile .avatar { width: 38px; height: 38px; }
   .sidebar-left .user-profile .info .name { font-size: 13px; }
   .sidebar-left .user-profile .info .expire { font-size: 10px; }
-  .banner { height: 220px; margin-bottom: 18px; }
+  .banner { height: 220px; }
   .banner-overlay h2 { font-size: 24px; }
   .banner-overlay p { font-size: 12px; }
   .explore-btn { padding: 9px 18px; font-size: 12px; }
@@ -834,6 +951,10 @@ body {
   .top-nav .nav-center a { padding: 6px 12px; font-size: 12px; }
   .top-nav .search-box input { width: 180px; padding: 7px 10px 7px 28px; font-size: 11px; }
   .top-nav .icon-btn { width: 32px; height: 32px; font-size: 14px; }
+  .banner-row { grid-template-columns: 1fr; }
+  .featured-row { grid-template-columns: 1fr; }
+  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
+  .custom-features { justify-content: center; }
 }
 @media (max-width: 900px) {
   .sidebar-left { display: none; }
@@ -843,12 +964,20 @@ body {
   .material-grid { grid-template-columns: repeat(2, 1fr); }
   .category-bar { grid-template-columns: repeat(3, 1fr); }
   .banner-overlay h2 { font-size: 22px; }
+  .banner-row { grid-template-columns: 1fr; }
+  .featured-row { grid-template-columns: 1fr; }
+  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
+  .custom-features { justify-content: center; }
 }
 @media (max-width: 600px) {
   .material-grid { grid-template-columns: 1fr; }
   .category-bar { grid-template-columns: repeat(2, 1fr); }
   .banner { height: 200px; }
   .banner-overlay { padding: 0 24px; }
+  .banner-row { grid-template-columns: 1fr; }
+  .featured-row { grid-template-columns: 1fr; }
+  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
+  .custom-features { justify-content: center; }
 }
 </style>
 </head>
@@ -929,33 +1058,56 @@ body {
 
   <!-- 中间内容区 -->
   <main class="content-main" id="homeTab">
-    <!-- Banner -->
-    <div class="banner" onclick="showToast('探索更多精选内容', 'success')">
-      <div class="banner-slides" id="bannerSlides">
-        <div class="banner-slide">
-          <img class="banner-img" src="https://img0.baidu.com/it/u=4163947130,2187883906&fm=253&fmt=auto&app=138&f=JPEG?w=951&h=500" alt="Banner 1">
-          <div class="banner-overlay">
-            <h2>让每一次点亮<br>都成为视觉盛宴</h2>
-            <p>雷曼家庭巨幕专属视觉内容平台</p>
-            <button class="explore-btn">
-              探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
-            </button>
+    <!-- Banner & 专属定制服务 -->
+    <div class="banner-row">
+      <!-- Banner -->
+      <div class="banner" onclick="showToast('探索更多精选内容', 'success')">
+        <div class="banner-slides" id="bannerSlides">
+          <div class="banner-slide">
+            <img class="banner-img" src="https://img0.baidu.com/it/u=4163947130,2187883906&fm=253&fmt=auto&app=138&f=JPEG?w=951&h=500" alt="Banner 1">
+            <div class="banner-overlay">
+              <h2>让每一次点亮<br>都成为视觉盛宴</h2>
+              <p>雷曼家庭巨幕专属视觉内容平台</p>
+              <button class="explore-btn">
+                探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
+              </button>
+            </div>
+          </div>
+          <div class="banner-slide">
+            <img class="banner-img" src="https://p3-pc-sign.douyinpic.com/obj/tos-cn-p-0015c000-ce/o8rADfzMDJbOFHXBIeEnpwQ5fC8Qzm7g7F7h9A?x-expires=2092496400&x-signature=k9UaqstMVXpAupuCQ%2FW0Q1zwWDY%3D&from=1516005123" alt="Banner 2">
+            <div class="banner-overlay">
+              <h2>一屏藏万象<br>点亮即美学</h2>
+              <p>雷曼家庭巨幕专属视觉内容平台</p>
+              <button class="explore-btn">
+                探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="banner-slide">
-          <img class="banner-img" src="https://p3-pc-sign.douyinpic.com/obj/tos-cn-p-0015c000-ce/o8rADfzMDJbOFHXBIeEnpwQ5fC8Qzm7g7F7h9A?x-expires=2092496400&x-signature=k9UaqstMVXpAupuCQ%2FW0Q1zwWDY%3D&from=1516005123" alt="Banner 2">
-          <div class="banner-overlay">
-            <h2>一屏藏万象<br>点亮即美学</h2>
-            <p>雷曼家庭巨幕专属视觉内容平台</p>
-            <button class="explore-btn">
-              探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
-            </button>
-          </div>
+        <div class="banner-dots">
+          <div class="dot active" onclick="switchSlide(0)"></div>
+          <div class="dot" onclick="switchSlide(1)"></div>
         </div>
       </div>
-      <div class="banner-dots">
-        <div class="dot active" onclick="switchSlide(0)"></div>
-        <div class="dot" onclick="switchSlide(1)"></div>
+
+      <!-- 专属定制服务 -->
+      <div class="custom-panel-banner">
+        <div class="custom-panel-banner-bg"></div>
+        <div class="custom-panel-banner-content">
+          <div class="custom-panel-banner-text">
+            <h4><i class="fas fa-palette"></i> 专属定制服务</h4>
+            <p>为您打造独一无二的视觉体验</p>
+            <div class="custom-features">
+              <span><i class="fas fa-user-tie"></i> 1V1专属设计</span>
+              <span><i class="fas fa-palette"></i> 个性化定制</span>
+              <span><i class="fas fa-gem"></i> 高清品质保障</span>
+              <span><i class="fas fa-bolt"></i> 快速交付</span>
+            </div>
+          </div>
+          <button class="action-btn custom-action-btn" onclick="openModal('customModal')">
+            提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1016,23 +1168,50 @@ body {
       </div>
     </div>
 
-    <!-- 精选推荐 -->
-    <div class="section-header">
-      <div class="left">
-        <h3>精选推荐</h3>
-        <div class="tabs">
-          <span class="active">最新</span>
-          <span>最热</span>
-          <span>精选</span>
+    <!-- 精选推荐 & 右侧卡片 -->
+    <div class="featured-row">
+      <div class="featured-left">
+        <!-- 精选推荐 -->
+        <div class="section-header">
+          <div class="left">
+            <h3>精选推荐</h3>
+            <div class="tabs">
+              <span class="active">最新</span>
+              <span>最热</span>
+              <span>精选</span>
+            </div>
+          </div>
+          <div class="more" onclick="showToast('查看更多', 'success')">
+            查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+          </div>
+        </div>
+
+        <div class="material-grid" id="materialGrid">
+          <!-- JS生成 -->
         </div>
       </div>
-      <div class="more" onclick="showToast('查看更多', 'success')">
-        查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-      </div>
-    </div>
 
-    <div class="material-grid" id="materialGrid">
-      <!-- JS生成 -->
+      <!-- 右侧卡片：自制相册 & VIP客服专线 -->
+      <div class="featured-right">
+        <!-- 自制相册 -->
+        <div class="panel album-panel">
+          <h4><i class="fas fa-images"></i> 自制相册</h4>
+          <p class="panel-sub">上传您的图片，打造专属视觉空间</p>
+          <div class="upload-zone" onclick="switchTab('upload')">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div class="upload-text">点击上传文件</div>
+            <div class="upload-hint">支持 JPG、PNG、MP4 格式</div>
+          </div>
+        </div>
+
+        <!-- VIP客服专线 -->
+        <div class="service-card-wider">
+          <h5><i class="fas fa-headset"></i> VIP客服专线</h5>
+          <div class="phone">4006-300162</div>
+          <div class="time">服务时间：9:00-18:00</div>
+          <button class="online-btn" onclick="openModal('vipModal')">在线咨询</button>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -1132,45 +1311,6 @@ body {
       </div>
     </div>
   </main>
-
-  <!-- 右侧边栏 -->
-  <aside class="sidebar-right">
-    <div class="panel custom-panel">
-      <div class="custom-panel-bg"></div>
-      <div class="custom-panel-content">
-        <h4>专属定制服务</h4>
-        <p class="panel-sub">为您打造独一无二的视觉体验</p>
-        <div class="feature-list">
-          <div class="feature"><i class="fas fa-user-tie"></i> 1V1 专属设计</div>
-          <div class="feature"><i class="fas fa-palette"></i> 个性化定制</div>
-          <div class="feature"><i class="fas fa-gem"></i> 高清品质保障</div>
-          <div class="feature"><i class="fas fa-bolt"></i> 快速交付</div>
-        </div>
-        <button class="action-btn" onclick="openModal('customModal')">
-          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="panel" style="padding:0; overflow:hidden">
-      <div style="padding:20px 20px 12px">
-        <h4 style="font-size:14px">自制相册</h4>
-        <p class="panel-sub" style="margin-bottom:0">上传您的图片，打造专属视觉空间</p>
-      </div>
-      <div class="upload-zone" style="border:none; border-radius:0; margin:0 12px 12px" onclick="switchTab('upload')">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <div class="upload-text">点击上传文件</div>
-        <div class="upload-hint">支持 JPG、PNG、MP4 格式</div>
-      </div>
-    </div>
-
-    <div class="service-card">
-      <h5><i class="fas fa-headset"></i> VIP客服专线</h5>
-      <div class="phone">4006-300162</div>
-      <div class="time">服务时间：9:00-18:00</div>
-      <button class="online-btn" onclick="openModal('vipModal')">在线咨询</button>
-    </div>
-  </aside>
 
 </div>
 
