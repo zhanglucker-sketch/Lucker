@@ -52,12 +52,14 @@ body {
   display: flex; align-items: center; gap: 16px;
 }
 .top-nav .brand {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: flex-end; gap: 8px;
 }
 .top-nav .brand-logo {
-  font-size: 20px; font-weight: 900; color: white; letter-spacing: 1px;
+  height: 24px; width: auto; display: block;
 }
-.top-nav .brand-logo span { color: var(--primary-light); }
+.top-nav .brand-name {
+  font-size: 20px; font-weight: 700; color: white; letter-spacing: 2px; transform: translateY(2px);
+}
 
 .top-nav .nav-center {
   display: flex; align-items: center; gap: 4px;
@@ -274,7 +276,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, rgba(11,15,26,0.9) 0%, rgba(11,15,26,0.5) 50%, rgba(11,15,26,0.2) 100%);
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -326,10 +328,10 @@ body {
 .custom-panel-banner-bg {
   position: absolute;
   inset: 0;
-  background-image: url('https://img0.baidu.com/it/u=1516685968,3520341842&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400');
+  background-image: url('https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/dz.png');
   background-size: cover;
   background-position: center;
-  opacity: 0.15;
+  opacity: 0.8;
 }
 .custom-panel-banner-content {
   position: relative;
@@ -342,15 +344,16 @@ body {
 .custom-panel-banner-text h4 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--primary-light);
+  color: #ffffff;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 .custom-panel-banner-text p {
   font-size: 12px;
-  color: var(--text-muted);
+  color: rgba(255,255,255,0.85);
   margin-bottom: 12px;
 }
 .custom-features {
@@ -363,10 +366,11 @@ body {
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: var(--text-dim);
-  padding: 4px 8px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 6px;
+  color: #ffffff;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 8px;
+  font-weight: 500;
 }
 .custom-action-btn {
   width: 100%;
@@ -484,6 +488,11 @@ body {
   grid-template-columns: repeat(6, 1fr);
   gap: 16px;
 }
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
 .material-card {
   position: relative;
   border-radius: 16px;
@@ -539,6 +548,17 @@ body {
 .material-card .card-img-wrap .heart-btn.liked {
   background: rgba(239,68,68,0.8);
   opacity: 1;
+}
+.material-card .card-img-wrap .download-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  background: rgba(16,185,129,0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
 }
 .material-card .card-img-wrap .res-tag {
   position: absolute;
@@ -794,6 +814,60 @@ body {
   color: white; font-size: 14px; font-weight: 700; cursor: pointer;
   transition: all 0.25s; margin-top: 6px;
 }
+/* 图片预览弹窗 */
+.image-preview-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s;
+}
+.image-preview-overlay.active { opacity: 1; }
+.image-preview-modal {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+  width: 90%; max-width: 800px; max-height: 90vh; padding: 24px; position: relative;
+  box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.3s;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.image-preview-overlay.active .image-preview-modal { transform: scale(1); }
+.image-preview-modal .close-btn {
+  position: absolute; top: 16px; right: 16px; width: 14px; height: 14px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); background: rgba(0,0,0,0.7);
+  color: #fff; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 8px; transition: all 0.25s; z-index: 10;
+}
+.image-preview-modal .close-btn:hover { background: rgba(239,68,68,0.3); }
+.image-preview-modal img {
+  width: 100%; height: auto; max-height: 65vh; object-fit: contain;
+  border-radius: 16px; display: block;
+}
+.image-preview-modal .preview-info {
+  padding: 20px 0 0; text-align: left; flex: 1;
+}
+.image-preview-modal .preview-info .title-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.image-preview-modal .preview-info h4 {
+  font-size: 18px; font-weight: 700; color: #fff; margin: 0;
+}
+.image-preview-modal .preview-info .cat {
+  font-size: 12px; color: #fff; padding: 4px 12px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.6), rgba(29,78,216,0.4));
+  border-radius: 20px; font-weight: 500;
+}
+.image-preview-modal .preview-stats {
+  display: flex; justify-content: space-between; gap: 20px;
+}
+.image-preview-modal .preview-stats .stat-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--text-muted);
+}
+.image-preview-modal .preview-stats .stat-item i {
+  font-size: 16px;
+}
+.image-preview-modal .preview-stats .stat-item.download i { color: #3b82f6; }
+.image-preview-modal .preview-stats .stat-item.favorite i { color: #ef4444; }
+.image-preview-modal .preview-stats .stat-item.recommend i { color: #10b981; }
+
 .modal .submit-btn:hover {
   transform: translateY(-2px); box-shadow: 0 8px 24px var(--primary-glow);
 }
@@ -809,9 +883,12 @@ body {
   .material-card .card-info .meta .cat { font-size: 10px; }
   .banner-row { grid-template-columns: 2fr 1fr; }
   .material-grid { grid-template-columns: repeat(3, 1fr); }
+  .category-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 1024px) {
   .material-grid { grid-template-columns: repeat(3, 1fr); }
+  .category-grid { grid-template-columns: repeat(3, 1fr); }
+  #favoriteGrid { grid-template-columns: repeat(3, 1fr) !important; }
   .content-main { padding: 18px; }
   .sidebar-left { width: 200px; }
   .content-main { margin-left: 200px; }
@@ -849,6 +926,8 @@ body {
   .footer { margin-left: 0; }
   .top-nav .nav-center { display: none; }
   .material-grid { grid-template-columns: repeat(2, 1fr); }
+  .category-grid { grid-template-columns: repeat(2, 1fr); }
+  #favoriteGrid { grid-template-columns: repeat(2, 1fr) !important; }
   .category-bar { grid-template-columns: repeat(3, 1fr); }
   .banner-overlay h2 { font-size: 22px; }
   .banner-row { grid-template-columns: 1fr; }
@@ -872,12 +951,13 @@ body {
 <nav class="top-nav">
   <div class="nav-left">
     <div class="brand">
-      <div class="brand-logo"><span>LED</span>MAN 雷曼</div>
-    </div>
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/logo.png" alt="LEDMAN" class="brand-logo">
+        <span class="brand-name">雷曼视界</span>
+      </div>
   </div>
   <div class="nav-center">
     <a class="active" onclick="switchTab('home')">首页</a>
-    <a onclick="switchTab('home')">素材库</a>
+    <a onclick="toggleSidebar()">素材库</a>
     <a onclick="switchTab('custom')">定制服务</a>
     <a onclick="switchTab('vip')">VIP专区</a>
     <a href="#">帮助中心</a>
@@ -901,7 +981,7 @@ body {
     <div class="user-profile">
       <div class="avatar"><img src="https://q5.itc.cn/q_70/images03/20250715/c1e8a6700622431583e103bc9ac17e1e.jpeg" alt="用户头像"></div>
       <div class="info">
-        <div class="name">李先生 <span class="vip-badge">VIP</span></div>
+        <div class="name">张先生 <span class="vip-badge">VIP</span></div>
         <div class="expire">高级会员 | 2035-12-31到期</div>
       </div>
     </div>
@@ -909,19 +989,19 @@ body {
       <a class="menu-item active" onclick="switchTab('home')">
         <i class="fas fa-home"></i> 首页推荐
       </a>
-      <a class="menu-item" onclick="setActiveMenu('category'); showToast('进入素材分类', 'success')">
+      <a class="menu-item" onclick="switchTab('category')">
         <i class="fas fa-th-large"></i> 素材分类
       </a>
-      <a class="menu-item" onclick="setActiveMenu('favorite'); showToast('我的收藏 38项', 'success')">
+      <a class="menu-item" onclick="switchTab('favorite')">
         <i class="far fa-heart"></i> 我的收藏
       </a>
-      <a class="menu-item" onclick="setActiveMenu('download'); showToast('我的下载 12项', 'success')">
+      <a class="menu-item" onclick="switchTab('download')">
         <i class="fas fa-download"></i> 我的下载
       </a>
       <a class="menu-item" onclick="switchTab('custom')">
         <i class="fas fa-paint-brush"></i> 专属定制
       </a>
-      <a class="menu-item" onclick="setActiveMenu('album'); showToast('进入我的相册', 'success')">
+      <a class="menu-item" onclick="switchTab('album')">
         <i class="far fa-images"></i> 我的相册 <span class="new-tag">NEW</span>
       </a>
       <a class="menu-item" onclick="switchTab('upload')">
@@ -945,7 +1025,7 @@ body {
       <div class="banner" onclick="showToast('探索更多精选内容', 'success')">
         <div class="banner-slides" id="bannerSlides">
           <div class="banner-slide">
-            <img class="banner-img" src="https://img0.baidu.com/it/u=4163947130,2187883906&fm=253&fmt=auto&app=138&f=JPEG?w=951&h=500" alt="Banner 1">
+            <img class="banner-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/lbt1.png" alt="Banner 1">
             <div class="banner-overlay">
               <h2>让每一次点亮<br>都成为视觉盛宴</h2>
               <p>雷曼家庭巨幕专属视觉内容平台</p>
@@ -955,7 +1035,7 @@ body {
             </div>
           </div>
           <div class="banner-slide">
-            <img class="banner-img" src="https://p3-pc-sign.douyinpic.com/obj/tos-cn-p-0015c000-ce/o8rADfzMDJbOFHXBIeEnpwQ5fC8Qzm7g7F7h9A?x-expires=2092496400&x-signature=k9UaqstMVXpAupuCQ%2FW0Q1zwWDY%3D&from=1516005123" alt="Banner 2">
+            <img class="banner-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/lbt2.png" alt="Banner 2">
             <div class="banner-overlay">
               <h2>一屏藏万象<br>点亮即美学</h2>
               <p>雷曼家庭巨幕专属视觉内容平台</p>
@@ -994,56 +1074,56 @@ body {
 
     <!-- 分类快捷入口 -->
     <div class="category-bar">
-      <div class="category-item" onclick="filterByCat('art')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="艺术画廊">
+      <div class="category-item" onclick="filterByCat('texture')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q1.png" alt="仿真肌理">
         <div class="cat-overlay">
-          <div class="cat-name">艺术画廊</div>
+          <div class="cat-name">仿真肌理</div>
           <div class="cat-count">1280+ 素材</div>
         </div>
       </div>
-      <div class="category-item" onclick="filterByCat('nature')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="自然风光">
+      <div class="category-item" onclick="filterByCat('gallery')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q2.png" alt="数字画廊">
         <div class="cat-overlay">
-          <div class="cat-name">自然风光</div>
+          <div class="cat-name">数字画廊</div>
+          <div class="cat-count">860+ 素材</div>
+        </div>
+      </div>
+      <div class="category-item" onclick="filterByCat('scenery')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q3.png" alt="四季风景">
+        <div class="cat-overlay">
+          <div class="cat-name">四季风景</div>
           <div class="cat-count">2560+ 素材</div>
         </div>
       </div>
-      <div class="category-item" onclick="filterByCat('window')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="城市景观">
+      <div class="category-item" onclick="filterByCat('flow')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q4.png" alt="流光艺术">
         <div class="cat-overlay">
-          <div class="cat-name">城市景观</div>
-          <div class="cat-count">1890+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('geometry')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="抽象艺术">
-        <div class="cat-overlay">
-          <div class="cat-name">抽象艺术</div>
+          <div class="cat-name">流光艺术</div>
           <div class="cat-count">980+ 素材</div>
         </div>
       </div>
       <div class="category-item" onclick="filterByCat('family')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="亲子互动">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q5.png" alt="亲子互动">
         <div class="cat-overlay">
           <div class="cat-name">亲子互动</div>
           <div class="cat-count">760+ 素材</div>
         </div>
       </div>
-      <div class="category-item" onclick="filterByCat('festival')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="节日主题">
+      <div class="category-item" onclick="filterByCat('celebration')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q6.png" alt="节日庆典">
         <div class="cat-overlay">
-          <div class="cat-name">节日主题</div>
+          <div class="cat-name">节日庆典</div>
           <div class="cat-count">530+ 素材</div>
         </div>
       </div>
-      <div class="category-item" onclick="filterByCat('business')">
-        <img src="https://img.shetu66.com/2023/07/25/1690254235490349.png" alt="商务办公">
+      <div class="category-item" onclick="filterByCat('window')">
+        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q7.png" alt="虚拟窗景">
         <div class="cat-overlay">
-          <div class="cat-name">商务办公</div>
-          <div class="cat-count">680+ 素材</div>
+          <div class="cat-name">虚拟窗景</div>
+          <div class="cat-count">420+ 素材</div>
         </div>
       </div>
-      <div class="category-item all-cats" onclick="showToast('查看全部分类', 'success')">
+      <div class="category-item all-cats" onclick="switchTab('category')">
         <i class="fas fa-th"></i>
         <span>全部分类</span>
       </div>
@@ -1101,6 +1181,138 @@ body {
           提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
         </button>
       </div>
+    </div>
+  </main>
+
+  <!-- 素材分类页 -->
+  <main class="content-main" id="categoryTab" style="display:none">
+    <div style="padding-bottom:16px">
+      <div class="section-header" style="margin-bottom:16px">
+        <div class="left">
+          <h3>素材分类</h3>
+          <div class="tabs" id="categoryTabs">
+            <span class="active" onclick="switchCategory('texture')">仿真肌理</span>
+            <span onclick="switchCategory('gallery')">数字画廊</span>
+            <span onclick="switchCategory('scenery')">四季风景</span>
+            <span onclick="switchCategory('flow')">流光艺术</span>
+            <span onclick="switchCategory('family')">亲子互动</span>
+            <span onclick="switchCategory('celebration')">节日庆典</span>
+            <span onclick="switchCategory('custom')">私属定制</span>
+            <span onclick="switchCategory('window')">虚拟窗景</span>
+            <span onclick="switchCategory('meditation')">冥想疗愈</span>
+            <span onclick="switchCategory('party')">派对娱乐</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="left">
+          <h3 style="font-size:15px; font-weight:600; color:var(--text-dim)">仿真肌理</h3>
+          <div class="tabs" id="subTabs">
+            <span class="active" onclick="switchSubTab('latest')">最新</span>
+            <span onclick="switchSubTab('hot')">最热</span>
+            <span onclick="switchSubTab('featured')">精选</span>
+          </div>
+        </div>
+        <div class="more" onclick="showToast('查看更多', 'success')">
+          查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
+        </div>
+      </div>
+    </div>
+    <div class="category-grid" id="categoryGrid">
+      <!-- JS生成 -->
+    </div>
+  </main>
+
+  <!-- 我的收藏页 -->
+  <main class="content-main" id="favoriteTab" style="display:none">
+    <div class="section-header" style="margin-bottom:20px">
+      <div class="left">
+        <h3>我的收藏</h3>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
+        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
+      </button>
+      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：客厅场景', 'success')">
+        <div style="display:flex; align-items:center; gap:12px">
+          <div style="width:40px; height:40px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:600; font-size:14px">客厅场景</div>
+            <div style="font-size:12px; color:var(--text-muted)">8 个收藏内容</div>
+          </div>
+          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="material-grid" id="favoriteGrid" style="grid-template-columns: repeat(4, 1fr);">
+      <!-- JS生成收藏内容 -->
+    </div>
+  </main>
+
+  <!-- 我的相册页 -->
+  <main class="content-main" id="albumTab" style="display:none">
+    <div class="section-header" style="margin-bottom:20px">
+      <div class="left">
+        <h3>我的相册</h3>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
+        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
+      </button>
+      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：家族照片', 'success')">
+        <div style="display:flex; align-items:center; gap:12px">
+          <div style="width:40px; height:40px; background:linear-gradient(135deg, #ec4899 0%, #be185d 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:600; font-size:14px">家族照片</div>
+            <div style="font-size:12px; color:var(--text-muted)">2 张合影</div>
+          </div>
+          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="material-grid" id="albumGrid" style="grid-template-columns: repeat(4, 1fr);">
+      <!-- JS生成相册内容 -->
+    </div>
+  </main>
+
+  <!-- 我的下载页 -->
+  <main class="content-main" id="downloadTab" style="display:none">
+    <div class="section-header" style="margin-bottom:20px">
+      <div class="left">
+        <h3>我的下载</h3>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
+      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
+        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
+      </button>
+      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：下载文件', 'success')">
+        <div style="display:flex; align-items:center; gap:12px">
+          <div style="width:40px; height:40px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:600; font-size:14px">下载文件</div>
+            <div style="font-size:12px; color:var(--text-muted)">3 个文件</div>
+          </div>
+          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="material-grid" id="downloadGrid" style="grid-template-columns: repeat(4, 1fr);">
+      <!-- JS生成下载内容 -->
     </div>
   </main>
 
@@ -1195,7 +1407,7 @@ body {
       <a href="#">投资者关系</a>
     </div>
     <div class="footer-qr">
-      <div class="qr-placeholder"><i class="fas fa-qrcode"></i></div>
+      <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/erweima.png" alt="公司二维码" style="width:80px; height:80px; border-radius:8px;">
       <p>关注雷曼光电<br>获取更多资讯和优惠</p>
     </div>
   </div>
@@ -1272,27 +1484,27 @@ body {
 <script>
 // ===== 素材数据 =====
 const materials = [
-  { id: 1, title: "星空银河", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 2, title: "落日余晖", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 3, title: "数字艺术空间", cat: "抽象艺术", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 4, title: "极光之境", cat: "自然风光", res: "", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 5, title: "水墨山水", cat: "艺术画廊", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 6, title: "未来都市", cat: "城市景观", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 7, title: "海底世界", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 8, title: "几何空间", cat: "抽象艺术", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 9, title: "春日樱花", cat: "自然风光", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 10, title: "极简线条", cat: "抽象艺术", res: "8K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 11, title: "城市夜景", cat: "城市景观", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
-  { id: 12, title: "花鸟山水", cat: "艺术画廊", res: "4K", img: "https://img.shetu66.com/2023/07/25/1690254235490349.png" },
+  { id: 1, title: "大理石纹", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/大理石纹.png" },
+  { id: 2, title: "水墨丹青", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/水墨丹青.png" },
+  { id: 3, title: "星空银河", cat: "四季风景", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/星空银河.png" },
+  { id: 4, title: "春日樱花", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春日樱花.png" },
+  { id: 5, title: "流光溢彩", cat: "流光艺术", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/流光溢彩.png" },
+  { id: 6, title: "梵高艺术", cat: "数字画廊", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/梵高艺术.png" },
+  { id: 7, title: "亲子时光", cat: "亲子互动", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/亲子时光.png" },
+  { id: 8, title: "节日庆典", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/节日庆典.png" },
+  { id: 9, title: "海岛窗景", cat: "虚拟窗景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/海岛窗景.png" },
+  { id: 10, title: "木纹纹理", cat: "仿真肌理", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/木纹纹理.png" },
+  { id: 11, title: "春节喜庆", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节喜庆.png" },
+  { id: 12, title: "春节定制", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节定制.png" },
 ];
 
 function renderGrid() {
   const grid = document.getElementById('materialGrid');
   grid.innerHTML = materials.map(m => `
-    <div class="material-card">
+    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
       <div class="card-img-wrap">
         <img src="${m.img}" alt="${m.title}">
-        <button class="heart-btn" onclick="toggleLike(this)"><i class="far fa-heart"></i></button>
+        <button class="heart-btn" onclick="event.stopPropagation(); toggleLike(this)"><i class="far fa-heart"></i></button>
         ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
       </div>
       <div class="card-info">
@@ -1303,6 +1515,136 @@ function renderGrid() {
       </div>
     </div>
   `).join('');
+}
+
+function renderCategoryGrid() {
+  const grid = document.getElementById('categoryGrid');
+  const catImages = [
+    { title: "大理石纹", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/大理石纹.png" },
+    { title: "水墨丹青", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/水墨丹青.png" },
+    { title: "木纹纹理", cat: "仿真肌理", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/木纹纹理.png" },
+    { title: "流光溢彩", cat: "流光艺术", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/流光溢彩.png" },
+    { title: "梵高艺术", cat: "数字画廊", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/梵高艺术.png" },
+    { title: "星空银河", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/星空银河.png" },
+    { title: "春日樱花", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春日樱花.png" },
+    { title: "海岛窗景", cat: "虚拟窗景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/海岛窗景.png" },
+    { title: "亲子时光", cat: "亲子互动", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/亲子时光.png" },
+    { title: "节日庆典", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/节日庆典.png" },
+    { title: "春节喜庆", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节喜庆.png" },
+    { title: "春节定制", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节定制.png" }
+  ];
+  grid.innerHTML = catImages.map(m => `
+    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
+      <div class="card-img-wrap">
+        <img src="${m.img}" alt="${m.title}">
+        <button class="heart-btn" onclick="event.stopPropagation(); toggleLike(this)"><i class="far fa-heart"></i></button>
+        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
+      </div>
+      <div class="card-info">
+        <div class="title">${m.title}</div>
+        <div class="meta">
+          <span class="cat">${m.cat}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDownloadGrid() {
+  const grid = document.getElementById('downloadGrid');
+  const downloadImages = materials.slice(0, 3);
+  grid.innerHTML = downloadImages.map(m => `
+    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
+      <div class="card-img-wrap">
+        <img src="${m.img}" alt="${m.title}">
+        <span class="download-tag">已下载</span>
+      </div>
+      <div class="card-info">
+        <div class="title">${m.title}</div>
+        <div class="meta">
+          <span class="cat">${m.cat}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAlbumGrid() {
+  const grid = document.getElementById('albumGrid');
+  const albumImages = [
+    { img: 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/hy1.png', title: '家庭合影', cat: '家族照片' },
+    { img: 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/hy2.png', title: '全家福', cat: '家族照片' }
+  ];
+  grid.innerHTML = albumImages.map(m => `
+    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
+      <div class="card-img-wrap">
+        <img src="${m.img}" alt="${m.title}">
+        <button class="heart-btn liked" onclick="event.stopPropagation(); toggleLike(this)"><i class="fas fa-heart"></i></button>
+      </div>
+      <div class="card-info">
+        <div class="title">${m.title}</div>
+        <div class="meta">
+          <span class="cat">${m.cat}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFavoriteGrid() {
+  const grid = document.getElementById('favoriteGrid');
+  const favImages = materials.slice(0, 8);
+  grid.innerHTML = favImages.map(m => `
+    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
+      <div class="card-img-wrap">
+        <img src="${m.img}" alt="${m.title}">
+        <button class="heart-btn liked" onclick="event.stopPropagation(); toggleLike(this)"><i class="fas fa-heart"></i></button>
+        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
+      </div>
+      <div class="card-info">
+        <div class="title">${m.title}</div>
+        <div class="meta">
+          <span class="cat">${m.cat}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchCategory(cat) {
+  const categoryNames = {
+    'texture': '仿真肌理',
+    'gallery': '数字画廊',
+    'scenery': '四季风景',
+    'flow': '流光艺术',
+    'family': '亲子互动',
+    'celebration': '节日庆典',
+    'custom': '私属定制',
+    'window': '虚拟窗景',
+    'meditation': '冥想疗愈',
+    'party': '派对娱乐'
+  };
+  document.querySelectorAll('#categoryTabs span').forEach(s => s.classList.remove('active'));
+  const activeTab = document.querySelector(`#categoryTabs span[onclick="switchCategory('${cat}')"]`);
+  if (activeTab) activeTab.classList.add('active');
+  const catTitle = document.querySelector('#categoryTab .section-header:last-of-type h3');
+  if (catTitle) catTitle.textContent = categoryNames[cat] || '素材分类';
+  document.querySelectorAll('#subTabs span').forEach(s => s.classList.remove('active'));
+  document.querySelector('#subTabs span:nth-child(1)').classList.add('active');
+  renderCategoryGrid();
+  showToast('已切换到：' + (categoryNames[cat] || '素材分类'));
+}
+
+function switchSubTab(tab) {
+  const tabNames = {
+    'latest': '最新',
+    'hot': '最热',
+    'featured': '精选'
+  };
+  document.querySelectorAll('#subTabs span').forEach(s => s.classList.remove('active'));
+  const activeTab = document.querySelector(`#subTabs span[onclick="switchSubTab('${tab}')"]`);
+  if (activeTab) activeTab.classList.add('active');
+  showToast('已切换到：' + tabNames[tab]);
 }
 
 function toggleLike(btn) {
@@ -1335,10 +1677,15 @@ function stopSlideTimer() {
   clearInterval(slideTimer);
 }
 function switchTab(tab) {
-  const tabs = ['home', 'custom', 'upload', 'vip'];
+  const tabs = ['home', 'category', 'favorite', 'download', 'custom', 'album', 'upload', 'vip'];
   tabs.forEach(t => {
-    document.getElementById(t + 'Tab').style.display = t === tab ? 'block' : 'none';
+    const el = document.getElementById(t + 'Tab');
+    if (el) el.style.display = t === tab ? 'block' : 'none';
   });
+  if (tab === 'category') renderCategoryGrid();
+  if (tab === 'favorite') renderFavoriteGrid();
+  if (tab === 'download') renderDownloadGrid();
+  if (tab === 'album') renderAlbumGrid();
   setActiveMenu(tab);
 }
 
@@ -1363,6 +1710,75 @@ function setActiveMenu(tab) {
 
 function filterByCat(cat) {
   showToast('已筛选：' + cat, 'success');
+}
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar-left');
+  const content = document.querySelector('.content-main');
+  const footer = document.querySelector('.footer');
+  sidebar.classList.toggle('collapsed');
+  if (sidebar.classList.contains('collapsed')) {
+    sidebar.style.width = '0';
+    sidebar.style.overflow = 'hidden';
+    content.style.marginLeft = '0';
+    footer.style.marginLeft = '0';
+  } else {
+    sidebar.style.width = '240px';
+    sidebar.style.overflow = '';
+    content.style.marginLeft = '240px';
+    footer.style.marginLeft = '240px';
+  }
+}
+
+function openImagePreview(img, title, cat) {
+  const overlay = document.createElement('div');
+  overlay.className = 'image-preview-overlay';
+  overlay.onclick = function(e) {
+    if (e.target === overlay) closeImagePreview(overlay);
+  };
+  
+  const randomDownloads = Math.floor(Math.random() * 5000) + 1000;
+  const randomFavorites = Math.floor(Math.random() * 2000) + 500;
+  const randomRecommend = Math.floor(Math.random() * 1000) + 200;
+  
+  overlay.innerHTML = `
+    <div class="image-preview-modal">
+      <button class="close-btn" onclick="closeImagePreview(this.parentElement.parentElement)">
+        <i class="fas fa-times"></i>
+      </button>
+      <img src="${img}" alt="${title}">
+      <div class="preview-info">
+        <div class="title-row">
+          <h4>${title}</h4>
+          <span class="cat">${cat}</span>
+        </div>
+        <div class="preview-stats">
+          <div class="stat-item download">
+            <i class="fas fa-download"></i>
+            <span>下载 ${randomDownloads.toLocaleString()} 次</span>
+          </div>
+          <div class="stat-item favorite">
+            <i class="fas fa-heart"></i>
+            <span>收藏 ${randomFavorites.toLocaleString()} 次</span>
+          </div>
+          <div class="stat-item recommend">
+            <i class="fas fa-thumbs-up"></i>
+            <span>推荐 ${randomRecommend.toLocaleString()} 次</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('active'), 10);
+}
+
+function closeImagePreview(overlay) {
+  overlay.classList.remove('active');
+  setTimeout(() => {
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }, 300);
 }
 
 function openModal(id) {
@@ -1391,6 +1807,7 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
 });
 
 renderGrid();
+renderCategoryGrid();
 startSlideTimer();
 document.querySelector('.banner').addEventListener('mouseenter', stopSlideTimer);
 document.querySelector('.banner').addEventListener('mouseleave', startSlideTimer);
