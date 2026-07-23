@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高端家用Micro LED巨幕「待机美学内容体系」创新研究报告</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+:root {
+  --bg: #f5f7fa;
+  --bg-card: #ffffff;
+  --text: #1a1a2e;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --border: #e5e7eb;
+  --accent: #f59e0b;
+  --accent2: #3b82f6;
+  --accent3: #10b981;
+  --accent4: #ec4899;
+  --accent5: #8b5cf6;
+  --accent6: #06b6d4;
+  --accent7: #f97316;
+  --accent8: #ef4444;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans SC', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+/* 头部 */
+.header { text-align: center; padding: 32px 0 20px; }
+.header .badge {
+  display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  color: var(--accent); background: rgba(245,158,11,0.08); padding: 4px 14px;
+  border-radius: 20px; margin-bottom: 12px;
+}
+.header h1 { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; }
+.header h1 .highlight { color: var(--accent); }
+.header p { color: var(--text-muted); font-size: 15px; margin-top: 6px; }
+
+/* Tab导航 */
+.tab-nav {
+  display: flex; gap: 4px; background: var(--bg-card); padding: 6px;
+  border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 24px;
+  overflow-x: auto; flex-wrap: wrap; justify-content: center;
+}
+.tab-nav button {
+  padding: 10px 18px; border-radius: 10px; border: none; background: transparent;
+  color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.25s; white-space: nowrap;
+}
+.tab-nav button:hover { background: rgba(0,0,0,0.03); color: var(--text); }
+.tab-nav button.active {
+  background: var(--text); color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* 页面内容 */
+.tab-page { display: none; animation: fadeIn 0.35s ease; }
+.tab-page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 卡片通用 */
+.card {
+  background: var(--bg-card); border-radius: 16px; padding: 24px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+.card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.card p { font-size: 13.5px; color: var(--text-muted); line-height: 1.8; }
+
+/* 金句 */
+.quote-block {
+  background: var(--bg-card); border-left: 3px solid var(--accent); padding: 16px 20px;
+  border-radius: 0 12px 12px 0; margin: 12px 0; font-size: 14.5px; font-weight: 500;
+  color: var(--text); line-height: 1.8; font-style: italic; box-shadow: var(--shadow);
+}
+
+/* 网格 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+/* 场景卡片 - 彩色 */
+.scene-card {
+  background: var(--bg-card); border-radius: 16px; padding: 22px;
+  box-shadow: var(--shadow); border: 1px solid var(--border);
+  position: relative; overflow: hidden; transition: all 0.3s;
+}
+.scene-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.scene-card .top-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.scene-card .emoji { font-size: 32px; margin-bottom: 10px; }
+.scene-card strong { font-size: 15px; display: block; margin-bottom: 8px; }
+.scene-card p { font-size: 12.5px; color: var(--text-muted); line-height: 1.75; margin: 0; }
+.scene-card .tag-pill {
+  display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 10px;
+  border-radius: 10px; margin-top: 10px;
+}
+
+/* 10大分类卡片 - 强色彩 */
+.cat-card {
+  border-radius: 16px; padding: 22px; position: relative; overflow: hidden;
+  box-shadow: var(--shadow); border: 1px solid var(--border); transition: all 0.3s;
+  min-height: 140px;
+}
+.cat-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+.cat-card .cat-num {
+  position: absolute; top: 10px; right: 16px; font-size: 48px; font-weight: 900;
+  opacity: 0.12; line-height: 1;
+}
+.cat-card .cat-icon { font-size: 28px; margin-bottom: 10px; }
+.cat-card .cat-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.cat-card p { font-size: 12px; color: #374151; line-height: 1.7; margin: 0; }
+.cat-card .cat-meta {
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 11px; color: #4b5563;
+}
+.cat-card .cat-card-img {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 65%;
+  object-fit: cover;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 25%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 75%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 25%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.8) 75%, black 100%);
+}
+.cat-card > *:not(.cat-card-img) { position: relative; z-index: 1; }
+.cat-card .cat-content { max-width: 45%; }
+
+/* 甘特图 */
+.gantt-wrap { background: var(--bg-card); border-radius: 16px; padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.gantt-header { display: flex; justify-content: space-between; margin-bottom: 14px; padding: 0 8px; }
+.gantt-header span { font-size: 11px; color: var(--text-light); font-weight: 600; }
+.gantt-row { display: flex; align-items: center; margin-bottom: 10px; }
+.gantt-label { width: 85px; font-size: 11px; color: var(--text-muted); font-weight: 600; }
+.gantt-track { flex: 1; height: 30px; background: #f3f4f6; border-radius: 8px; position: relative; overflow: hidden; }
+.gantt-bar { position: absolute; height: 100%; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; color: white; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.gantt-bar.p1 { left: 0%; width: 16.6%; background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.gantt-bar.p2 { left: 16.6%; width: 16.6%; background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.gantt-bar.p3 { left: 33.3%; width: 16.6%; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.gantt-bar.p4 { left: 50%; width: 50%; background: linear-gradient(90deg, #10b981, #34d399); }
+
+/* 预算表 */
+.budget-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.budget-table th { background: #f9fafb; color: var(--text); padding: 12px 14px; text-align: left; font-weight: 700; font-size: 12px; border-bottom: 2px solid var(--border); }
+.budget-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 12.5px; }
+.budget-table tr:hover td { background: #fafafa; }
+.budget-table .num { text-align: center; font-weight: 700; color: var(--text); }
+.budget-table .total td { background: #f9fafb !important; color: var(--text); font-weight: 700; font-size: 14px; }
+
+/* 复盘对比 */
+.compare-row { display: flex; gap: 14px; margin-bottom: 10px; }
+.compare-col { flex: 1; border-radius: 14px; padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.compare-col.fail { background: linear-gradient(180deg, #fef2f2 0%, #fff 100%); border-color: #fecaca; }
+.compare-col.win { background: linear-gradient(180deg, #f0fdf4 0%, #fff 100%); border-color: #bbf7d0; }
+.compare-col strong { font-size: 13px; display: block; margin-bottom: 6px; }
+.compare-col.fail strong { color: #dc2626; }
+.compare-col.win strong { color: #059669; }
+.compare-col p { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin: 0; }
+
+/* 问题列表 */
+.issue-item {
+  display: flex; gap: 14px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px; margin-bottom: 10px; box-shadow: var(--shadow); transition: all 0.3s;
+}
+.issue-item:hover { box-shadow: var(--shadow-hover); border-color: #ddd; }
+.issue-item .issue-num {
+  width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #ec4899, #f472b6);
+  color: white; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.issue-item .issue-body strong { font-size: 13.5px; color: var(--text); }
+.issue-item .issue-body p { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin-top: 4px; }
+
+/* 组织图 */
+.org-wrap { text-align: center; padding: 16px; background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.org-boss {
+  display: inline-block; background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white;
+  padding: 10px 28px; border-radius: 10px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 12px rgba(245,158,11,0.3);
+}
+.org-line { width: 2px; height: 18px; background: var(--border); margin: 0 auto; }
+.org-teams { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.org-team {
+  border-radius: 12px; padding: 14px 16px; min-width: 140px;
+  background: #fafafa; border: 1px solid var(--border);
+}
+.org-team strong { display: block; font-size: 12px; margin-bottom: 2px; }
+.org-team span { font-size: 11px; color: var(--text-light); }
+
+/* 标签 */
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; margin-right: 6px;
+}
+.tag-gold { background: rgba(245,158,11,0.1); color: #b45309; }
+.tag-blue { background: rgba(59,130,246,0.1); color: #1d4ed8; }
+.tag-green { background: rgba(16,185,129,0.1); color: #047857; }
+.tag-pink { background: rgba(236,72,153,0.1); color: #be185d; }
+
+/* AI引擎卡片 */
+.ai-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d2b55 100%); color: white;
+  border-radius: 16px; padding: 24px; text-align: center; box-shadow: var(--shadow);
+  margin-top: 16px;
+}
+.ai-card h4 { font-size: 16px; margin-bottom: 8px; }
+.ai-card p { color: rgba(255,255,255,0.7); font-size: 13px; }
+
+/* 响应式 */
+@media (max-width: 900px) {
+  .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+  .header h1 { font-size: 24px; }
+  .tab-nav { justify-content: flex-start; }
+  .compare-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- 头部 -->
+<div class="header">
+  <div class="badge">创新研究报告</div>
+  <h1>高端家用Micro LED巨幕<br><span class="highlight">「待机美学内容体系」</span></h1>
+  <p>让屏幕在"不播放"时，比"播放"时更有价值</p>
+</div>
+
+<!-- Tab导航 -->
+<div class="tab-nav">
+  <button class="active" onclick="showTab(0)">📋 前言</button>
+  <button onclick="showTab(1)">🏠 场景延展</button>
+  <button onclick="showTab(2)">🎨 十大体系</button>
+  <button onclick="showTab(3)">📅 落地排期</button>
+  <button onclick="showTab(4)">💰 预算人力</button>
+  <button onclick="showTab(5)">⚠️ 洲明复盘</button>
+  <button onclick="showTab(6)">🛡️ 成功与风险</button>
+  <button onclick="showTab(7)">🔧 技术攻坚</button>
+</div>
+
+<!-- ==================== 第1页：前言 ==================== -->
+<div class="tab-page active">
+  <div class="card" style="text-align:center; padding: 40px 32px;">
+    <div style="max-width: 720px; margin: 0 auto;">
+      <div style="font-size: 48px; margin-bottom: 20px;">✨</div>
+      <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 24px;">核心定位：从"待机黑屏"到"空间艺术品"</h2>
+
+      <div class="quote-block" style="text-align:left">
+        "待机画面是这套系统唯一 24 小时在场的部分——它决定了客户在没有看电影的时候，是否依然觉得这笔钱花得值。"
+      </div>
+      <div class="quote-block" style="text-align:left; border-color: var(--accent2)">
+        "内容不完全是硬件的免费附赠，而应该分成基础、典藏、专属定制三层，让内容本身也具备持续的商业价值。"
+      </div>
+      <div class="quote-block" style="text-align:left; border-color: var(--accent3)">
+        "用实时天气、生成式演算这类'活的内容'，做出静态装饰画和普通电视永远做不到的体验，这才是真正的技术壁垒。"
+      </div>
+
+      <div style="display:flex; gap: 32px; justify-content: center; margin-top: 32px; flex-wrap: wrap;">
+        <div style="text-align:center">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent)">9</div>
+          <div style="font-size: 12px; color: var(--text-muted)">核心应用场景</div>
+        </div>
+        <div style="width: 1px; background: var(--border)"></div>
+        <div style="text-align:center">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent2)">10</div>
+          <div style="font-size: 12px; color: var(--text-muted)">内容分类体系</div>
+        </div>
+        <div style="width: 1px; background: var(--border)"></div>
+        <div style="text-align:center">
+          <div style="font-size: 32px; font-weight: 800; color: var(--accent3)">3</div>
+          <div style="font-size: 12px; color: var(--text-muted)">级内容分层</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 第2页：用户场景延展 ==================== -->
+<div class="tab-page">
+  <div style="margin-bottom: 8px;">
+    <span class="tag tag-gold">板块 A</span>
+    <strong style="font-size: 16px; margin-left: 6px">高端私宅消费场景（C端 · 核心盈利赛道）</strong>
+  </div>
+  <div class="grid3" style="margin-bottom: 20px;">
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div>
+      <div class="emoji">🎬</div>
+      <strong>别墅私人影音室</strong>
+      <p>地下室专属观影空间，搭载裸眼 3D 窗景、数字画廊、柔和天光动态，低蓝光长效待机，改善地下室昏暗压抑问题。</p>
+      <span class="tag-pill" style="background: rgba(59,130,246,0.1); color: #1d4ed8;">20-35万</span>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
+      <div class="emoji">🛋️</div>
+      <strong>大宅轻奢客厅</strong>
+      <p>全屋待客核心空间，艺术画作、石材肌理、人文风光静态画面，昼夜自动调光，适配各类家装，熄屏即高端挂画。</p>
+      <span class="tag-pill" style="background: rgba(139,92,246,0.1); color: #6d28d9;">20-35万</span>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #10b981, #34d399);"></div>
+      <div class="emoji">👨‍👩‍👧</div>
+      <strong>家庭互动亲子空间</strong>
+      <p>适配有孩家庭，内置家庭相册、节气国风、低饱和护眼画面，兼顾科普陪伴，缓解儿童沉迷屏幕问题。</p>
+      <span class="tag-pill" style="background: rgba(16,185,129,0.1); color: #047857;">15-25万</span>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div>
+      <div class="emoji">🧘</div>
+      <strong>瑜伽冥想疗愈空间</strong>
+      <p>私宅康养区域，薄雾、静水、星空、曼陀罗舒缓慢动态，无强光刺激，适合瑜伽、独处放松。</p>
+      <span class="tag-pill" style="background: rgba(6,182,212,0.1); color: #0e7490;">18-28万</span>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+      <div class="emoji">🍵</div>
+      <strong>中式茶室 / 禅意会客区</strong>
+      <p>中式别墅品茶雅集空间，水墨山水、园林窗景、节气国风内容，淡雅低饱和光影，适配小型私谈。</p>
+      <span class="tag-pill" style="background: rgba(245,158,11,0.1); color: #b45309;">18-28万</span>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #ec4899, #f472b6);"></div>
+      <div class="emoji">🎉</div>
+      <strong>私宅派对娱乐房</strong>
+      <p>家庭聚会专用，音乐联动频谱光影、节日霓虹氛围素材，兼顾观影、社交、节庆打卡。</p>
+      <span class="tag-pill" style="background: rgba(236,72,153,0.1); color: #be185d;">20-30万</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 8px;">
+    <span class="tag tag-blue">板块 B</span>
+    <strong style="font-size: 16px; margin-left: 6px">商业商用全域场景（B端 · 批量采购+渠道招商）</strong>
+  </div>
+  <div class="grid2">
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #64748b, #94a3b8);"></div>
+      <div class="emoji">🏢</div>
+      <strong>企业商务接待空间</strong>
+      <p>私人会所、高管接待厅、企业前台、会议室。企业 IP 定制、数据看板、简约商务几何光影，克制不抢宾客焦点。</p>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #0ea5e9, #38bdf8);"></div>
+      <div class="emoji">🏨</div>
+      <strong>高端酒店 / 民宿文旅空间</strong>
+      <p>客房套房、大堂公区。城市风景虚拟窗景、打卡艺术画面、欢迎定制内容，打造差异化竞争力。</p>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #f97316, #fb923c);"></div>
+      <div class="emoji">🏬</div>
+      <strong>渠道招商展示空间</strong>
+      <p>加盟商样板间、线下门店。全品类内容轮播、天气联动演示，快速突出产品差异化，促进成交转化。</p>
+    </div>
+    <div class="scene-card">
+      <div class="top-bar" style="background: linear-gradient(90deg, #14b8a6, #2dd4bf);"></div>
+      <div class="emoji">🏛️</div>
+      <strong>商用公共 / 专业领域</strong>
+      <p>智慧教育教室、商业零售橱窗展厅、政企指挥数据中心。适配教学互动、品牌展示、节能数据待机需求。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 第3页：十大体系 ==================== -->
+<div class="tab-page">
+  <div class="grid2">
+    <div class="cat-card" style="background: linear-gradient(180deg, #fbbf24 0%, #fef9c3 100%); border-color: #f59e0b;">
+      <div class="cat-num">01</div>
+      <div class="cat-content">
+        <div class="cat-icon">🪨</div>
+        <div class="cat-title">仿真肌理</div>
+        <p>大理石、水墨、金属等低饱和底纹，全场景通用基底素材</p>
+        <div class="cat-meta">全场景通用 · 出厂免费标配 · 弱化电子屏突兀感</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q1.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #60a5fa 0%, #dbeafe 100%); border-color: #3b82f6;">
+      <div class="cat-num">02</div>
+      <div class="cat-content">
+        <div class="cat-icon">🖼️</div>
+        <div class="cat-title">数字画廊</div>
+        <p>名画、原创艺术、裸眼 3D 作品，对标高端装饰挂画</p>
+        <div class="cat-meta">支撑 20-30 万产品溢价 · 对标高端装饰挂画</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q2.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #f472b6 0%, #fce7f3 100%); border-color: #ec4899;">
+      <div class="cat-num">03</div>
+      <div class="cat-content">
+        <div class="cat-icon">🌿</div>
+        <div class="cat-title">四季风景</div>
+        <p>天光云雾山林，四季实景动态，全天候柔和自然氛围</p>
+        <div class="cat-meta">核心差异化卖点 · 全天候柔和低动态不伤眼</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q3.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #a78bfa 0%, #e0e7ff 100%); border-color: #8b5cf6;">
+      <div class="cat-num">04</div>
+      <div class="cat-content">
+        <div class="cat-icon">🔷</div>
+        <div class="cat-title">流光艺术</div>
+        <p>粒子渐变、纯粹光影，极简高级商务抽象视觉</p>
+        <div class="cat-meta">设计师主推百搭内容 · 商务克制高级</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q4.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #34d399 0%, #dcfce7 100%); border-color: #10b981;">
+      <div class="cat-num">05</div>
+      <div class="cat-content">
+        <div class="cat-icon">👨‍👩‍👧</div>
+        <div class="cat-title">亲子互动</div>
+        <p>家庭相册、儿童动画，柔和居家温情氛围素材</p>
+        <div class="cat-meta">打动家庭高净值客户 · 弱化科技冰冷感</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q5.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #fde047 0%, #fef9c3 100%); border-color: #eab308;">
+      <div class="cat-num">06</div>
+      <div class="cat-content">
+        <div class="cat-icon">🎋</div>
+        <div class="cat-title">节日庆典</div>
+        <p>二十四节气、法定假日、年会生日全套节庆素材</p>
+        <div class="cat-meta">全部家用+商用场景 · 可单独售卖年度节日会员素材包</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q6.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #c4b5fd 0%, #ede9fe 100%); border-color: #a855f7;">
+      <div class="cat-num">07</div>
+      <div class="cat-content">
+        <div class="cat-icon">👤</div>
+        <div class="cat-title">私属定制</div>
+        <p>LOGO 演绎、家族徽标、企业数据可视化专属服务</p>
+        <div class="cat-meta">顶配机型高利润增值服务 · 打造独一无二私属身份标识</div>
+      </div>
+      <img class="cat-card-img" src="LEDMAN/q8.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #22d3ee 0%, #cffafe 100%); border-color: #06b6d4;">
+      <div class="cat-num">08</div>
+      <div class="cat-content">
+        <div class="cat-icon">🪟</div>
+        <div class="cat-title">虚拟窗景</div>
+        <p>海岛庭院城市 3D 窗景，改善地下室无窗压抑缺陷</p>
+        <div class="cat-meta">解决地下室压抑痛点 · 沉浸式观景体验</div>
+      </div>
+      <img class="cat-card-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q7.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #fb923c 0%, #ffedd5 100%); border-color: #f97316;">
+      <div class="cat-num">09</div>
+      <div class="cat-content">
+        <div class="cat-icon">🧘</div>
+        <div class="cat-title">冥想疗愈</div>
+        <p>星空柔光、呼吸引导，低亮度舒缓冥想氛围内容</p>
+        <div class="cat-meta">针对高净值人群康养需求 · 功能性独家内容</div>
+      </div>
+      <img class="cat-card-img" src="LEDMAN/q9.png" alt="">
+    </div>
+    <div class="cat-card" style="background: linear-gradient(180deg, #f87171 0%, #fee2e2 100%); border-color: #ef4444;">
+      <div class="cat-num">10</div>
+      <div class="cat-content">
+        <div class="cat-icon">🎉</div>
+        <div class="cat-title">派对娱乐</div>
+        <p>音乐光影、互动小游戏，宴会年会活动动态素材</p>
+        <div class="cat-meta">年轻业主、商业活动核心吸睛内容</div>
+      </div>
+      <img class="cat-card-img" src="LEDMAN/q10.png" alt="">
+    </div>
+  </div>
+
+  <div class="ai-card">
+    <h4>🤖 AI 智能场景调度引擎</h4>
+    <p>自动按昼夜、季节、实时天气、日历节日、空间场景智能切换待机内容<br>
+    让每一块屏幕都"活"起来，越用越懂你</p>
+  </div>
+</div>
+
+<!-- ==================== 第4页：落地执行 ==================== -->
+<div class="tab-page">
+  <div class="card" style="margin-bottom: 16px;">
+    <h3>📅 12个月项目里程碑路线图</h3>
+    <p style="margin-bottom: 16px">分四阶段推进：验证 → 建设 → 赋能 → 规模化</p>
+    <div class="gantt-wrap" style="box-shadow: none; border: none; padding: 0;">
+      <div class="gantt-header">
+        <span>Month 1-2</span><span>Month 3-4</span><span>Month 5-6</span><span>Month 7-9</span><span>Month 10-12</span>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">Phase 1</div>
+        <div class="gantt-track"><div class="gantt-bar p1">MVP验证 · 内容制作 · 展厅适配</div></div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">Phase 2</div>
+        <div class="gantt-track"><div class="gantt-bar p2">CMS开发 · 盒子固件 · 内容库建设</div></div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">Phase 3</div>
+        <div class="gantt-track"><div class="gantt-bar p3">加盟商培训 · 销售工具包 · 首批试点</div></div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">Phase 4</div>
+        <div class="gantt-track"><div class="gantt-bar p4">全国推广 · 生态搭建 · 持续迭代</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3><span style="font-size: 20px;">🎯</span> Phase 1 · MVP验证（1-2月）</h3>
+      <p>精选3-5个核心场景制作Demo内容，适配公司现有展厅。邀请目标客户与加盟商体验，收集反馈验证方向。</p>
+    </div>
+    <div class="card">
+      <h3><span style="font-size: 20px;">⚙️</span> Phase 2 · 系统建设（3-4月）</h3>
+      <p>开发云端CMS管理后台，内容盒子固件与OTA升级能力。建立内容分级体系，内容库达到200+条。</p>
+    </div>
+    <div class="card">
+      <h3><span style="font-size: 20px;">🤝</span> Phase 3 · 渠道赋能（5-6月）</h3>
+      <p>为加盟商提供"销售弹药包"：iPad演示App+展厅视频+话术手册。培训全国加盟商，首批试点5-10城。</p>
+    </div>
+    <div class="card">
+      <h3><span style="font-size: 20px;">🚀</span> Phase 4 · 规模化（7-12月）</h3>
+      <p>全国推广，引入UGC创作者生态。接入智能家居协议。探索B端酒店/民宿批量采购，形成内容生态闭环。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 第5页：预算人力 ==================== -->
+<div class="tab-page">
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <h3>👥 建议组织架构</h3>
+        <div class="org-wrap" style="margin-top: 10px;">
+          <div class="org-boss">内容系统负责人<br><span style="font-size: 11px; font-weight: 400">（向董事长汇报）</span></div>
+          <div class="org-line"></div>
+          <div class="org-teams">
+            <div class="org-team" style="border-color: rgba(59,130,246,0.3)">
+              <strong style="color: #2563eb">内容创作组</strong>
+              <span>3-4人 · 视频/设计/AI生成</span>
+            </div>
+            <div class="org-team" style="border-color: rgba(16,185,129,0.3)">
+              <strong style="color: #059669">产品技术组</strong>
+              <span>2-3人 · CMS/盒子/运维</span>
+            </div>
+            <div class="org-team" style="border-color: rgba(139,92,246,0.3)">
+              <strong style="color: #7c3aed">渠道赋能组</strong>
+              <span>2人 · 培训/物料/推广</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>💰 首年预算分解</h3>
+        <p style="margin-bottom: 12px; font-size: 12px; color: var(--text-light)">项目初期以免费基础内容为主，聚焦体系建设与渠道赋能</p>
+        <table class="budget-table">
+          <thead><tr><th>科目</th><th style="text-align:center">金额</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">人力成本</td><td class="num">140万</td><td>7人团队全年薪资（不含商务组）</td></tr>
+            <tr><td style="font-weight:600">内容制作</td><td class="num">60万</td><td>首批200条精品内容（外包+AI生成）</td></tr>
+            <tr><td style="font-weight:600">技术开发</td><td class="num">50万</td><td>CMS系统+盒子固件开发（可部分外包）</td></tr>
+            <tr><td style="font-weight:600">硬件采购</td><td class="num">25万</td><td>内容盒子样机+测试服务器</td></tr>
+            <tr><td style="font-weight:600">市场推广</td><td class="num">30万</td><td>销售工具包、宣传视频、展会活动</td></tr>
+            <tr><td style="font-weight:600">运营杂费</td><td class="num">15万</td><td>办公、云服务器、CDN、差旅</td></tr>
+            <tr class="total"><td>首年总预算</td><td class="num">320万</td><td>约320万人民币</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px; background: linear-gradient(135deg, #f0fdf4 0%, #fff 100%); border-color: #bbf7d0;">
+    <h3><span style="font-size: 20px;">💡</span> 项目初期策略：基础内容全免费</h3>
+    <p>项目启动阶段，全部<strong>基础内容免费标配</strong>（静态肌理、自然环境、数字画廊等），目标是用优质内容<strong>提升产品溢价和成交转化率</strong>，而非直接收费。待内容生态成熟后，再逐步开放高级订阅与定制服务。初期核心KPI是<strong>用户满意度</strong>和<strong>加盟商成交率</strong>，而非内容收入。</p>
+  </div>
+</div>
+
+<!-- ==================== 第6页：洲明复盘 ==================== -->
+<div class="tab-page">
+  <div style="margin-bottom: 16px;">
+    <span class="tag" style="background: rgba(220,38,38,0.1); color: #dc2626;">前车之鉴</span>
+    <strong style="font-size: 16px; margin-left: 6px">洲明内容盒子项目为什么没做成？</strong>
+  </div>
+  <div class="grid2" style="margin-bottom: 16px;">
+    <div class="compare-col fail">
+      <strong>❌ 没有唯一负责人（Owner）</strong>
+      <p>内容、硬件、销售、市场各自为政，没有人对最终结果负责。需求来自四面八方，优先级混乱，项目沦为"无人认领的孤儿"。</p>
+    </div>
+    <div class="compare-col fail">
+      <strong>❌ 销售端无动力推广</strong>
+      <p>销售KPI只考核硬件销售额，内容盒子是"附加项"而非"必选项"。销售不懂内容价值，客户更不懂，自然卖不动。</p>
+    </div>
+    <div class="compare-col fail">
+      <strong>❌ 内容更新机制缺失</strong>
+      <p>盒子出厂预装内容后，再无更新。用户新鲜感3个月消失，盒子沦为"电子垃圾"。没有云端CMS，内容生命周期=0。</p>
+    </div>
+    <div class="compare-col fail">
+      <strong>❌ 没有用户反馈闭环</strong>
+      <p>不知道用户用了什么、喜欢什么、抱怨什么。产品迭代失去方向，内容团队做的东西与市场脱节。</p>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 16px;">
+    <span class="tag" style="background: rgba(16,185,129,0.1); color: #059669;">反脆弱策略</span>
+    <strong style="font-size: 16px; margin-left: 6px">如何避坑？</strong>
+  </div>
+  <div class="grid2">
+    <div class="compare-col win">
+      <strong>✅ 设立"内容系统事业部"</strong>
+      <p>内容系统负责人直接向董事长汇报，拥有跨部门协调权。硬件、软件、内容、销售全部对齐。</p>
+    </div>
+    <div class="compare-col win">
+      <strong>✅ 销售激励绑定内容</strong>
+      <p>内容盒子计入销售KPI，且提成比例高于纯硬件。提供"销售弹药包"：iPad演示+展厅视频+话术手册。</p>
+    </div>
+    <div class="compare-col win">
+      <strong>✅ 云端CMS + OTA强制更新</strong>
+      <p>内容每月自动更新，用户开机即见新内容。CMS后台可查看播放数据，用数据驱动内容迭代。</p>
+    </div>
+    <div class="compare-col win">
+      <strong>✅ 建立种子用户社群</strong>
+      <p>首批100个种子用户拉入企业微信群，每周收集反馈，每月举办线上内容品鉴会，用户参与内容共创。</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 8px; background: linear-gradient(135deg, #fffbeb 0%, #fff 100%); border-color: #fde68a;">
+    <h3><span style="font-size: 20px;">⚡</span> 核心执行原则：三要三不要</h3>
+    <div class="grid2" style="margin-top: 10px;">
+      <div>
+        <div style="font-size: 12px; color: #059669; font-weight: 700; margin-bottom: 8px;">✅ 三要</div>
+        <p style="font-size: 12.5px; line-height: 2; margin: 0; color: var(--text-muted)">
+          1. <strong style="color: var(--text)">要有一个Owner</strong>——对结果负全责，有预算权、人事权、决策权<br>
+          2. <strong style="color: var(--text)">要先做展厅验证</strong>——利用公司现有展厅，快速做出Demo让董事长和加盟商亲眼看到<br>
+          3. <strong style="color: var(--text)">要绑定销售利益</strong>——内容系统卖得好，销售提成高，自然有人推
+        </p>
+      </div>
+      <div>
+        <div style="font-size: 12px; color: #dc2626; font-weight: 700; margin-bottom: 8px;">❌ 三不要</div>
+        <p style="font-size: 12.5px; line-height: 2; margin: 0; color: var(--text-muted)">
+          1. <strong style="color: var(--text)">不要闭门造车</strong>——MVP快速验证，不要等产品"完美"再发布<br>
+          2. <strong style="color: var(--text)">不要只做内容不做系统</strong>——没有CMS和更新机制，内容就是死内容<br>
+          3. <strong style="color: var(--text)">不要忽视加盟商培训</strong>——加盟商不懂 = 客户不懂 = 卖不动
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 第7页：成功与风险 ==================== -->
+<div class="tab-page">
+  <div class="grid2">
+    <div>
+      <h3 style="font-size: 16px; margin-bottom: 14px; color: #059669;">🎯 关键成功要素（CSF）</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="card" style="border-left: 3px solid #10b981;">
+          <strong style="font-size: 13px;">1. 董事长站台</strong>
+          <p style="margin-top: 6px;">项目启动会上董事长亲自宣布，赋予跨部门协调权威，确保资源倾斜。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #10b981;">
+          <strong style="font-size: 13px;">2. 展厅展示</strong>
+          <p style="margin-top: 6px;">利用公司现有展厅做沉浸式内容适配，加盟商培训必来现场感受，眼见为实。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #10b981;">
+          <strong style="font-size: 13px;">3. 销售话术标准化</strong>
+          <p style="margin-top: 6px;">制作3分钟演示视频+FAQ手册，让销售"傻瓜式"推广，降低认知门槛。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #10b981;">
+          <strong style="font-size: 13px;">4. 数据驱动迭代</strong>
+          <p style="margin-top: 6px;">CMS后台埋点，每月出内容使用报告，用数据指导内容方向，拒绝拍脑袋。</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size: 16px; margin-bottom: 14px; color: #dc2626;">🛡️ 风险预警与应对</h3>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="card" style="border-left: 3px solid #ef4444;">
+          <strong style="font-size: 13px;">风险1：内容版权纠纷</strong>
+          <p style="margin-top: 6px;"><strong style="color: #059669;">应对：</strong>全部内容原创或购买正版授权，建立版权审核SOP，与博物馆/艺术家签约。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #ef4444;">
+          <strong style="font-size: 13px;">风险2：技术团队流失</strong>
+          <p style="margin-top: 6px;"><strong style="color: #059669;">应对：</strong>核心系统外包给稳定供应商，内部保留产品/运营能力，降低人员依赖。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #ef4444;">
+          <strong style="font-size: 13px;">风险3：加盟商不配合</strong>
+          <p style="margin-top: 6px;"><strong style="color: #059669;">应对：</strong>内容盒子作为"赠品"而非"选配"，降低推广阻力，让销售无压力。</p>
+        </div>
+        <div class="card" style="border-left: 3px solid #ef4444;">
+          <strong style="font-size: 13px;">风险4：竞品快速跟进</strong>
+          <p style="margin-top: 6px;"><strong style="color: #059669;">应对：</strong>先跑通模式建立壁垒，AI个性化+内容生态是技术护城河，难以复制。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 第8页：技术攻坚 ==================== -->
+<div class="tab-page">
+  <div style="margin-bottom: 16px;">
+    <span class="tag" style="background: rgba(236,72,153,0.1); color: #be185d;">技术攻坚</span>
+    <strong style="font-size: 16px; margin-left: 6px">5大核心技术短板（优先级排序）</strong>
+  </div>
+
+  <div class="issue-item">
+    <div class="issue-num">1</div>
+    <div class="issue-body">
+      <strong>HDMI 通道闲置自动切回本机艺术待机</strong>
+      <p>当前逻辑：外接盒子观影暂停后，屏幕只会黑屏/提示无信号，不会自动跳转本机待机画面。<strong style="color: #dc2626;">这是最大短板</strong>——90%使用时间停留在HDMI通道，自研高端待机素材完全无法自动展示，产品差异化卖点无法落地。</p>
+      <div style="margin-top: 8px">
+        <span class="tag" style="background: rgba(245,158,11,0.1); color: #b45309;">P0 · 最高优先级</span>
+        <span style="font-size: 11px; color: var(--text-light); margin-left: 8px;">需硬件团队配合开发信号检测+自动切换逻辑</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="issue-item">
+    <div class="issue-num">2</div>
+    <div class="issue-body">
+      <strong>双系统图层叠加待机功能</strong>
+      <p>不能在播放盒子影片时，上层叠加光影/纹理待机画面；盒子暂停时只能二选一：保留影片画面或切全屏屏保，缺少高端旗舰独有的氛围感叠加体验。</p>
+      <div style="margin-top: 8px">
+        <span class="tag" style="background: rgba(245,158,11,0.1); color: #b45309;">P1 · 高优先级</span>
+        <span style="font-size: 11px; color: var(--text-light); margin-left: 8px;">需底层图形渲染能力支持半透明叠加</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="issue-item">
+    <div class="issue-num">3</div>
+    <div class="issue-body">
+      <strong>智能联动自动化体系</strong>
+      <p>不支持根据室外天气、昼夜时段自动切换待机内容；无四季/节日素材自动轮换机制；不能区分家装风格自动匹配内容包。以上全部是空白，只有基础固定屏保循环。</p>
+      <div style="margin-top: 8px">
+        <span class="tag" style="background: rgba(59,130,246,0.1); color: #1d4ed8;">P1 · 高优先级</span>
+        <span style="font-size: 11px; color: var(--text-light); margin-left: 8px;">需接入天气API+智能家居协议+用户画像系统</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="issue-item">
+    <div class="issue-num">4</div>
+    <div class="issue-body">
+      <strong>分层商业化素材运营配套系统</strong>
+      <p>现有屏保只是出厂内置少量免费素材，没有搭建：①免费标配素材库、②订阅更新付费素材、③私人IP/裸眼3D高端定制素材的分级管理、付费推送、本地更新整套运营体系。</p>
+      <div style="margin-top: 8px">
+        <span class="tag" style="background: rgba(59,130,246,0.1); color: #1d4ed8;">P2 · 中优先级</span>
+        <span style="font-size: 11px; color: var(--text-light); margin-left: 8px;">需CMS后台+支付系统+内容分发CDN</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="issue-item">
+    <div class="issue-num">5</div>
+    <div class="issue-body">
+      <strong>加盟商展厅专属锁定模式</strong>
+      <p>线下门店无法设置"3分钟无操作强制切待机"，销售演示需要频繁手动切换，很难向客户直观展示"大屏不开机也是艺术品"的核心卖点。</p>
+      <div style="margin-top: 8px">
+        <span class="tag" style="background: rgba(16,185,129,0.1); color: #047857;">P2 · 中优先级</span>
+        <span style="font-size: 11px; color: var(--text-light); margin-left: 8px;">需固件层增加展厅模式+定时器逻辑</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin: 20px 0 16px;">
+    <span class="tag" style="background: rgba(59,130,246,0.1); color: #1d4ed8;">内容规范</span>
+    <strong style="font-size: 16px; margin-left: 6px">6项内容制作标准待建立</strong>
+  </div>
+  <div class="grid2">
+    <div class="card" style="border-left: 3px solid #3b82f6;">
+      <strong style="font-size: 13px;">分辨率自适应技术标准</strong>
+      <p style="margin-top: 6px;">建立从P0.4 Micro LED到P2.0常规LED的分层适配规范。明确最小字号、安全区域、色域标准（Rec.2020）、HDR亮度映射规则，确保同一条内容在不同规格屏幕上都有最佳表现。</p>
+    </div>
+    <div class="card" style="border-left: 3px solid #3b82f6;">
+      <strong style="font-size: 13px;">内容评审与验收机制</strong>
+      <p style="margin-top: 6px;">建立10大分类的审美与技术双重验收标准：①视觉舒适度（无频闪/低蓝光时段）②品牌调性一致性 ③分辨率与码率达标 ④版权合规审查。每批内容上线前必须通过评审委员会签字。</p>
+    </div>
+    <div class="card" style="border-left: 3px solid #ef4444;">
+      <strong style="font-size: 13px;">分区亮度 & 烧屏防护标准</strong>
+      <p style="margin-top: 6px;"><strong>大屏核心痛点防护：</strong>①静态Logo、固定文字最大停留时长限制；②明暗像素占比阈值监测；③艺术待机低亮度夜间模式亮度压制曲线，精准适配夜间家居低光环境，防止光污染与视觉疲劳。</p>
+    </div>
+    <div class="card" style="border-left: 3px solid #10b981;">
+      <strong style="font-size: 13px;">色彩分场景映射规范</strong>
+      <p style="margin-top: 6px;"><strong>多场景智能适配：</strong>①白天高光客厅、夜间暗光卧室、展厅高亮橱窗三套色彩自动偏移规则；②四季/节日素材专属色阶偏移标准，联动智能环境感知实现场景化视觉体验。</p>
+    </div>
+    <div class="card" style="border-left: 3px solid #8b5cf6;">
+      <strong style="font-size: 13px;">3D素材分层输出标准</strong>
+      <p style="margin-top: 6px;"><strong>立体视觉安全规范：</strong>①近中远景景深分层阈值；②视差安全区间控制；③大屏边缘防眩晕规范，确保裸眼3D内容在超大屏幕上的观看舒适度与安全性。</p>
+    </div>
+    <div class="card" style="border-left: 3px solid #f59e0b;">
+      <strong style="font-size: 13px;">媒体封装统一标准</strong>
+      <p style="margin-top: 6px;"><strong>全格式兼容规范：</strong>①视频编码格式统一标准；②透明通道素材格式规范；③静态图无损压缩上限；④循环素材首尾无缝衔接规范，确保内容播放流畅无卡顿。</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px; background: linear-gradient(135deg, #fef3c7 0%, #fff 100%); border-color: #fde68a; text-align: center;">
+    <h3 style="justify-content: center;"><span style="font-size: 20px;">🎯</span> 总结：项目启动后的首要行动项</h3>
+    <p style="margin-top: 10px; font-size: 14px;">
+      <strong style="color: #b45309;">第一步</strong>：与硬件团队确认HDMI信号检测+自动切换的技术可行性 → 
+      <strong style="color: #1d4ed8;">第二步</strong>：利用公司现有展厅快速搭建Demo验证内容方向 → 
+      <strong style="color: #047857;">第三步</strong>：同步启动CMS系统开发与内容制作 → 
+      <strong style="color: #be185d;">第四步</strong>：首批加盟商试点，收集真实反馈迭代
+    </p>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showTab(n) {
+  const pages = document.querySelectorAll('.tab-page');
+  const buttons = document.querySelectorAll('.tab-nav button');
+  pages.forEach((p, i) => p.classList.toggle('active', i === n));
+  buttons.forEach((b, i) => b.classList.toggle('active', i === n));
+}
+</script>
+</body>
+</html>
