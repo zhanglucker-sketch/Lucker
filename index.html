@@ -417,7 +417,7 @@ function render(){
  <span style="position:relative"><button id="bl">🔔 预警${al.length?` <b class="red">${al.length}</b>`:''}</button><div class="cd al" id="alp" ${alOpen?'':'hidden'}>${al.length?al.map(alCard).join(''):'<div class="k">暂无临近截止的任务 ✅</div>'}<button class="sm" id="st" style="margin-top:8px">⚙ 提醒设置</button></div></span>
  <button class="pr" id="add">＋ 新建任务卡</button></header>
  <main>${SETTINGS_OK?'':'<div class="warn">⚠ 数据库缺少 settings 表，设计师/部门等设置与提醒时间目前只保存在本设备，无法全组共享。请在 Supabase → SQL Editor 执行页面源码顶部注释里的建表语句。</div>'}${STAGES_OK?'':'<div class="warn">⚠ 数据库 tasks 表缺少 stages 字段，阶段时间暂无法云端保存。请在 Supabase → SQL Editor 执行：<br><b>alter table tasks add column if not exists stages jsonb default \'[]\'::jsonb;</b></div>'}${EVENTS_OK?'':`<div class="warn">⚠ task_events 表读取失败，「新增项目 / 提交审核」次数无法统计。数据库返回：<b>${esc(EV_ERR||'未知错误')}</b><br>请在 Supabase → SQL Editor 执行页面源码顶部注释里的建表 + 授权语句。</div>`}
- <div class="row">${[['day','今日'],['week','本周'],['month','月度']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
+ <div class="row">${[['day','今日'],['week','本周'],['month','月度'],['quarter','季度'],['year','年度'],['all','全部']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
  <button class="sm" id="pv">◀</button><b>${lab()}</b><button class="sm" id="nx">▶</button><span class="sp"></span>
  ${L?`<select id="who"><option value="">全部设计师</option>${DEF.de.map(d=>`<option ${P.who==d?'selected':''}>${esc(d)}</option>`).join('')}</select>`:''}
  <button class="sm" id="csv">⬇ 导出CSV</button><button class="sm" id="cp">📋 复制汇报</button></div>
@@ -450,7 +450,7 @@ function card(t){
 function bind(){const A=$('#appMain');
  A.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{P.m=b.dataset.m;P.off=0;P.pg=0;render()});
  const g=(i,f)=>{const e=$(i);if(e)e.onclick=f};
- g('#pv',()=>{P.off--;P.pg=0;render()});g('#nx',()=>{P.off++;P.pg=0;render()});
+ g('#pv',()=>{if(P.m=='all')return;P.off--;P.pg=0;render()});g('#nx',()=>{if(P.m=='all')return;P.off++;P.pg=0;render()});
  g('#add',()=>form());g('#st',()=>setf('al'));g('#sg',()=>setf('tp'));
  g('#bl',()=>{$('#alp').hidden=!$('#alp').hidden});
  const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;P.pg=0;render()};
