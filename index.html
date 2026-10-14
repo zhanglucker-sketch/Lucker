@@ -1,1816 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>雷曼内容云 | LEDMAN Content Cloud</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>内容创意组工作看板</title>
+<!-- supabase sdk -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
-
-:root {
-  --bg: #0b0f1a;
-  --bg-card: rgba(255,255,255,0.04);
-  --bg-card-hover: rgba(255,255,255,0.07);
-  --bg-sidebar: #0d1220;
-  --border: rgba(255,255,255,0.06);
-  --border-light: rgba(255,255,255,0.1);
-  --text: #e8eaf6;
-  --text-muted: #8b92a8;
-  --text-dim: #5a6078;
-  --primary: #2563eb;
-  --primary-light: #3b82f6;
-  --primary-glow: rgba(37,99,235,0.25);
-  --accent: #f59e0b;
-  --accent-glow: rgba(245,158,11,0.3);
-  --success: #10b981;
-  --danger: #ef4444;
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Inter', 'Noto Sans SC', -apple-system, sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh;
-  overflow-x: hidden;
-}
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-
-/* ===== 顶部导航 ===== */
-.top-nav {
-  position: fixed; top: 0; left: 0; right: 0; height: 60px;
-  background: rgba(11,15,26,0.85); backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border); z-index: 1000;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px;
-}
-.top-nav .nav-left {
-  display: flex; align-items: center; gap: 16px;
-}
-.top-nav .brand {
-  display: flex; align-items: flex-end; gap: 8px;
-}
-.top-nav .brand-logo {
-  height: 24px; width: auto; display: block;
-}
-.top-nav .brand-name {
-  font-size: 20px; font-weight: 700; color: white; letter-spacing: 2px; transform: translateY(2px);
-}
-
-.top-nav .nav-center {
-  display: flex; align-items: center; gap: 4px;
-}
-.top-nav .nav-center a {
-  padding: 8px 16px; border-radius: 8px; color: var(--text-muted);
-  font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; cursor: pointer;
-}
-.top-nav .nav-center a:hover, .top-nav .nav-center a.active {
-  color: var(--text); background: var(--bg-card);
-}
-.top-nav .nav-center a.active {
-  position: relative;
-}
-.top-nav .nav-center a.active::after {
-  content: ''; position: absolute; bottom: -2px; left: 20%; right: 20%;
-  height: 2px; background: var(--primary); border-radius: 1px;
-}
-
-.top-nav .nav-right {
-  display: flex; align-items: center; gap: 14px;
-}
-.top-nav .search-box {
-  position: relative;
-}
-.top-nav .search-box input {
-  width: 220px; padding: 8px 12px 8px 32px; border-radius: 10px;
-  border: 1px solid var(--border); background: var(--bg-card);
-  color: var(--text); font-size: 12px; outline: none; transition: all 0.3s;
-}
-.top-nav .search-box input::placeholder { color: var(--text-dim); }
-.top-nav .search-box input:focus {
-  border-color: var(--primary-light); width: 280px;
-  box-shadow: 0 0 0 3px var(--primary-glow);
-}
-.top-nav .search-box i {
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  color: var(--text-dim); font-size: 12px;
-}
-.top-nav .icon-btn {
-  width: 36px; height: 36px; border-radius: 10px; border: none;
-  background: transparent; color: var(--text-muted); font-size: 15px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; position: relative;
-}
-.top-nav .icon-btn:hover { background: var(--bg-card); color: var(--text); }
-.top-nav .icon-btn .dot {
-  position: absolute; top: 6px; right: 6px; width: 7px; height: 7px;
-  background: var(--danger); border-radius: 50%; border: 2px solid var(--bg);
-}
-.top-nav .user-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  color: white;
-  cursor: pointer;
-  border: 2px solid var(--border-light);
-  overflow: hidden;
-}
-.top-nav .user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ===== 主布局 ===== */
-.main-layout {
-  display: flex; margin-top: 60px; min-height: calc(100vh - 60px);
-}
-
-/* ===== 左侧边栏 ===== */
-.sidebar-left {
-  width: 240px; background: var(--bg-sidebar);
-  border-right: 1px solid var(--border); flex-shrink: 0;
-  display: flex; flex-direction: column; position: fixed;
-  top: 60px; bottom: 0; left: 0; overflow-y: auto;
-}
-.sidebar-left .user-profile {
-  padding: 20px; display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-left .user-profile .avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: white;
-  flex-shrink: 0;
-  overflow: hidden;
-  border: 2px solid var(--border-light);
-}
-.sidebar-left .user-profile .avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.sidebar-left .user-profile .info {
-  flex: 1; min-width: 0;
-}
-.sidebar-left .user-profile .info .name {
-  font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px;
-  display: flex; align-items: center; gap: 6px;
-}
-.sidebar-left .user-profile .info .name .vip-badge {
-  font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 4px;
-  background: linear-gradient(135deg, var(--accent), #fbbf24); color: #1a1a2e;
-}
-.sidebar-left .user-profile .info .expire {
-  font-size: 11px; color: var(--text-dim);
-}
-
-.sidebar-menu {
-  padding: 12px 0; flex: 1;
-}
-.sidebar-menu .menu-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 20px; margin: 2px 12px; border-radius: 10px;
-  color: var(--text-muted); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background 0.4s ease, color 0.3s ease; text-decoration: none;
-}
-.sidebar-menu .menu-item:hover {
-  background: var(--bg-card); color: var(--text);
-}
-.sidebar-menu .menu-item.active {
-  background: linear-gradient(to right, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.15) 40%, rgba(37,99,235,0.05) 70%, transparent 100%);
-  color: var(--primary-light);
-  position: relative;
-}
-.sidebar-menu .menu-item.active::before {
-  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
-  width: 3px; background: var(--primary); border-radius: 0 2px 2px 0;
-}
-.sidebar-menu .menu-item i {
-  width: 20px; text-align: center; font-size: 15px;
-}
-.sidebar-menu .menu-item .new-tag {
-  margin-left: auto; font-size: 9px; font-weight: 700; padding: 1px 5px;
-  border-radius: 4px; background: var(--danger); color: white;
-}
-
-.sidebar-vip {
-  padding: 16px; margin: 0 12px 16px;
-  background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(251,191,36,0.06));
-  border: 1px solid rgba(245,158,11,0.15); border-radius: 16px;
-}
-.sidebar-vip h4 {
-  font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 4px;
-}
-.sidebar-vip p {
-  font-size: 11px; color: var(--text-muted); margin-bottom: 12px;
-}
-.sidebar-vip .vip-btn {
-  width: 100%; padding: 9px; border-radius: 10px; border: none;
-  background: linear-gradient(135deg, var(--accent), #fbbf24);
-  color: #1a1a2e; font-size: 12px; font-weight: 700; cursor: pointer;
-  transition: all 0.25s; display: flex; align-items: center;
-  justify-content: center; gap: 6px;
-}
-.sidebar-vip .vip-btn:hover {
-  transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-glow);
-}
-
-/* ===== 中间内容区 ===== */
-.content-main {
-  flex: 1; margin-left: 240px; margin-right: 0; padding: 24px;
-  min-width: 0;
-}
-
-/* Banner & 专属定制服务并排 */
-.banner-row {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-/* Banner轮播 */
-.banner {
-  position: relative;
-  height: 280px;
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
-}
-.banner-slides {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.banner-slide {
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-.banner-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.banner-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0 48px;
-}
-.banner-overlay h2 {
-  font-size: 40px;
-  font-weight: 800;
-  line-height: 1.3;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #fff, #c7d2fe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  max-width: 450px;
-}
-.banner-overlay p {
-  font-size: 14px; color: var(--text-muted); margin-bottom: 20px; max-width: 360px;
-}
-.banner-overlay .explore-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 22px; border-radius: 12px; border: 1px solid var(--border-light);
-  background: var(--bg-card); color: var(--text); font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: all 0.25s; width: fit-content;
-  backdrop-filter: blur(10px);
-}
-.banner-overlay .explore-btn:hover {
-  background: var(--bg-card-hover); border-color: var(--primary-light);
-}
-.banner-dots {
-  position: absolute; bottom: 16px; left: 48px; display: flex; gap: 6px;
-}
-.banner-dots .dot {
-  width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.3);
-  cursor: pointer; transition: all 0.3s;
-}
-.banner-dots .dot.active { width: 20px; border-radius: 4px; background: var(--primary-light); }
-
-/* 专属定制服务卡片 */
-.custom-panel-banner {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, rgba(37,99,235,0.08) 50%, rgba(29,78,216,0.1) 100%);
-  border: 1px solid rgba(37,99,235,0.2);
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-.custom-panel-banner-bg {
-  position: absolute;
-  inset: 0;
-  background-image: url('https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/dz.png');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.8;
-}
-.custom-panel-banner-content {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.custom-panel-banner-text h4 {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-.custom-panel-banner-text p {
-  font-size: 12px;
-  color: rgba(255,255,255,0.85);
-  margin-bottom: 12px;
-}
-.custom-features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.custom-features span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: #ffffff;
-  padding: 6px 10px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 8px;
-  font-weight: 500;
-}
-.custom-action-btn {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-}
-
-/* 分类快捷入口 */
-.category-bar {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.category-item {
-  position: relative;
-  aspect-ratio: 3/2;
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: 1px solid var(--border);
-}
-.category-item:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-light);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
-}
-.category-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s;
-}
-.category-item:hover img {
-  transform: scale(1.08);
-}
-.category-item .cat-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 14px;
-}
-.category-item .cat-overlay .cat-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 4px;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-.category-item .cat-overlay .cat-count {
-  font-size: 11px;
-  color: rgba(255,255,255,0.7);
-}
-.category-item.all-cats {
-  background: var(--bg-card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 6px;
-  border: 1px dashed var(--border-light);
-}
-.category-item.all-cats:hover {
-  background: var(--bg-card-hover);
-}
-.category-item.all-cats i {
-  font-size: 24px;
-  color: var(--text-muted);
-}
-.category-item.all-cats span {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* 精选推荐 */
-.section-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-}
-.section-header .left {
-  display: flex; align-items: center; gap: 16px;
-}
-.section-header .left h3 {
-  font-size: 16px; font-weight: 700; color: var(--text);
-  display: flex; align-items: center; gap: 8px;
-}
-.section-header .left h3::before {
-  content: ''; width: 4px; height: 18px; background: var(--primary); border-radius: 2px;
-}
-.section-header .tabs {
-  display: flex; gap: 4px;
-}
-.section-header .tabs span {
-  padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
-  color: var(--text-muted); cursor: pointer; transition: all 0.2s;
-}
-.section-header .tabs span:hover { color: var(--text); }
-.section-header .tabs span.active {
-  background: var(--bg-card); color: var(--primary-light);
-}
-.section-header .more {
-  font-size: 12px; color: var(--text-muted); cursor: pointer; display: flex;
-  align-items: center; gap: 4px; transition: color 0.2s;
-}
-.section-header .more:hover { color: var(--primary-light); }
-
-/* 素材网格 */
-.material-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 16px;
-}
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-.material-card {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.35s;
-  border: 1px solid var(--border);
-}
-.material-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-light);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-}
-.material-card .card-img-wrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16/9;
-}
-.material-card .card-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s;
-}
-.material-card:hover .card-img-wrap img {
-  transform: scale(1.08);
-}
-.material-card .card-img-wrap .heart-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s;
-  opacity: 0;
-}
-.material-card:hover .card-img-wrap .heart-btn {
-  opacity: 1;
-}
-.material-card .card-img-wrap .heart-btn:hover {
-  background: rgba(239,68,68,0.8);
-  border-color: rgba(239,68,68,0.4);
-}
-.material-card .card-img-wrap .heart-btn.liked {
-  background: rgba(239,68,68,0.8);
-  opacity: 1;
-}
-.material-card .card-img-wrap .download-tag {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 3px 8px;
-  background: rgba(16,185,129,0.9);
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: 4px;
-}
-.material-card .card-img-wrap .res-tag {
-  position: absolute;
-  bottom: 48px;
-  right: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  font-size: 10px;
-  font-weight: 700;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-.material-card .card-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 12px 14px;
-  padding-top: 40px;
-  background: -webkit-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
-  background: -moz-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
-  background: -o-linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.2) 80%, transparent 100%);
-}
-.material-card .card-info .title {
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-.material-card .card-info .meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.material-card .card-info .meta .cat {
-  font-size: 11px;
-  color: rgba(255,255,255,0.7);
-}
-
-/* 通用按钮 */
-.action-btn {
-  width: 100%; padding: 11px; border-radius: 12px; border: none;
-  background: linear-gradient(135deg, var(--primary), #1d4ed8);
-  color: white; font-size: 13px; font-weight: 700; cursor: pointer;
-  transition: all 0.25s; display: flex; align-items: center;
-  justify-content: center; gap: 6px;
-}
-.action-btn:hover {
-  transform: translateY(-1px); box-shadow: 0 8px 24px var(--primary-glow);
-}
-
-/* 上传区域 */
-.upload-zone {
-  border: 1px solid rgba(37,99,235,0.2); border-radius: 16px;
-  padding: 28px 16px; text-align: center; cursor: pointer;
-  transition: all 0.3s; background: rgba(37,99,235,0.04);
-}
-.upload-zone:hover {
-  border-color: rgba(37,99,235,0.4); background: rgba(37,99,235,0.08);
-}
-.upload-zone i { font-size: 28px; color: var(--primary-light); margin-bottom: 8px; }
-.upload-zone .upload-text { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-.upload-zone .upload-hint { font-size: 11px; color: var(--text-dim); }
-
-/* 客服卡片 */
-.service-card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.06) 30%, rgba(37,99,235,0.04) 60%, rgba(29,78,216,0.06) 100%);
-  border: 1px solid rgba(37,99,235,0.18);
-  border-radius: 14px;
-  padding: 16px;
-  overflow: hidden;
-}
-.service-card::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 100px;
-  background: linear-gradient(to left, rgba(37,99,235,0.25) 0%, rgba(37,99,235,0.1) 50%, rgba(37,99,235,0) 100%);
-}
-.service-card h5 {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  position: relative;
-  z-index: 1;
-}
-.service-card .phone {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 1;
-}
-.service-card .time {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-bottom: 12px;
-  position: relative;
-  z-index: 1;
-}
-.service-card .online-btn {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: 9px;
-  border-radius: 10px;
-  border: 1px solid var(--primary);
-  background: transparent;
-  color: var(--primary-light);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.service-card .online-btn:hover {
-  background: var(--primary); color: white;
-}
-
-/* ===== 页脚 ===== */
-.footer {
-  width: 100%;
-  border-top: 1px solid var(--border);
-  padding: 32px 24px;
-  background: var(--bg);
-}
-.footer-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
-  gap: 32px;
-}
-.footer-brand .logo {
-  font-size: 18px; font-weight: 900; color: white; letter-spacing: 1px; margin-bottom: 4px;
-}
-.footer-brand .logo span { color: var(--primary-light); }
-.footer-brand .company {
-  font-size: 13px; color: var(--text); margin-bottom: 2px;
-}
-.footer-brand .company-en {
-  font-size: 11px; color: var(--text-dim);
-}
-.footer-col h5 {
-  font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 12px;
-}
-.footer-col a {
-  display: block; font-size: 12px; color: var(--text-muted); text-decoration: none;
-  margin-bottom: 8px; transition: color 0.2s;
-}
-.footer-col a:hover { color: var(--primary-light); }
-.footer-qr {
-  text-align: center;
-}
-.footer-qr .qr-placeholder {
-  width: 80px; height: 80px; background: var(--bg-card); border-radius: 10px;
-  border: 1px solid var(--border); margin: 0 auto 8px;
-  display: flex; align-items: center; justify-content: center; font-size: 24px;
-  color: var(--text-dim);
-}
-.footer-qr p {
-  font-size: 11px; color: var(--text-muted);
-}
-.footer-bottom {
-  max-width: 1400px;
-  margin: 0 auto;
-  text-align: center;
-  padding-top: 20px;
-  margin-top: 20px;
-  border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-/* ===== Toast ===== */
-.toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: rgba(15,23,42,0.95); backdrop-filter: blur(20px);
-  border: 1px solid var(--border); border-radius: 14px;
-  padding: 14px 24px; color: var(--text); font-size: 13px; font-weight: 500;
-  box-shadow: var(--shadow); z-index: 3000; opacity: 0;
-  transition: all 0.3s; pointer-events: none; display: flex; align-items: center; gap: 8px;
-}
-.toast.show {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
-.toast i { font-size: 16px; }
-.toast.success i { color: var(--success); }
-
-/* ===== 弹窗 ===== */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
-  z-index: 2000; display: none; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.3s;
-}
-.modal-overlay.active { display: flex; opacity: 1; }
-.modal {
-  background: linear-gradient(135deg, #0f172a, #0b0f1a);
-  border: 1px solid var(--border); border-radius: 20px;
-  width: 90%; max-width: 480px; padding: 28px; position: relative;
-  box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.3s;
-}
-.modal-overlay.active .modal { transform: scale(1); }
-.modal .close-btn {
-  position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
-  border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card);
-  color: var(--text-muted); cursor: pointer; display: flex; align-items: center;
-  justify-content: center; font-size: 14px; transition: all 0.25s;
-}
-.modal .close-btn:hover { background: rgba(239,68,68,0.2); color: var(--danger); }
-.modal h3 {
-  font-size: 18px; font-weight: 700; margin-bottom: 6px;
-  background: linear-gradient(135deg, #fff, #c7d2fe);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-.modal .form-group { margin-bottom: 14px; }
-.modal .form-group label {
-  display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;
-}
-.modal .form-group input,
-.modal .form-group textarea,
-.modal .form-group select {
-  width: 100%; padding: 11px 14px; border-radius: 12px;
-  border: 1px solid var(--border); background: var(--bg-card);
-  color: var(--text); font-size: 13px; outline: none; transition: all 0.3s;
-  font-family: inherit;
-}
-.modal .form-group input:focus,
-.modal .form-group textarea:focus,
-.modal .form-group select:focus {
-  border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow);
-}
-.modal .form-group textarea { min-height: 90px; resize: vertical; }
-.modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.modal .submit-btn {
-  width: 100%; padding: 13px; border-radius: 14px; border: none;
-  background: linear-gradient(135deg, var(--primary), #1d4ed8);
-  color: white; font-size: 14px; font-weight: 700; cursor: pointer;
-  transition: all 0.25s; margin-top: 6px;
-}
-/* 图片预览弹窗 */
-.image-preview-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-  z-index: 2000; display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.3s;
-}
-.image-preview-overlay.active { opacity: 1; }
-.image-preview-modal {
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
-  width: 90%; max-width: 800px; max-height: 90vh; padding: 24px; position: relative;
-  box-shadow: var(--shadow); transform: scale(0.95); transition: transform 0.3s;
-  overflow: hidden;
-  display: flex; flex-direction: column;
-}
-.image-preview-overlay.active .image-preview-modal { transform: scale(1); }
-.image-preview-modal .close-btn {
-  position: absolute; top: 16px; right: 16px; width: 14px; height: 14px;
-  border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); background: rgba(0,0,0,0.7);
-  color: #fff; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; font-size: 8px; transition: all 0.25s; z-index: 10;
-}
-.image-preview-modal .close-btn:hover { background: rgba(239,68,68,0.3); }
-.image-preview-modal img {
-  width: 100%; height: auto; max-height: 65vh; object-fit: contain;
-  border-radius: 16px; display: block;
-}
-.image-preview-modal .preview-info {
-  padding: 20px 0 0; text-align: left; flex: 1;
-}
-.image-preview-modal .preview-info .title-row {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-}
-.image-preview-modal .preview-info h4 {
-  font-size: 18px; font-weight: 700; color: #fff; margin: 0;
-}
-.image-preview-modal .preview-info .cat {
-  font-size: 12px; color: #fff; padding: 4px 12px;
-  background: linear-gradient(135deg, rgba(37,99,235,0.6), rgba(29,78,216,0.4));
-  border-radius: 20px; font-weight: 500;
-}
-.image-preview-modal .preview-stats {
-  display: flex; justify-content: space-between; gap: 20px;
-}
-.image-preview-modal .preview-stats .stat-item {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 14px; color: var(--text-muted);
-}
-.image-preview-modal .preview-stats .stat-item i {
-  font-size: 16px;
-}
-.image-preview-modal .preview-stats .stat-item.download i { color: #3b82f6; }
-.image-preview-modal .preview-stats .stat-item.favorite i { color: #ef4444; }
-.image-preview-modal .preview-stats .stat-item.recommend i { color: #10b981; }
-
-.modal .submit-btn:hover {
-  transform: translateY(-2px); box-shadow: 0 8px 24px var(--primary-glow);
-}
-
-/* ===== 响应式 ===== */
-@media (max-width: 1200px) {
-  .category-bar { grid-template-columns: repeat(4, 1fr); }
-  .content-main { padding: 20px; }
-  .banner { height: 240px; }
-  .banner-overlay h2 { font-size: 26px; }
-  .banner-overlay p { font-size: 13px; }
-  .material-card .card-info .title { font-size: 13px; }
-  .material-card .card-info .meta .cat { font-size: 10px; }
-  .banner-row { grid-template-columns: 2fr 1fr; }
-  .material-grid { grid-template-columns: repeat(3, 1fr); }
-  .category-grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 1024px) {
-  .material-grid { grid-template-columns: repeat(3, 1fr); }
-  .category-grid { grid-template-columns: repeat(3, 1fr); }
-  #favoriteGrid { grid-template-columns: repeat(3, 1fr) !important; }
-  .content-main { padding: 18px; }
-  .sidebar-left { width: 200px; }
-  .content-main { margin-left: 200px; }
-  .footer { margin-left: 200px; }
-  .sidebar-menu .menu-item { font-size: 12px; padding: 9px 16px; }
-  .sidebar-menu .menu-item i { font-size: 14px; }
-  .sidebar-left .user-profile .avatar { width: 38px; height: 38px; }
-  .sidebar-left .user-profile .info .name { font-size: 13px; }
-  .sidebar-left .user-profile .info .expire { font-size: 10px; }
-  .banner { height: 220px; }
-  .banner-overlay h2 { font-size: 24px; }
-  .banner-overlay p { font-size: 12px; }
-  .explore-btn { padding: 9px 18px; font-size: 12px; }
-  .material-grid { gap: 12px; }
-  .material-card .card-info { padding: 10px 12px; padding-top: 32px; }
-  .material-card .card-info .title { font-size: 12px; }
-  .material-card .card-info .meta .cat { font-size: 9px; }
-  .section-header h3 { font-size: 15px; }
-  .section-header .tabs span { font-size: 12px; }
-  .category-bar { gap: 10px; }
-  .category-item { border-radius: 12px; }
-  .category-item .cat-overlay .cat-name { font-size: 12px; }
-  .category-item .cat-overlay .cat-count { font-size: 9px; }
-  .top-nav { padding: 0 16px; }
-  .top-nav .nav-center a { padding: 6px 12px; font-size: 12px; }
-  .top-nav .search-box input { width: 180px; padding: 7px 10px 7px 28px; font-size: 11px; }
-  .top-nav .icon-btn { width: 32px; height: 32px; font-size: 14px; }
-  .banner-row { grid-template-columns: 1fr; }
-  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
-  .custom-features { justify-content: center; }
-}
-@media (max-width: 767px) {
-  .sidebar-left { display: none; }
-  .content-main { margin-left: 0; }
-  .footer { margin-left: 0; }
-  .top-nav .nav-center { display: none; }
-  .material-grid { grid-template-columns: repeat(2, 1fr); }
-  .category-grid { grid-template-columns: repeat(2, 1fr); }
-  #favoriteGrid { grid-template-columns: repeat(2, 1fr) !important; }
-  .category-bar { grid-template-columns: repeat(3, 1fr); }
-  .banner-overlay h2 { font-size: 22px; }
-  .banner-row { grid-template-columns: 1fr; }
-  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
-  .custom-features { justify-content: center; }
-}
-@media (max-width: 600px) {
-  .material-grid { grid-template-columns: 1fr; }
-  .category-bar { grid-template-columns: repeat(2, 1fr); }
-  .banner { height: 200px; }
-  .banner-overlay { padding: 0 24px; }
-  .banner-row { grid-template-columns: 1fr; }
-  .custom-panel-banner-content { flex-direction: column; gap: 12px; text-align: center; }
-  .custom-features { justify-content: center; }
-}
-</style>
-</head>
+:root{--bg:#f4f6fb;--cd:#fff;--tx:#1d2433;--mu:#6b7488;--bd:#e3e7f0;--ac:#2f6bff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--cd:#1b2029;--tx:#e8ecf4;--mu:#98a1b5;--bd:#2a3140;--ac:#6c95ff}}
+:root[data-theme="dark"]{--bg:#12151c;--cd:#1b2029;--tx:#e8ecf4;--mu:#98a1b5;--bd:#2a3140;--ac:#6c95ff}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
+button{cursor:pointer}button.pr{background:var(--ac);color:#fff;border-color:var(--ac)}button.sm{padding:3px 8px;font-size:12px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:8px;align-items:center;padding:10px 14px;background:var(--cd);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+header b{font-size:16px}header .sp{flex:1}
+main{max-width:1180px;margin:0 auto;padding:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.cd{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.k{font-size:12px;color:var(--mu)}.v{font-size:26px;font-weight:700}
+h3{margin:0 0 10px;font-size:14px}
+.br{display:grid;grid-template-columns:110px 1fr 70px;gap:8px;align-items:center;margin:6px 0;font-size:12px}
+.br i{display:block;height:8px;border-radius:4px;background:var(--ac)}.br div{background:var(--bd);border-radius:4px}.br span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dn{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.dn>div:first-child{width:120px;height:120px;border-radius:50%}
+.lg span{display:block;font-size:12px}.lg b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.tr{display:flex;align-items:flex-end;gap:6px;height:110px}.tr div{flex:1;text-align:center;font-size:11px;color:var(--mu)}.tr i{display:block;background:var(--ac);border-radius:4px 4px 0 0;margin-bottom:2px}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}.sc{overflow-x:auto}
+.tk{cursor:pointer;border-left:4px solid var(--c)}.tt{font-weight:600;font-size:15px;margin-bottom:8px}.tk{padding:18px}.mt{font-size:12px;color:var(--mu);margin:3px 0}
+.tg{display:inline-block;background:var(--bg);border-radius:6px;padding:1px 7px;margin:0 4px 4px 0;font-size:11px}
+.ch{color:#fff;border-radius:6px;padding:1px 8px;font-size:11px;background:var(--c)}
+.pg{height:5px;background:var(--bd);border-radius:3px;margin:6px 0}.pg i{display:block;height:100%;border-radius:3px;background:var(--c)}
+.tks{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.md{position:fixed;inset:0;background:#0007;z-index:20;display:flex;align-items:center;justify-content:center;overflow:auto;padding:16px}
+.md>div{position:relative;background:var(--cd);border-radius:16px;padding:28px 30px;width:100%;max-width:720px;margin:auto}
+.x{position:absolute;right:12px;top:10px;border:0;background:none;font-size:22px;line-height:1;padding:6px 10px;color:var(--mu)}
+.ft{display:grid;grid-template-columns:1fr minmax(160px,2fr) 1fr;gap:10px;margin-top:22px;align-items:center}.ft .pr{width:100%;height:46px;padding:0;font-size:15px}.ft #rmv{justify-self:end;width:46px;height:46px;padding:0;background:#d6523f;border-color:#d6523f;color:#fff;font-size:20px;line-height:1}
+input:not([type=checkbox]):not([type=range]),select{height:40px}.fm input,.fm select,.fm textarea{margin-top:4px;font-size:15px;padding:8px 12px}select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}.sl{width:100%;height:22px;padding:0;border:0;background:none;accent-color:#2f6bff;margin:4px 0;cursor:pointer}
+.fm{display:grid;grid-template-columns:1fr 1fr;gap:14px}.fm label{display:block;font-size:12px;color:var(--mu)}.fm input,.fm select,.fm textarea{width:100%;display:block}.w2{grid-column:1/3}
+.al{position:absolute;right:14px;top:100%;width:min(360px,92vw);max-height:60vh;overflow:auto;z-index:9;box-shadow:0 8px 30px #0004}
+.red{color:#d6523f}.org{color:#e0912a}
+#lg{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:20px}#lg .cd{width:100%;max-width:380px;text-align:center}#lg input,#lg select{width:100%;margin:12px 0}
+#ts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:20px;z-index:30}
+body{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 16%,var(--bg)),var(--bg) 45%) fixed}
+header{background:color-mix(in srgb,var(--cd) 88%,transparent);backdrop-filter:blur(10px)}
+header b{font-size:17px;background:linear-gradient(90deg,var(--ac),#8a5cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+main{background:var(--cd);border:1px solid var(--bd);border-radius:22px;padding:24px;margin:16px auto;box-shadow:0 10px 40px #1d243314}
+main .cd{background:color-mix(in srgb,var(--bg) 55%,var(--cd));border-radius:16px}
+.grid:not(.g2)>.cd{border-top:3px solid var(--ac)}.v{color:var(--ac)}
+h3{display:flex;align-items:center;gap:8px}h3:before{content:"";width:4px;height:14px;border-radius:2px;background:var(--ac)}
+.br i,.tr i{background:linear-gradient(90deg,var(--ac),#8a5cf6)}.tr i{background:linear-gradient(180deg,#8a5cf6,var(--ac))}
+button.pr,.tab.on{background:linear-gradient(135deg,var(--ac),#6a4cf0);border:0;color:#fff}
+.tk{transition:.15s}.tk:hover{transform:translateY(-2px);box-shadow:0 8px 22px #1d24331f}
+#lg{background:radial-gradient(circle at 20% 15%,color-mix(in srgb,var(--ac) 28%,transparent),transparent 55%),radial-gradient(circle at 85% 85%,#8a5cf633,transparent 50%)}
+#lg .cd{padding:42px 30px;border-radius:26px;box-shadow:0 24px 70px #2f6bff30}#lg h2{margin:0 0 8px;font-size:24px}
+.logo{width:80px;height:80px;margin:0 auto 14px;border-radius:24px;font-size:40px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ac),#8a5cf6)}
+#lg{position:fixed;inset:0;z-index:40;min-height:0;overflow:auto;background:linear-gradient(160deg,#2f6bff 0%,#6a4cf0 55%,#8a5cf6 100%)}
+#lg .cd{background:none;border:0;box-shadow:none;border-radius:0;padding:0;color:#fff}#lg .logo{display:none}#lg h2{color:#fff;font-size:30px;margin:0 0 10px}
+#lg .k{color:#ffffffcc}
+#lg input,#lg select{background:#fff;color:#1d2433;border:0;height:48px;border-radius:12px;padding:0 14px}
+#lg #go{background:#fff;color:#2f6bff;border:0;height:48px;font-weight:600;border-radius:12px}#lg #ld{background:transparent;color:#fff;border:1px solid #ffffffaa;height:48px;border-radius:12px}
+#lg{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 16%,var(--bg)),var(--bg) 45%)}#lg .cd{color:var(--tx)}#lg h2{color:var(--tx)}#lg .k{color:var(--mu)}
+#lg input,#lg select{background:var(--cd);color:var(--tx);border:1px solid var(--bd)}#lg #go{background:linear-gradient(135deg,var(--ac),#6a4cf0);color:#fff}#lg #ld{background:var(--cd);color:var(--tx);border:1px solid var(--bd)}
+@media(max-width:560px){main{padding:12px;border-radius:16px;margin:8px}}
+@media(max-width:560px){.fm{grid-template-columns:1fr}.w2{grid-column:auto}.br{grid-template-columns:90px 1fr 60px}}
+</style></head>
 <body>
-
-<!-- ===== 顶部导航 ===== -->
-<nav class="top-nav">
-  <div class="nav-left">
-    <div class="brand">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/logo.png" alt="LEDMAN" class="brand-logo">
-        <span class="brand-name">雷曼视界</span>
-      </div>
-  </div>
-  <div class="nav-center">
-    <a class="active" onclick="switchTab('home')">首页</a>
-    <a onclick="toggleSidebar()">素材库</a>
-    <a onclick="switchTab('custom')">定制服务</a>
-    <a onclick="switchTab('vip')">VIP专区</a>
-    <a href="#">帮助中心</a>
-  </div>
-  <div class="nav-right">
-    <div class="search-box">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="搜索素材关键词" id="searchInput">
+<div id="lg" hidden>
+  <div class="cd">
+    <div class="logo">🎨</div>
+    <h2>内容创意组工作看板</h2>
+    <div class="k">Supabase登录后使用，多人实时协同</div>
+    <div>
+      <button class="pr" id="loginBtn" style="width:100%">Supabase邮箱登录</button>
+      <div class="k" style="margin:10px 0">登录后自动进入看板</div>
     </div>
-    <button class="icon-btn"><i class="far fa-envelope"></i><div class="dot"></div></button>
-    <button class="icon-btn"><i class="far fa-heart"></i></button>
-    <div class="user-avatar"><img src="https://q5.itc.cn/q_70/images03/20250715/c1e8a6700622431583e103bc9ac17e1e.jpeg" alt="用户头像"></div>
-  </div>
-</nav>
-
-<!-- ===== 主布局 ===== -->
-<div class="main-layout">
-
-  <!-- 左侧边栏 -->
-  <aside class="sidebar-left">
-    <div class="user-profile">
-      <div class="avatar"><img src="https://q5.itc.cn/q_70/images03/20250715/c1e8a6700622431583e103bc9ac17e1e.jpeg" alt="用户头像"></div>
-      <div class="info">
-        <div class="name">张先生 <span class="vip-badge">VIP</span></div>
-        <div class="expire">高级会员 | 2035-12-31到期</div>
-      </div>
-    </div>
-    <nav class="sidebar-menu">
-      <a class="menu-item active" onclick="switchTab('home')">
-        <i class="fas fa-home"></i> 首页推荐
-      </a>
-      <a class="menu-item" onclick="switchTab('category')">
-        <i class="fas fa-th-large"></i> 素材分类
-      </a>
-      <a class="menu-item" onclick="switchTab('favorite')">
-        <i class="far fa-heart"></i> 我的收藏
-      </a>
-      <a class="menu-item" onclick="switchTab('download')">
-        <i class="fas fa-download"></i> 我的下载
-      </a>
-      <a class="menu-item" onclick="switchTab('custom')">
-        <i class="fas fa-paint-brush"></i> 专属定制
-      </a>
-      <a class="menu-item" onclick="switchTab('album')">
-        <i class="far fa-images"></i> 我的相册 <span class="new-tag">NEW</span>
-      </a>
-      <a class="menu-item" onclick="switchTab('upload')">
-        <i class="fas fa-cloud-upload-alt"></i> 上传文件
-      </a>
-      <div style="height:1px; background:var(--border); margin:8px 16px;"></div>
-      <a class="menu-item" onclick="switchTab('vip')">
-        <i class="fas fa-crown" style="color:var(--accent)"></i> VIP专享
-      </a>
-      <a class="menu-item" onclick="openModal('vipModal')">
-        <i class="fas fa-headset"></i> 客服中心
-      </a>
-    </nav>
-  </aside>
-
-  <!-- 中间内容区 -->
-  <main class="content-main" id="homeTab">
-    <!-- Banner & 专属定制服务 -->
-    <div class="banner-row">
-      <!-- Banner -->
-      <div class="banner" onclick="showToast('探索更多精选内容', 'success')">
-        <div class="banner-slides" id="bannerSlides">
-          <div class="banner-slide">
-            <img class="banner-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/lbt1.png" alt="Banner 1">
-            <div class="banner-overlay">
-              <h2>让每一次点亮<br>都成为视觉盛宴</h2>
-              <p>雷曼家庭巨幕专属视觉内容平台</p>
-              <button class="explore-btn">
-                探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
-              </button>
-            </div>
-          </div>
-          <div class="banner-slide">
-            <img class="banner-img" src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/lbt2.png" alt="Banner 2">
-            <div class="banner-overlay">
-              <h2>一屏藏万象<br>点亮即美学</h2>
-              <p>雷曼家庭巨幕专属视觉内容平台</p>
-              <button class="explore-btn">
-                探索更多 <i class="fas fa-arrow-right" style="font-size:11px"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="banner-dots">
-          <div class="dot active" onclick="switchSlide(0)"></div>
-          <div class="dot" onclick="switchSlide(1)"></div>
-        </div>
-      </div>
-
-      <!-- 专属定制服务 -->
-      <div class="custom-panel-banner">
-        <div class="custom-panel-banner-bg"></div>
-        <div class="custom-panel-banner-content">
-          <div class="custom-panel-banner-text">
-            <h4><i class="fas fa-palette"></i> 专属定制服务</h4>
-            <p>为您打造独一无二的视觉体验</p>
-            <div class="custom-features">
-              <span><i class="fas fa-user-tie"></i> 1V1专属设计</span>
-              <span><i class="fas fa-palette"></i> 个性化定制</span>
-              <span><i class="fas fa-gem"></i> 高清品质保障</span>
-              <span><i class="fas fa-bolt"></i> 快速交付</span>
-            </div>
-          </div>
-          <button class="action-btn custom-action-btn" onclick="openModal('customModal')">
-            提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 分类快捷入口 -->
-    <div class="category-bar">
-      <div class="category-item" onclick="filterByCat('texture')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q1.png" alt="仿真肌理">
-        <div class="cat-overlay">
-          <div class="cat-name">仿真肌理</div>
-          <div class="cat-count">1280+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('gallery')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q2.png" alt="数字画廊">
-        <div class="cat-overlay">
-          <div class="cat-name">数字画廊</div>
-          <div class="cat-count">860+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('scenery')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q3.png" alt="四季风景">
-        <div class="cat-overlay">
-          <div class="cat-name">四季风景</div>
-          <div class="cat-count">2560+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('flow')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q4.png" alt="流光艺术">
-        <div class="cat-overlay">
-          <div class="cat-name">流光艺术</div>
-          <div class="cat-count">980+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('family')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q5.png" alt="亲子互动">
-        <div class="cat-overlay">
-          <div class="cat-name">亲子互动</div>
-          <div class="cat-count">760+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('celebration')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q6.png" alt="节日庆典">
-        <div class="cat-overlay">
-          <div class="cat-name">节日庆典</div>
-          <div class="cat-count">530+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item" onclick="filterByCat('window')">
-        <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/q7.png" alt="虚拟窗景">
-        <div class="cat-overlay">
-          <div class="cat-name">虚拟窗景</div>
-          <div class="cat-count">420+ 素材</div>
-        </div>
-      </div>
-      <div class="category-item all-cats" onclick="switchTab('category')">
-        <i class="fas fa-th"></i>
-        <span>全部分类</span>
-      </div>
-    </div>
-
-    <!-- 精选推荐 -->
-    <div class="section-header">
-      <div class="left">
-        <h3>精选推荐</h3>
-        <div class="tabs">
-          <span class="active">最新</span>
-          <span>最热</span>
-          <span>精选</span>
-        </div>
-      </div>
-      <div class="more" onclick="showToast('查看更多', 'success')">
-        查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-      </div>
-    </div>
-
-    <div class="material-grid" id="materialGrid">
-      <!-- JS生成 -->
-    </div>
-  </main>
-
-  <!-- 定制服务页 -->
-  <main class="content-main" id="customTab" style="display:none">
-    <div style="text-align:center; padding:40px 0 32px">
-      <div style="font-size:48px; margin-bottom:16px">✨</div>
-      <h2 style="font-size:28px; font-weight:800; margin-bottom:10px; background:linear-gradient(135deg,#fff,#c7d2fe); -webkit-background-clip:text; -webkit-text-fill-color:transparent">专属定制服务</h2>
-      <p style="color:var(--text-muted); font-size:14px; max-width:480px; margin:0 auto">为企业、私宅、酒店等高端客户提供独一无二的待机内容定制</p>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:800px; margin:0 auto 24px">
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
-        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,var(--primary),#60a5fa); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏢</div>
-        <h4 style="font-size:15px; margin-bottom:6px">企业品牌定制</h4>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">LOGO动态演绎、数据看板、企业愿景可视化</p>
-        <button class="action-btn" onclick="openModal('customModal')">
-          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        </button>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
-        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,var(--accent),#fbbf24); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏠</div>
-        <h4 style="font-size:15px; margin-bottom:6px">私宅专属定制</h4>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">家族徽标、个人IP动画、纪念日主题、私人相册</p>
-        <button class="action-btn" onclick="openModal('customModal')">
-          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        </button>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
-        <div style="width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#ec4899,#f472b6); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:22px">🏨</div>
-        <h4 style="font-size:15px; margin-bottom:6px">酒店文旅定制</h4>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px">欢迎画面、城市窗景、品牌主题、节日氛围</p>
-        <button class="action-btn" onclick="openModal('customModal')">
-          提交定制需求 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        </button>
-      </div>
-    </div>
-  </main>
-
-  <!-- 素材分类页 -->
-  <main class="content-main" id="categoryTab" style="display:none">
-    <div style="padding-bottom:16px">
-      <div class="section-header" style="margin-bottom:16px">
-        <div class="left">
-          <h3>素材分类</h3>
-          <div class="tabs" id="categoryTabs">
-            <span class="active" onclick="switchCategory('texture')">仿真肌理</span>
-            <span onclick="switchCategory('gallery')">数字画廊</span>
-            <span onclick="switchCategory('scenery')">四季风景</span>
-            <span onclick="switchCategory('flow')">流光艺术</span>
-            <span onclick="switchCategory('family')">亲子互动</span>
-            <span onclick="switchCategory('celebration')">节日庆典</span>
-            <span onclick="switchCategory('custom')">私属定制</span>
-            <span onclick="switchCategory('window')">虚拟窗景</span>
-            <span onclick="switchCategory('meditation')">冥想疗愈</span>
-            <span onclick="switchCategory('party')">派对娱乐</span>
-          </div>
-        </div>
-      </div>
-      <div class="section-header">
-        <div class="left">
-          <h3 style="font-size:15px; font-weight:600; color:var(--text-dim)">仿真肌理</h3>
-          <div class="tabs" id="subTabs">
-            <span class="active" onclick="switchSubTab('latest')">最新</span>
-            <span onclick="switchSubTab('hot')">最热</span>
-            <span onclick="switchSubTab('featured')">精选</span>
-          </div>
-        </div>
-        <div class="more" onclick="showToast('查看更多', 'success')">
-          查看更多 <i class="fas fa-chevron-right" style="font-size:10px"></i>
-        </div>
-      </div>
-    </div>
-    <div class="category-grid" id="categoryGrid">
-      <!-- JS生成 -->
-    </div>
-  </main>
-
-  <!-- 我的收藏页 -->
-  <main class="content-main" id="favoriteTab" style="display:none">
-    <div class="section-header" style="margin-bottom:20px">
-      <div class="left">
-        <h3>我的收藏</h3>
-      </div>
-    </div>
-
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
-      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
-        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
-      </button>
-      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：客厅场景', 'success')">
-        <div style="display:flex; align-items:center; gap:12px">
-          <div style="width:40px; height:40px; background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
-            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
-          </div>
-          <div style="flex:1">
-            <div style="font-weight:600; font-size:14px">客厅场景</div>
-            <div style="font-size:12px; color:var(--text-muted)">8 个收藏内容</div>
-          </div>
-          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="material-grid" id="favoriteGrid" style="grid-template-columns: repeat(4, 1fr);">
-      <!-- JS生成收藏内容 -->
-    </div>
-  </main>
-
-  <!-- 我的相册页 -->
-  <main class="content-main" id="albumTab" style="display:none">
-    <div class="section-header" style="margin-bottom:20px">
-      <div class="left">
-        <h3>我的相册</h3>
-      </div>
-    </div>
-
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
-      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
-        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
-      </button>
-      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：家族照片', 'success')">
-        <div style="display:flex; align-items:center; gap:12px">
-          <div style="width:40px; height:40px; background:linear-gradient(135deg, #ec4899 0%, #be185d 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
-            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
-          </div>
-          <div style="flex:1">
-            <div style="font-weight:600; font-size:14px">家族照片</div>
-            <div style="font-size:12px; color:var(--text-muted)">2 张合影</div>
-          </div>
-          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="material-grid" id="albumGrid" style="grid-template-columns: repeat(4, 1fr);">
-      <!-- JS生成相册内容 -->
-    </div>
-  </main>
-
-  <!-- 我的下载页 -->
-  <main class="content-main" id="downloadTab" style="display:none">
-    <div class="section-header" style="margin-bottom:20px">
-      <div class="left">
-        <h3>我的下载</h3>
-      </div>
-    </div>
-
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
-      <button class="action-btn" onclick="showToast('创建文件夹功能开发中', 'success')" style="font-size:14px; padding:0 20px; height:72px; width:auto; display:flex; align-items:center; gap:8px; font-weight:600;">
-        <i class="fas fa-folder-plus" style="font-size:18px;"></i> 创建文件夹
-      </button>
-      <div class="favorite-folder" style="flex:1; padding:16px; background:var(--bg-card); border-radius:16px; border:1px solid var(--border-light); cursor:pointer;" onclick="showToast('打开文件夹：下载文件', 'success')">
-        <div style="display:flex; align-items:center; gap:12px">
-          <div style="width:40px; height:40px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius:10px; display:flex; align-items:center; justify-content:center;">
-            <i class="fas fa-folder-open" style="color:#fff; font-size:18px"></i>
-          </div>
-          <div style="flex:1">
-            <div style="font-weight:600; font-size:14px">下载文件</div>
-            <div style="font-size:12px; color:var(--text-muted)">3 个文件</div>
-          </div>
-          <i class="fas fa-chevron-right" style="color:var(--text-dim); font-size:14px"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="material-grid" id="downloadGrid" style="grid-template-columns: repeat(4, 1fr);">
-      <!-- JS生成下载内容 -->
-    </div>
-  </main>
-
-  <!-- 上传页 -->
-  <main class="content-main" id="uploadTab" style="display:none">
-    <div style="max-width:600px; margin:0 auto; padding:40px 0">
-      <div style="text-align:center; margin-bottom:32px">
-        <div style="font-size:48px; margin-bottom:16px">📤</div>
-        <h2 style="font-size:26px; font-weight:800; margin-bottom:10px">自制相册上传</h2>
-        <p style="color:var(--text-muted); font-size:14px">上传您的私人照片，我们将为您生成专属待机画面</p>
-      </div>
-      <div class="upload-zone" onclick="document.getElementById('fileInput').click()" style="padding:48px 24px">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <div class="upload-text">点击或拖拽文件到此处上传</div>
-        <div class="upload-hint">支持 JPG、PNG、MP4、MOV 格式，单个文件不超过 500MB</div>
-        <input type="file" id="fileInput" style="display:none" multiple onchange="handleUpload(this)">
-      </div>
-    </div>
-  </main>
-
-  <!-- VIP页 -->
-  <main class="content-main" id="vipTab" style="display:none">
-    <div style="text-align:center; padding:40px 0 32px">
-      <div style="font-size:48px; margin-bottom:16px">👑</div>
-      <h2 style="font-size:28px; font-weight:800; margin-bottom:10px; background:linear-gradient(135deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent">VIP 尊享会员</h2>
-      <p style="color:var(--text-muted); font-size:14px">解锁全部典藏级素材、优先定制通道、专属客服支持</p>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:800px; margin:0 auto">
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
-        <div style="font-size:12px; font-weight:700; color:var(--text-dim); margin-bottom:8px">基础版</div>
-        <div style="font-size:36px; font-weight:800; margin-bottom:4px">免费</div>
-        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">永久免费</div>
-        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>100+ 基础静态素材</div>
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>标准清晰度下载</div>
-          <div><i class="fas fa-times" style="color:var(--text-dim); margin-right:8px"></i>动态/视频素材</div>
-        </div>
-        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center">当前方案</button>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid rgba(245,158,11,0.3); border-radius:16px; padding:28px 20px; text-align:center; position:relative">
-        <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); padding:3px 12px; border-radius:8px; background:linear-gradient(135deg,var(--accent),#fbbf24); color:#1a1a2e; font-size:10px; font-weight:800">最受欢迎</div>
-        <div style="font-size:12px; font-weight:700; color:var(--accent); margin-bottom:8px">专业版</div>
-        <div style="font-size:36px; font-weight:800; margin-bottom:4px">¥999</div>
-        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">/ 年</div>
-        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>2,400+ 全部素材</div>
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>4K/8K 超清下载</div>
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>AI 智能场景调度</div>
-        </div>
-        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center; background:linear-gradient(135deg,var(--accent),#fbbf24); color:#1a1a2e; border:none" onclick="showToast('已选择专业版，请前往支付', 'success')">立即开通</button>
-      </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:28px 20px; text-align:center">
-        <div style="font-size:12px; font-weight:700; color:var(--primary); margin-bottom:8px">企业版</div>
-        <div style="font-size:36px; font-weight:800; margin-bottom:4px">定制</div>
-        <div style="font-size:12px; color:var(--text-dim); margin-bottom:20px">按需求报价</div>
-        <div style="text-align:left; font-size:12px; color:var(--text-muted); line-height:2.2; margin-bottom:20px">
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>专业版全部权益</div>
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>企业IP专属定制</div>
-          <div><i class="fas fa-check" style="color:var(--success); margin-right:8px"></i>API 对接支持</div>
-        </div>
-        <button class="explore-btn" style="margin:0 auto; width:100%; justify-content:center" onclick="openModal('customModal')">联系销售</button>
-      </div>
-    </div>
-  </main>
-
-</div>
-
-<!-- ===== 页脚 ===== -->
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-brand">
-      <div class="logo"><span>LED</span>MAN 雷曼</div>
-      <div class="company">雷曼光电科技有限公司</div>
-      <div class="company-en">Leyard Optoelectronic Co., Ltd.</div>
-    </div>
-    <div class="footer-col">
-      <h5>关于我们</h5>
-      <a href="#">公司简介</a>
-      <a href="#">新闻中心</a>
-      <a href="#">联系我们</a>
-    </div>
-    <div class="footer-col">
-      <h5>服务支持</h5>
-      <a href="#">帮助中心</a>
-      <a href="#">使用条款</a>
-      <a href="#">隐私政策</a>
-    </div>
-    <div class="footer-col">
-      <h5>商务合作</h5>
-      <a href="#">渠道合作</a>
-      <a href="#">品牌合作</a>
-      <a href="#">投资者关系</a>
-    </div>
-    <div class="footer-qr">
-      <img src="https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/erweima.png" alt="公司二维码" style="width:80px; height:80px; border-radius:8px;">
-      <p>关注雷曼光电<br>获取更多资讯和优惠</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    © 2026 雷曼光电科技有限公司 版权所有 | 粤ICP备xxxxxxxx号
-  </div>
-</footer>
-
-<!-- ===== 定制弹窗 ===== -->
-<div class="modal-overlay" id="customModal">
-  <div class="modal">
-    <button class="close-btn" onclick="closeModal('customModal')"><i class="fas fa-times"></i></button>
-    <h3>提交定制需求</h3>
-    <p>填写您的需求信息，专属客户经理将在 24 小时内与您联系</p>
-    <div class="form-row">
-      <div class="form-group">
-        <label>您的姓名</label>
-        <input type="text" placeholder="请输入姓名">
-      </div>
-      <div class="form-group">
-        <label>联系电话</label>
-        <input type="tel" placeholder="请输入手机号">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>企业/机构名称（选填）</label>
-      <input type="text" placeholder="如为个人定制可留空">
-    </div>
-    <div class="form-group">
-      <label>定制类型</label>
-      <select>
-        <option>企业品牌定制</option>
-        <option>私宅专属定制</option>
-        <option>酒店文旅定制</option>
-        <option>其他需求</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>需求描述</label>
-      <textarea placeholder="请详细描述您的定制需求..."></textarea>
-    </div>
-    <button class="submit-btn" onclick="submitCustom()">提交需求</button>
   </div>
 </div>
-
-<!-- ===== 客服弹窗 ===== -->
-<div class="modal-overlay" id="vipModal">
-  <div class="modal" style="text-align:center">
-    <button class="close-btn" onclick="closeModal('vipModal')"><i class="fas fa-times"></i></button>
-    <div style="font-size:42px; margin-bottom:12px">👑</div>
-    <h3>VIP 专属客服</h3>
-    <p>1 对 1 专属服务，快速响应您的所有需求</p>
-    <div style="margin:20px 0; display:flex; flex-direction:column; gap:10px">
-      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">服务热线</div>
-        <div style="font-size:18px; font-weight:700; color:var(--accent)">4006-300162</div>
-      </div>
-      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">企业微信</div>
-        <div style="font-size:15px; font-weight:600">LEDman_VIP</div>
-      </div>
-      <div style="padding:12px; background:var(--bg-card); border-radius:12px; border:1px solid var(--border)">
-        <div style="font-size:11px; color:var(--text-dim); margin-bottom:4px">邮箱</div>
-        <div style="font-size:15px; font-weight:600">vip@ledman.com</div>
-      </div>
-    </div>
-    <p style="font-size:12px; color:var(--text-dim)">服务时间：周一至周日 9:00-21:00</p>
-  </div>
-</div>
-
-<!-- ===== Toast ===== -->
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">操作成功</span></div>
+<div id="ap" hidden></div><div id="md"></div><div id="ts" hidden></div>
+<datalist id="dpl"></datalist><datalist id="rql"></datalist>
 
 <script>
-// ===== 素材数据 =====
-const materials = [
-  { id: 1, title: "大理石纹", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/大理石纹.png" },
-  { id: 2, title: "水墨丹青", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/水墨丹青.png" },
-  { id: 3, title: "星空银河", cat: "四季风景", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/星空银河.png" },
-  { id: 4, title: "春日樱花", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春日樱花.png" },
-  { id: 5, title: "流光溢彩", cat: "流光艺术", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/流光溢彩.png" },
-  { id: 6, title: "梵高艺术", cat: "数字画廊", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/梵高艺术.png" },
-  { id: 7, title: "亲子时光", cat: "亲子互动", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/亲子时光.png" },
-  { id: 8, title: "节日庆典", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/节日庆典.png" },
-  { id: 9, title: "海岛窗景", cat: "虚拟窗景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/海岛窗景.png" },
-  { id: 10, title: "木纹纹理", cat: "仿真肌理", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/木纹纹理.png" },
-  { id: 11, title: "春节喜庆", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节喜庆.png" },
-  { id: 12, title: "春节定制", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节定制.png" },
-];
+// ============ 请替换为你的Supabase项目凭证 =================
+const SUPABASE_URL = "https://kynlglwctlicnnydumke.supabase.co"
+const SUPABASE_ANON_KEY = "sb_publishable_4TSk3Tn3jOnp-fmg-Kls5A_GoY1NRCT"
+// ==========================================================
+const { createClient } = supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-function renderGrid() {
-  const grid = document.getElementById('materialGrid');
-  grid.innerHTML = materials.map(m => `
-    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
-      <div class="card-img-wrap">
-        <img src="${m.img}" alt="${m.title}">
-        <button class="heart-btn" onclick="event.stopPropagation(); toggleLike(this)"><i class="far fa-heart"></i></button>
-        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
-      </div>
-      <div class="card-info">
-        <div class="title">${m.title}</div>
-        <div class="meta">
-          <span class="cat">${m.cat}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
+let B = []; // 全部任务从数据库加载，不再写死在前端
+let S={user:'',leader:false,ov:{},custom:[],lead:[72,48,12,1],fired:{},opts:{}};
+let P={m:'year',off:0,who:'',q:'',st:'',so:'desc'};
+const SC={'已完成':'#22a06b','进行中':'#2f6bff','待开展':'#8a94a8','审核中':'#e0912a','已暂停':'#d6523f'},
+TY=['其他平面设计','效果图-平面','效果图-3D建模渲染','效果图-视频','动画-3D建模渲染','剪辑合成','视频剪辑','视频拍摄','照片拍摄','输出提供','UI交互','品牌推广工具包'];
+const LD=[[72,'3天'],[48,'2天'],[12,'半天'],[1,'1小时']];
+const iso=d=>d.toLocaleDateString('sv'),TD=()=>iso(new Date()),addD=(s,n)=>iso(new Date(+new Date(s+'T00:00')+n*864e5));
+const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
+let DES=[],DEP=[],REQ=[],DEF={ty:TY,d:[],r:[],de:[]};
+const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
+let realtimeChannel=null;
+
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ========= Supabase 数据读写函数 =========
+async function loadAllTasks(){
+  const {data,error}=await supabase.from('tasks').select('*');
+  if(error){toast('读取任务失败：'+error.message);return;}
+  B=data||[];
+  DES=[...new Set(B.map(x=>x.de).filter(Boolean))];
+  DEP=[...new Set(B.map(x=>x.d).filter(Boolean))].sort();
+  REQ=[...new Set(B.map(x=>x.r).filter(Boolean))].sort();
+  DEF={ty:TY,d:sp(B.map(x=>x.d)).sort(),r:sp(B.map(x=>x.r)).sort(),de:DES};
 }
 
-function renderCategoryGrid() {
-  const grid = document.getElementById('categoryGrid');
-  const catImages = [
-    { title: "大理石纹", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/大理石纹.png" },
-    { title: "水墨丹青", cat: "仿真肌理", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/水墨丹青.png" },
-    { title: "木纹纹理", cat: "仿真肌理", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/木纹纹理.png" },
-    { title: "流光溢彩", cat: "流光艺术", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/流光溢彩.png" },
-    { title: "梵高艺术", cat: "数字画廊", res: "8K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/梵高艺术.png" },
-    { title: "星空银河", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/星空银河.png" },
-    { title: "春日樱花", cat: "四季风景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春日樱花.png" },
-    { title: "海岛窗景", cat: "虚拟窗景", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/海岛窗景.png" },
-    { title: "亲子时光", cat: "亲子互动", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/亲子时光.png" },
-    { title: "节日庆典", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/节日庆典.png" },
-    { title: "春节喜庆", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节喜庆.png" },
-    { title: "春节定制", cat: "节日庆典", res: "4K", img: "https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/春节定制.png" }
-  ];
-  grid.innerHTML = catImages.map(m => `
-    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
-      <div class="card-img-wrap">
-        <img src="${m.img}" alt="${m.title}">
-        <button class="heart-btn" onclick="event.stopPropagation(); toggleLike(this)"><i class="far fa-heart"></i></button>
-        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
-      </div>
-      <div class="card-info">
-        <div class="title">${m.title}</div>
-        <div class="meta">
-          <span class="cat">${m.cat}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderDownloadGrid() {
-  const grid = document.getElementById('downloadGrid');
-  const downloadImages = materials.slice(0, 3);
-  grid.innerHTML = downloadImages.map(m => `
-    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
-      <div class="card-img-wrap">
-        <img src="${m.img}" alt="${m.title}">
-        <span class="download-tag">已下载</span>
-      </div>
-      <div class="card-info">
-        <div class="title">${m.title}</div>
-        <div class="meta">
-          <span class="cat">${m.cat}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderAlbumGrid() {
-  const grid = document.getElementById('albumGrid');
-  const albumImages = [
-    { img: 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/hy1.png', title: '家庭合影', cat: '家族照片' },
-    { img: 'https://lucker-1255468956.cos.ap-guangzhou.myqcloud.com/assets/LEDMAN/hy2.png', title: '全家福', cat: '家族照片' }
-  ];
-  grid.innerHTML = albumImages.map(m => `
-    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
-      <div class="card-img-wrap">
-        <img src="${m.img}" alt="${m.title}">
-        <button class="heart-btn liked" onclick="event.stopPropagation(); toggleLike(this)"><i class="fas fa-heart"></i></button>
-      </div>
-      <div class="card-info">
-        <div class="title">${m.title}</div>
-        <div class="meta">
-          <span class="cat">${m.cat}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderFavoriteGrid() {
-  const grid = document.getElementById('favoriteGrid');
-  const favImages = materials.slice(0, 8);
-  grid.innerHTML = favImages.map(m => `
-    <div class="material-card" onclick="openImagePreview('${m.img}', '${m.title}', '${m.cat}')">
-      <div class="card-img-wrap">
-        <img src="${m.img}" alt="${m.title}">
-        <button class="heart-btn liked" onclick="event.stopPropagation(); toggleLike(this)"><i class="fas fa-heart"></i></button>
-        ${m.res ? `<span class="res-tag">${m.res}</span>` : ''}
-      </div>
-      <div class="card-info">
-        <div class="title">${m.title}</div>
-        <div class="meta">
-          <span class="cat">${m.cat}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function switchCategory(cat) {
-  const categoryNames = {
-    'texture': '仿真肌理',
-    'gallery': '数字画廊',
-    'scenery': '四季风景',
-    'flow': '流光艺术',
-    'family': '亲子互动',
-    'celebration': '节日庆典',
-    'custom': '私属定制',
-    'window': '虚拟窗景',
-    'meditation': '冥想疗愈',
-    'party': '派对娱乐'
-  };
-  document.querySelectorAll('#categoryTabs span').forEach(s => s.classList.remove('active'));
-  const activeTab = document.querySelector(`#categoryTabs span[onclick="switchCategory('${cat}')"]`);
-  if (activeTab) activeTab.classList.add('active');
-  const catTitle = document.querySelector('#categoryTab .section-header:last-of-type h3');
-  if (catTitle) catTitle.textContent = categoryNames[cat] || '素材分类';
-  document.querySelectorAll('#subTabs span').forEach(s => s.classList.remove('active'));
-  document.querySelector('#subTabs span:nth-child(1)').classList.add('active');
-  renderCategoryGrid();
-  showToast('已切换到：' + (categoryNames[cat] || '素材分类'));
-}
-
-function switchSubTab(tab) {
-  const tabNames = {
-    'latest': '最新',
-    'hot': '最热',
-    'featured': '精选'
-  };
-  document.querySelectorAll('#subTabs span').forEach(s => s.classList.remove('active'));
-  const activeTab = document.querySelector(`#subTabs span[onclick="switchSubTab('${tab}')"]`);
-  if (activeTab) activeTab.classList.add('active');
-  showToast('已切换到：' + tabNames[tab]);
-}
-
-function toggleLike(btn) {
-  btn.classList.toggle('liked');
-  const icon = btn.querySelector('i');
-  icon.classList.toggle('far');
-  icon.classList.toggle('fas');
-  showToast(btn.classList.contains('liked') ? '已添加到喜欢' : '已取消喜欢');
-}
-
-let currentSlide = 0;
-let slideTimer;
-function switchSlide(index) {
-  const slides = document.getElementById('bannerSlides');
-  const dots = document.querySelectorAll('.banner-dots .dot');
-  currentSlide = index;
-  slides.style.transform = `translateX(-${index * 100}%)`;
-  dots.forEach((dot, i) => {
-    dot.classList.toggle('active', i === index);
-  });
-}
-function nextSlide() {
-  currentSlide = (currentSlide + 1) % 2;
-  switchSlide(currentSlide);
-}
-function startSlideTimer() {
-  slideTimer = setInterval(nextSlide, 5000);
-}
-function stopSlideTimer() {
-  clearInterval(slideTimer);
-}
-function switchTab(tab) {
-  const tabs = ['home', 'category', 'favorite', 'download', 'custom', 'album', 'upload', 'vip'];
-  tabs.forEach(t => {
-    const el = document.getElementById(t + 'Tab');
-    if (el) el.style.display = t === tab ? 'block' : 'none';
-  });
-  if (tab === 'category') renderCategoryGrid();
-  if (tab === 'favorite') renderFavoriteGrid();
-  if (tab === 'download') renderDownloadGrid();
-  if (tab === 'album') renderAlbumGrid();
-  setActiveMenu(tab);
-}
-
-function setActiveMenu(tab) {
-  document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
-    item.classList.remove('active');
-  });
-  const menuItems = {
-    'home': document.querySelector('.sidebar-menu .menu-item:nth-child(1)'),
-    'category': document.querySelector('.sidebar-menu .menu-item:nth-child(2)'),
-    'favorite': document.querySelector('.sidebar-menu .menu-item:nth-child(3)'),
-    'download': document.querySelector('.sidebar-menu .menu-item:nth-child(4)'),
-    'custom': document.querySelector('.sidebar-menu .menu-item:nth-child(5)'),
-    'album': document.querySelector('.sidebar-menu .menu-item:nth-child(6)'),
-    'upload': document.querySelector('.sidebar-menu .menu-item:nth-child(7)'),
-    'vip': document.querySelector('.sidebar-menu .menu-item:nth-child(9)')
-  };
-  if (menuItems[tab]) {
-    menuItems[tab].classList.add('active');
+async function saveTaskToDb(task){
+  const payload={
+    id:task.id,t:task.t,ty:task.ty,d:task.d,s:task.s,p:task.p,n:task.n,
+    a:task.a,b:task.b,de:task.de,r:task.r,f:!!task.f,note:task.note,pr:task.pr,
+    path:task.path,rm:task.rm||[]
   }
+  const {error}=await supabase.from('tasks').upsert(payload);
+  if(error) toast('保存失败:'+error.message);
 }
 
-function filterByCat(cat) {
-  showToast('已筛选：' + cat, 'success');
+async function deleteTaskFromDb(id){
+  const {error}=await supabase.from('tasks').delete().eq('id',id);
+  if(error) toast('删除失败:'+error.message);
 }
 
-function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar-left');
-  const content = document.querySelector('.content-main');
-  const footer = document.querySelector('.footer');
-  sidebar.classList.toggle('collapsed');
-  if (sidebar.classList.contains('collapsed')) {
-    sidebar.style.width = '0';
-    sidebar.style.overflow = 'hidden';
-    content.style.marginLeft = '0';
-    footer.style.marginLeft = '0';
-  } else {
-    sidebar.style.width = '240px';
-    sidebar.style.overflow = '';
-    content.style.marginLeft = '240px';
-    footer.style.marginLeft = '240px';
+// 开启实时订阅
+function subscribeRealtime(){
+  if(realtimeChannel) realtimeChannel.unsubscribe();
+  realtimeChannel = supabase.channel('task_watch')
+  .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},async ()=>{
+    await loadAllTasks();
+    render();
+  }).subscribe();
+}
+
+function G(d){d=(d||'未填写').split(',')[0].trim();return/国际/.test(d)?'国际LED事业部':/国内/.test(d)?'国内LED事业部':d;}
+const all=()=>B.map(t=>t).filter(Boolean).concat(S.custom||[]);
+
+function range(){const n=new Date(),o=P.off;let a,b;
+ if(P.m=='day'){a=b=addD(TD(),o)}
+ else if(P.m=='week'){const d=(n.getDay()+6)%7;a=iso(new Date(n.getFullYear(),n.getMonth(),n.getDate()-d+7*o));b=addD(a,6)}
+ else if(P.m=='month'){a=iso(new Date(n.getFullYear(),n.getMonth()+o,1));b=iso(new Date(n.getFullYear(),n.getMonth()+o+1,0))}
+ else if(P.m=='quarter'){const q=Math.floor(n.getMonth()/3)*3+o*3;a=iso(new Date(n.getFullYear(),q,1));b=iso(new Date(n.getFullYear(),q+3,0))}
+ else if(P.m=='year'){const y=n.getFullYear()+o;a=y+'-01-01';b=y+'-12-31'}else{a='0000';b='9999'}
+ return[a,b]}
+const lab=()=>{const[a,b]=range();return P.m=='all'?'全部时间':P.m=='day'?a:P.m=='week'?a+' ~ '+b.slice(5):P.m=='month'?a.slice(0,7):P.m=='year'?a.slice(0,4)+'年':a.slice(0,7)+' ~ '+b.slice(0,7)};
+const mine=()=>all().filter(t=>S.leader?(!P.who||t.de==P.who):t.de==S.user);
+const open_=t=>['待开展','进行中','审核中'].includes(t.s);
+function scope(l){const[a,b]=range(),d=TD();return l.filter(t=>{const e=t.b||t.a;if(!e)return false;
+ if(P.m=='day')return(t.a<=a&&a<=e)||(open_(t)&&e<a&&a==d);return e>=a&&e<=b})}
+function stat(l){const c=l.filter(t=>t.a&&t.b),dn=l.filter(t=>t.s=='已完成');
+ return{n:l.length,dn:dn.length,rate:l.length?Math.round(dn.length/l.length*100):0,cy:c.length?(c.reduce((s,t)=>s+days(t.a,t.b),0)/c.length).toFixed(1):'-',fin:l.reduce((s,t)=>s+(+t.n||0),0),fl:l.filter(t=>t.f).length,op:l.filter(open_).length}}
+function cnt(l,f){const o={};l.forEach(t=>{const k=f(t);o[k]=(o[k]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])}
+const bars=(e,n)=>e.slice(0,10).map(([k,v])=>`<div class="br"><span title="${esc(k)}">${esc(k)}</span><div><i style="width:${v/n*100}%"></i></div><span>${v} · ${Math.round(v/n*100)}%</span></div>`).join('')||'<div class="k">暂无数据</div>';
+function alerts(l){const now=Date.now(),r=[];l.filter(t=>open_(t)&&t.b).forEach(t=>{const h=(new Date(t.b+'T18:00')-now)/36e5,ls=(t.rm&&t.rm.length?t.rm:S.lead);
+ if(h<0)r.push({t,h,lv:0});else{const m=ls.filter(x=>h<=x);if(m.length)r.push({t,h,lv:Math.min(...m)})}});return r.sort((a,b)=>a.h-b.h)}
+const fh=h=>h<0?'已逾期 '+(Math.abs(h)>48?Math.round(Math.abs(h)/24)+'天':Math.round(Math.abs(h))+'小时'):h<1?'不足1小时':h<48?'剩 '+Math.round(h)+' 小时':'剩 '+Math.round(h/24)+' 天';
+function toast(m){const e=$('#ts');e.textContent=m;e.hidden=false;setTimeout(()=>e.hidden=true,2600)}
+
+function render(){
+ $('#dpl').innerHTML=[...new Set(DEP.concat((S.custom||[]).map(t=>t.d)))].map(x=>`<option value="${esc(x)}">`).join('');$('#rql').innerHTML=REQ.map(x=>`<option value="${esc(x)}">`).join('');
+ if(!S.user&&!S.leader){$('#lg').hidden=false;$('#ap').hidden=true;return}
+ $('#lg').hidden=true;$('#ap').hidden=false;
+ const base=mine(),l=scope(base),s=stat(l),al=alerts(base),L=S.leader;
+ const sl=cnt(l,t=>t.s),gr=cnt(l,t=>G(t.d)),ty=cnt(l,t=>(t.ty||'未分类').split(',')[0]);
+ let acc=0;const dn=l.length?'conic-gradient('+sl.map(([k,v])=>{const a=acc/l.length*100;acc+=v;return`${SC[k]||'#999'} ${a}% ${acc/l.length*100}%`}).join(',')+')':'var(--bd)';
+ const mo=cnt(l,t=>(t.b||t.a).slice(0,7)).sort((a,b)=>a[0]<b[0]?-1:1),mx=Math.max(1,...mo.map(x=>x[1]));
+ const f=l.filter(t=>(!P.st||t.s==P.st)&&(!P.q||(t.t+t.r+t.d+(t.ty||'')).includes(P.q))).sort((a,b)=>{const x=a.b||a.a,y=b.b||b.a;return(x<y?-1:x>y?1:0)*(P.so=='asc'?1:-1)});
+ $('#ap').innerHTML=`<header><button id="sg">⚙ 设置</button><b>内容创意组工作看板</b><span class="k">${L?'全部看板':'👤 '+esc(S.user)}</span><span id="sc"></span><span class="sp"></span>
+ <span style="position:relative"><button id="bl">🔔 预警${al.length?` <b class="red">${al.length}</b>`:''}</button><div class="cd al" id="alp" hidden>${al.length?al.map(a=>`<div class="mt" style="cursor:pointer" data-e="${a.t.id}"><b class="${a.h<0?'red':'org'}">${fh(a.h)}</b> · ${esc(a.t.t)}<br>${esc(a.t.de)} · 截止 ${a.t.b}</div>`).join(''):'<div class="k">暂无临近截止的任务 ✅</div>'}<button class="sm" id="st" style="margin-top:8px">⚙ 提醒设置</button></div></span>
+ <button class="pr" id="add">＋ 新建任务卡</button><button class="sm" id="logout">退出登录</button></header>
+ <main><div class="row">${[['day','今日'],['week','本周'],['month','月度'],['quarter','季度'],['year','年度'],['all','全部']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
+ ${P.m!='all'?`<button class="sm" id="pv">◀</button><b>${lab()}</b><button class="sm" id="nx">▶</button>`:''}<span class="sp" style="flex:1"></span>
+ ${L?`<select id="who"><option value="">全部设计师</option>${DEF.de.map(d=>`<option ${P.who==d?'selected':''}>${esc(d)}</option>`).join('')}</select>`:''}
+ <button class="sm" id="csv">⬇ 导出CSV</button><button class="sm" id="cp">📋 复制汇报</button></div>
+ <h3 style="margin:4px 0 10px">整体概览 · ${lab()}</h3>
+ <div class="grid">${[['任务总数',s.n],['已完成',s.dn+'<small> / '+s.rate+'%</small>'],['进行中/待办',s.op],['平均周期',s.cy+'<small> 天</small>'],['定稿数量',s.fin],['走流程',s.fl],['预警任务','<span class="red">'+al.length+'</span>']].map(([k,v])=>`<div class="cd"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}</div>
+ <div class="grid g2"><div class="cd"><h3>各部门占比</h3>${bars(gr,l.length)}</div>
+ <div class="cd"><h3>完成状态</h3><div class="dn"><div style="background:${dn}"></div><div class="lg">${sl.map(([k,v])=>`<span><b style="background:${SC[k]||'#999'}"></b>${k} ${v}（${Math.round(v/l.length*100)}%）</span>`).join('')}</div></div>
+ <div class="cd"><h3>设计类型占比</h3>${bars(ty,l.length)}</div>
+ ${['year','all','quarter'].includes(P.m)?`<div class="cd"><h3>按月任务量</h3><div class="tr">${mo.map(([k,v])=>`<div><i style="height:${v/mx*80}px"></i>${v}<br>${k.slice(5)}月</div>`).join('')}</div></div>`:''}</div>
+ <h3 style="margin:4px 0 10px">⚠ 预警项目（${al.length}）</h3><div class="tks" style="margin-bottom:16px">${al.slice(0,60).map(a=>`<div class="cd tk" style="--c:${a.h<0?'#d6523f':'#e0912a'}" data-e="${a.t.id}"><div class="tt">${esc(a.t.t)}</div><span class="ch">${fh(a.h)}</span> <span class="ch" style="--c:${SC[a.t.s]||'#999'}">${a.t.s}</span><div class="mt">👤 设计师：${esc(a.t.de)}　需求人：${esc(a.t.r||'-')}</div><div class="mt">📅 ${a.t.a||'?'} → ${a.t.b} 18:00　周期 ${days(a.t.a,a.t.b)??'-'} 天</div><div class="mt"><span class="tg">${esc(G(a.t.d))}</span></div></div>`).join('')||'<div class="k">暂无预警项目 ✅</div>'}</div>
+ ${L&&!P.who?`<div class="cd sc" style="margin-bottom:12px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>t.de==d),y=stat(x);return`<tr><td><a href="#" data-w="${esc(d)}">${esc(d)}</a></td><td>${y.n}</td><td>${y.dn}</td><td>${y.rate}%</td><td>${y.cy}天</td><td>${y.fin}</td><td>${y.op}</td><td>${alerts(x).length}</td></tr>`}).join('')}</table></div>`:''}
+ <div class="row"><b>任务卡 (${f.length})</b><input id="q" placeholder="搜索内容/需求人/部门" value="${esc(P.q)}"><select id="so"><option value="desc" ${P.so!='asc'?'selected':''}>降序（截止最新在前）</option><option value="asc" ${P.so=='asc'?'selected':''}>升序（截止最早在前）</option></select><select id="fs"><option value="">全部状态</option>${Object.keys(SC).map(k=>`<option ${P.st==k?'selected':''}>${k}</option>`).join('')}</select></div>
+ <div class="tks">${f.slice(0,120).map(t=>`<div class="cd tk" style="--c:${SC[t.s]||'#999'}" data-e="${t.id}"><div class="tt">${esc(t.t)}</div><span class="ch">${t.s||'-'}</span> ${t.pr?`<span class="ch" style="--c:#d6523f">${t.pr}优先</span>`:''}${t.f?' <span class="tg">走流程</span>':''}
+ <div class="mt">${(t.ty||'').split(',').map(x=>`<span class="tg">${esc(x.trim())}</span>`).join('')}<span class="tg">${esc(G(t.d))}</span></div>
+ <div class="mt">需求人：${esc(t.r||'-')}${L?' · 设计师：'+esc(t.de):''}</div><div class="mt">📅 ${t.a||'?'} → ${t.b||'?'}　周期 ${days(t.a,t.b)??'-'} 天</div>
+ ${t.s=='进行中'?`<div class="mt">进度 <b class="pl">${Math.round((t.p||0)*100)}%</b>（拖动记录）</div><input type="range" class="sl" data-s="${t.id}" min="0" max="100" step="5" value="${Math.round((t.p||0)*100)}">`:`<div class="pg" style="--c:${SC[t.s]||'#999'}"><i style="width:${Math.round((t.p||0)*100)}%"></i></div>`}${t.path?`<button class="sm" data-p="${esc(t.path)}" title="${esc(t.path)}">📁 项目文件夹</button> `:''}${open_(t)?`<button class="sm" data-d="${t.id}">✓ 标记完成</button>`:''}</div>`).join('')||'<div class="k">该时间段暂无任务</div>'}</div>${f.length>120?'<div class="k" style="margin:10px">仅显示前120条，请用搜索筛选</div>':''}</main>`;
+ bind(l,s)}
+
+function bind(l,s){const A=$('#ap');
+ A.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{P.m=b.dataset.m;P.off=0;render()});
+ const g=(i,f)=>{const e=$(i);if(e)e.onclick=f};
+ g('#pv',()=>{P.off--;render()});g('#nx',()=>{P.off++;render()});
+ g('#logout',async ()=>{await supabase.auth.signOut();S.user='';S.leader=false;render()});
+ g('#add',()=>form());g('#st',()=>setf('al'));g('#sg',()=>setf('tp'));
+ g('#bl',()=>{$('#alp').hidden=!$('#alp').hidden});
+ const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;render()};
+ A.querySelectorAll('[data-w]').forEach(a=>a.onclick=e=>{e.preventDefault();P.who=a.dataset.w;render()});
+ const q=$('#q');q.onchange=()=>{P.q=q.value;render()};$('#fs').onchange=e=>{P.st=e.target.value;render()};$('#so').onchange=e=>{P.so=e.target.value;render()};
+ A.querySelectorAll('[data-e]').forEach(e=>e.onclick=()=>form(all().find(t=>t.id==e.dataset.e)));
+ A.querySelectorAll('[data-d]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=all().find(t=>t.id==b.dataset.d);ask('是否确认「'+esc(o.t)+'」已完成？',async ()=>{o.s='已完成';o.p=1;await saveTaskToDb(o);toast('已标记完成')},'确认完成')});
+ A.querySelectorAll('[data-p]').forEach(b=>b.onclick=e=>{e.stopPropagation();openP(b.dataset.p)});
+ A.querySelectorAll('.sl').forEach(e=>{e.onclick=ev=>ev.stopPropagation();e.oninput=()=>{e.previousElementSibling.querySelector('.pl').textContent=e.value+'%'};e.onchange=async ()=>{const o=all().find(t=>t.id==e.dataset.s);o.p=e.value/100;await saveTaskToDb(o);toast('进度已记录 '+e.value+'%')}});
+ g('#csv',()=>{const h=['工作内容','设计类型','对应部门','进展状态','进度','定稿数量','开始时间','计划完成时间','周期','优先级','设计师','需求人'],r=mine().map(t=>[t.t,t.ty,t.d,t.s,t.p,t.n,t.a,t.b,days(t.a,t.b),t.pr,t.de,t.r].map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(','));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+h.join(',')+'\n'+r.join('\n')],{type:'text/csv'}));a.download='工作汇报_'+lab()+'.csv';a.click()});
+ g('#cp',()=>{const ls=(a,m)=>a.length?a.slice(0,m).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}`).join('\n')+(a.length>m?`\n…等共${a.length}项`:''):'无',al=alerts(mine());const tx=`【${lab()}工作汇报】${S.leader?(P.who||'设计组'):S.user}\n任务 ${stat(mine()).n} 项，完成 ${stat(mine()).dn} 项（${stat(mine()).rate}%），进行中/待办 ${stat(mine()).op} 项\n平均周期 ${stat(mine()).cy} 天，定稿 ${stat(mine()).fin} 件，走流程 ${stat(mine()).fl} 项\n部门占比：`+cnt(mine(),t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/mine().length*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}｜${a.t.de}｜截止${a.t.b}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ 已完成项目（${mine().filter(t=>t.s=='已完成').length}）：\n`+ls(mine().filter(t=>t.s=='已完成'),40)+`\n\n🔄 进行中项目（${mine().filter(t=>t.s=='进行中').length}）：\n`+ls(mine().filter(t=>t.s=='进行中'),40);
+  try{navigator.clipboard.writeText(tx).then(()=>toast('汇报已复制'),()=>prompt('复制汇报',tx))}catch(e){prompt('复制汇报',tx)}})}
+
+function openP(p){if(p.includes('://')){window.open(p,'_blank','noopener');return}try{navigator.clipboard.writeText(p).then(()=>toast('📁 路径已复制，粘贴到资源管理器/访达地址栏即可打开'),()=>prompt('复制路径',p))}catch(e){prompt('复制路径',p)}}
+function ask(m,ok,okt){$('#md').innerHTML=`<div class="md" style="z-index:25"><div style="max-width:380px;text-align:center"><h3 style="font-size:16px;margin:8px 0 20px">${m}</h3><div class="row" style="justify-content:center;margin:0"><button id="aq" style="min-width:110px">取消</button><button class="pr" id="ay" style="min-width:110px">${okt||'确认'}</button></div></div></div>`;$('#aq').onclick=()=>{$('#md').innerHTML=''};$('#ay').onclick=ok}
+
+async function put(t){
+  if(String(t.id).startsWith('c')) S.custom.push(t);
+  await saveTaskToDb(t);
+  $('#md').innerHTML='';
+}
+
+function form(t){const n=!t,x=t||{id:'c'+Date.now(),t:'',ty:TY[0],d:'',s:'待开展',p:0,n:'',a:TD(),b:addD(TD(),3),de:S.leader?(P.who||(DES[0]||'')):S.user,r:'',f:false,note:'',pr:'',path:'',rm:[]};
+ const rm=x.rm||[],o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),sel=(i,k,v)=>`<select id="f_${i}">${v?'':'<option value="">请选择</option>'}${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option ${e==v?'selected':''}>${esc(e)}</option>`).join('')}</select>`;
+ $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>${n?'新建':'编辑'}任务卡</h3><div class="fm">
+ <label class="w2">工作内容<input id="f_t" value="${esc(x.t)}"></label>
+ <label>设计类型${sel('ty','ty',x.ty)}</label><label>事业部/部门${sel('d','d',x.d)}</label>
+ <label>需求人${sel('r','r',x.r)}</label><label>设计师${S.leader?sel('de','de',x.de):`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
+ <label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label><label>计划完成时间<input type="date" id="f_b" value="${x.b||''}"></label>
+ <div class="w2">周期：<span id="cy"></span> ${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<button class="sm" data-c="${d}">${k}</button>`).join(' ')}</div>
+ <label>进展状态<select id="f_s">${o(Object.keys(SC),x.s)}</select></label><label>优先级<select id="f_pr"><option></option>${o(['高','中','低'],x.pr)}</select></label>
+ <label>进度 <span id="pv_">${Math.round((x.p||0)*100)}%</span><input type="range" id="f_p" min="0" max="100" step="5" value="${(x.p||0)*100}"></label><label>定稿数量<input type="number" id="f_n" value="${x.n||''}"></label>
+ <label class="w2"><input type="checkbox" id="f_f" style="width:auto;display:inline" ${x.f?'checked':''}> 是否有流程</label>
+ <label class="w2">项目路径位置<input id="f_path" value="${esc(x.path)}" placeholder="粘贴网盘链接或文件夹路径，卡片上可一键打开"></label>
+ <label class="w2">工作进展描述<textarea id="f_note" rows="2">${esc(x.note)}</textarea></label>
+ <div class="w2"><span class="k">本任务预警提醒（不选则用默认）</span><br>${LD.map(([h,k])=>`<label style="display:inline-block;margin-right:10px"><input type="checkbox" style="width:auto;display:inline" class="rmc" value="${h}" ${rm.includes(h)?'checked':''}> 截止前${k}</label>`).join('')}</div></div>
+ <div class="ft"><span></span><button class="pr" id="ok">保存</button>${n?'<span></span>':'<button id="rmv" title="删除" aria-label="删除">🗑</button>'}</div></div></div>`;
+ const cy=()=>$('#cy').textContent=(days($('#f_a').value,$('#f_b').value)??'-')+' 天';cy();$('#f_a').onchange=$('#f_b').onchange=cy;
+ $('#f_p').oninput=e=>$('#pv_').textContent=e.target.value+'%';
+ document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{$('#f_b').value=addD($('#f_a').value||TD(),+b.dataset.c);cy()});
+ $('#no').onclick=()=>$('#md').innerHTML='';
+ const r=$('#rmv');if(r)r.onclick=()=>ask('确定删除该任务？',async ()=>{await deleteTaskFromDb(x.id);$('#md').innerHTML='';render()},'删除');
+ $('#ok').onclick=async ()=>{const v=i=>$('#f_'+i).value.trim();if(!v('t'))return toast('请填写工作内容');if(v('a')&&v('b')&&v('b')<v('a'))return toast('完成时间不能早于开始时间');
+  let s=v('s'),p=v('p')/100;if(s=='已完成')p=1;
+  await put({...x,t:v('t'),ty:v('ty'),d:v('d'),r:v('r'),de:v('de'),a:v('a'),b:v('b'),s,p,pr:v('pr'),n:v('n'),f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...document.querySelectorAll('.rmc:checked')].map(c=>+c.value)})}}
+function setf(tab){const tp=tab!='al',N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'};
+ $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row"><button class="tab ${tp?'on':''}" id="t1">任务卡模板</button><button class="tab ${tp?'':'on'}" id="t2">预警提醒</button></div>`+(tp?Object.keys(N).map(k=>`<div style="margin-bottom:16px"><b>${N[k]}</b>（${DEF[k].length}）<div style="margin:8px 0">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')}</div><div class="row" style="margin:0"><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}" style="flex:1"><button class="ad" data-k="${k}">＋ 添加</button></div></div>`).join('')+'<div class="k">增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响。</div>':
+ `<div class="k">截止时间按计划完成日 18:00 计算。进入所选时间窗口后会出现在预警列表，并弹出提醒。</div><p>${LD.map(([h,k])=>`<label style="display:block;margin:6px 0"><input type="checkbox" class="dc" value="${h}" ${S.lead.includes(h)?'checked':''}> 截止前 ${k}提醒（${h}小时）</label>`).join('')}</p><label class="k">自定义（小时，多个用逗号）<input id="cu" placeholder="如 6,24" style="width:100%"></label><p><button id="nt">🔔 开启系统通知</button></p><div class="ft"><span></span><button class="pr" id="sv">保存</button><span></span></div>`)+`</div></div>`;
+ $('#no').onclick=()=>{$('#md').innerHTML='';render()};$('#t1').onclick=()=>setf('tp');$('#t2').onclick=()=>setf('al');
+ const add=k=>{const v=$('#ni_'+k).value.trim();if(!v)return;DEF[k]=[...new Set([...DEF[k],v])];$('#md').innerHTML='';setf('tp')};
+ document.querySelectorAll('.ad').forEach(b=>b.onclick=()=>add(b.dataset.k));document.querySelectorAll('[id^=ni_]').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')add(i.dataset.k)});
+ document.querySelectorAll('.dx').forEach(a=>a.onclick=e=>{e.preventDefault();const k=a.dataset.k;DEF[k]=DEF[k].filter((_,j)=>j!=+a.dataset.i);$('#md').innerHTML='';setf('tp')});
+ const nt=$('#nt');if(nt)nt.onclick=()=>{try{Notification.requestPermission().then(r=>toast(r=='granted'?'通知已开启':'未授权，仍会在页面内提醒'))}catch(e){toast('当前浏览器不支持系统通知')}};
+ const sv=$('#sv');if(sv)sv.onclick=()=>{S.lead=[...new Set([...document.querySelectorAll('.dc:checked')].map(c=>+c.value).concat($('#cu').value.split(/[,，]/).map(Number).filter(x=>x>0)))].sort((a,b)=>b-a);$('#md').innerHTML='';render();toast('提醒设置已保存')}}
+function tick(){if(!S.user&&!S.leader)return;alerts(mine()).forEach(a=>{const k=a.t.id+'|'+a.lv;if(S.fired[k])return;S.fired[k]=1;toast('⏰ '+`${a.t.t}：${fh(a.h)}`);try{if(Notification.permission=='granted')new Notification('任务预警',{body:`${a.t.t}：${fh(a.h)}`})}catch(e){}})}
+
+// 登录逻辑
+$('#loginBtn').onclick=async ()=>{
+  const {error}=await supabase.auth.signInWithOAuth({provider:'email'});
+  if(error) toast(error.message);
+}
+
+// 监听登录状态
+supabase.auth.onAuthStateChange(async (event,session)=>{
+  if(session?.user){
+    S.user=session.user.email;
+    S.leader=true; // 你可以在这里做简单权限判断，哪些账号是管理员
+    await loadAllTasks();
+    subscribeRealtime();
+    render();
+    setInterval(tick,6e4);
+  }else{
+    S.user='';S.leader=false;
+    render();
   }
-}
+})
 
-function openImagePreview(img, title, cat) {
-  const overlay = document.createElement('div');
-  overlay.className = 'image-preview-overlay';
-  overlay.onclick = function(e) {
-    if (e.target === overlay) closeImagePreview(overlay);
-  };
-  
-  const randomDownloads = Math.floor(Math.random() * 5000) + 1000;
-  const randomFavorites = Math.floor(Math.random() * 2000) + 500;
-  const randomRecommend = Math.floor(Math.random() * 1000) + 200;
-  
-  overlay.innerHTML = `
-    <div class="image-preview-modal">
-      <button class="close-btn" onclick="closeImagePreview(this.parentElement.parentElement)">
-        <i class="fas fa-times"></i>
-      </button>
-      <img src="${img}" alt="${title}">
-      <div class="preview-info">
-        <div class="title-row">
-          <h4>${title}</h4>
-          <span class="cat">${cat}</span>
-        </div>
-        <div class="preview-stats">
-          <div class="stat-item download">
-            <i class="fas fa-download"></i>
-            <span>下载 ${randomDownloads.toLocaleString()} 次</span>
-          </div>
-          <div class="stat-item favorite">
-            <i class="fas fa-heart"></i>
-            <span>收藏 ${randomFavorites.toLocaleString()} 次</span>
-          </div>
-          <div class="stat-item recommend">
-            <i class="fas fa-thumbs-up"></i>
-            <span>推荐 ${randomRecommend.toLocaleString()} 次</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.appendChild(overlay);
-  setTimeout(() => overlay.classList.add('active'), 10);
-}
-
-function closeImagePreview(overlay) {
-  overlay.classList.remove('active');
-  setTimeout(() => {
-    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-  }, 300);
-}
-
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-}
-function submitCustom() {
-  closeModal('customModal');
-  showToast('需求已提交，专属客户经理将在24小时内联系您');
-}
-function handleUpload(input) {
-  if (input.files.length > 0) showToast('已选择 ' + input.files.length + ' 个文件');
-}
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
-// 搜索
-document.getElementById('searchInput').addEventListener('input', function(e) {
-  if (e.target.value) showToast('搜索: ' + e.target.value);
-});
-
-renderGrid();
-renderCategoryGrid();
-startSlideTimer();
-document.querySelector('.banner').addEventListener('mouseenter', stopSlideTimer);
-document.querySelector('.banner').addEventListener('mouseleave', startSlideTimer);
+document.addEventListener('click',e=>{const a=$('#alp');if(a&&!a.hidden&&!e.target.closest('#alp,#bl,[data-e]'))a.hidden=true});
+render();
 </script>
-</body>
-</html>
+</body></html>
+<!-- （注：内容由AI生成） -->
