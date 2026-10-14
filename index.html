@@ -80,8 +80,8 @@ const SUPABASE_URL = "https://kynlglwctlicnnydumke.supabase.co"
 const SUPABASE_ANON_KEY = "sb_publishable_4TSk3Tn3jOnp-fmg-Kls5A_GoY1NRCT"
 const PASSWORD = "ledman" // 修改这里为你的密码
 
-const { createClient } = supabase
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const { createClient } = window.supabase
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 let B = [];
 let S={user:'internal',leader:true,ov:{},custom:[],lead:[72,48,12,1],fired:{},opts:{}};
