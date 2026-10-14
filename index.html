@@ -9,6 +9,7 @@
 :root{--bg:#f4f6fb;--cd:#fff;--tx:#1d2433;--mu:#6b7488;--bd:#e3e7f0;--ac:#2f6bff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--cd:#1b2029;--tx:#e8ecf4;--mu:#98a1b5;--bd:#2a3140;--ac:#6c95ff}}
 :root[data-theme="dark"]{--bg:#12151c;--cd:#1b2029;--tx:#e8ecf4;--mu:#98a1b5;--bd:#2a3140;--ac:#6c95ff}
+:root[data-theme="jungle"]{--bg:#040d07;--cd:#0a170f;--tx:#e8f6ec;--mu:#83ab93;--bd:#1c3524;--ac:#1fd67a}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;color:var(--tx);font:14px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 16%,var(--bg)),var(--bg) 45%) fixed}
@@ -16,15 +17,19 @@ body{margin:0;color:var(--tx);font:14px/1.5 -apple-system,"PingFang SC","Microso
 button,input,select,textarea{font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;max-width:100%}
 button{cursor:pointer}
 button.pr,.tab.on{background:linear-gradient(135deg,var(--ac),#6a4cf0);border:0;color:#fff}
+:root[data-theme="jungle"] button.pr,:root[data-theme="jungle"] .tab.on{background:linear-gradient(135deg,#1fd67a,#0f7a45)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{padding:4px 12px!important;border-radius:999px;font-size:12px;line-height:1.6;background:var(--cd);border:1px solid var(--bd);color:var(--mu)}
+.chip.on{background:var(--c,var(--ac))!important;border-color:transparent;color:#fff}
 button.sm{padding:3px 8px;font-size:12px}
 button:disabled,input:disabled{opacity:.55;cursor:not-allowed}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:8px;align-items:center;padding:10px 14px;background:color-mix(in srgb,var(--cd) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd);flex-wrap:wrap}
 header>b{font-size:17px;background:linear-gradient(90deg,var(--ac),#8a5cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
 header .sp,.row .sp{flex:1}
-main{max-width:1180px;margin:16px auto;padding:24px;background:var(--cd);border:1px solid var(--bd);border-radius:22px;box-shadow:0 10px 40px #1d243314}
+main{max-width:1680px;margin:16px auto;padding:24px;background:var(--cd);border:1px solid var(--bd);border-radius:22px;box-shadow:0 10px 40px #1d243314}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:12px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))}
 .cd{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px}
 main .cd{background:color-mix(in srgb,var(--bg) 55%,var(--cd));border-radius:16px}
 .grid:not(.g2)>.cd{border-top:3px solid var(--ac)}
@@ -38,7 +43,7 @@ h3:before{content:"";width:4px;height:14px;border-radius:2px;background:var(--ac
 .tr{display:flex;align-items:flex-end;gap:6px;height:150px;overflow-x:auto}.tr div{flex:1;min-width:26px;text-align:center;font-size:11px;color:var(--mu)}.tr i{display:block;background:linear-gradient(180deg,#8a5cf6,var(--ac));border-radius:4px 4px 0 0;margin-bottom:2px}
 table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}.sc{overflow-x:auto}
 /* 任务卡：等高 + 底部操作区对齐 */
-.tks{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(330px,100%),1fr))}
+.tks{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(288px,100%),1fr))}
 .tk{cursor:pointer;border-left:4px solid var(--c)!important;padding:16px 18px!important;display:flex;flex-direction:column;min-width:0;transition:.15s}
 .tk:hover{transform:translateY(-2px);box-shadow:0 8px 22px #1d24331f}
 .tt{font-weight:600;font-size:15px;margin-bottom:8px;word-break:break-word}
@@ -50,7 +55,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px;borde
 .tk .ac{margin-top:auto;padding-top:10px;display:flex;gap:6px;flex-wrap:wrap}
 .stg{margin:4px 0 2px;font-size:12px;color:var(--mu);display:grid;gap:2px}
 .stg .cur{color:var(--tx);font-weight:600}.stg .sd{text-decoration:line-through;opacity:.65}.stg .od{color:#d6523f;font-weight:600}
-.sl{width:100%;height:22px;padding:0;border:0;background:none;accent-color:#2f6bff;margin:2px 0 4px;cursor:pointer}
+.sl{width:100%;height:22px;padding:0;border:0;background:none;accent-color:var(--c,#2f6bff);margin:2px 0 4px;cursor:pointer}
 /* 弹窗：高内容在小屏不再被顶部裁切 */
 .md{position:fixed;inset:0;background:#0007;z-index:20;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:16px}
 .md>div{position:relative;background:var(--cd);border-radius:16px;padding:28px 30px;width:100%;max-width:720px;margin:auto}
@@ -65,13 +70,18 @@ select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}
 .fm input:not([type=checkbox]),.fm select,.fm textarea{width:100%;display:block;margin-top:4px;font-size:15px;padding:8px 12px;min-width:0}
 .fm input[type=checkbox]{width:auto;display:inline-block;margin:0 4px 0 0;vertical-align:middle}
 .fm input[type=range]{padding:0}
+.fm .trow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end}
+.fm .trow input{margin-top:2px;height:36px}
+.fm .trow button{height:36px;padding:0 12px;white-space:nowrap}
 .w2{grid-column:1/3;min-width:0}
-.lbh{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .sr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;background:var(--bg)}
 .sr .l{grid-column:1/3}
 .fm .sr input:not([type=checkbox]){margin-top:0;height:36px;font-size:14px}
 .sr .sm2{grid-column:1/3;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .fm .sr .sm2 label{display:flex;align-items:center;font-size:13px;color:var(--tx)}
+.fm .sr .sm2 select{width:auto;height:30px;font-size:12px;padding:2px 6px;margin:0;flex:none}
+.fm .bad{border-color:#d6523f!important;box-shadow:0 0 0 2px rgba(214,82,63,.15)}
+.fel{color:#d6523f;font-size:11px;line-height:1.4;margin-top:3px}
 .al{position:absolute;right:0;top:calc(100% + 6px);width:min(360px,92vw);max-height:60vh;overflow:auto;z-index:9;box-shadow:0 8px 30px #0004}
 #loginWrap{position:fixed;inset:0;background:#0008;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
 #loginBox{background:var(--cd);border-radius:16px;padding:32px;width:min(360px,100%)}
@@ -79,6 +89,14 @@ select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}
 #ts{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:16px;z-index:30;max-width:90vw;text-align:center}
 .warn{background:#fff4e0;color:#8a5a00;border:1px solid #f0c98a;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px;word-break:break-all}
 .red{color:#d6523f}.org{color:#e0912a}
+/* 设置界面：标题+输入框一行，选项固定高度滚动 */
+.setrow{display:flex;align-items:center;gap:8px;margin:10px 0 4px;flex-wrap:wrap}
+.setrow b{flex:none}
+.setrow .k{flex:none}
+.setrow input{flex:1;min-width:140px;height:34px;padding:5px 10px;font-size:13px}
+.setrow button{height:34px;flex:none}
+.opt{max-height:140px;overflow-y:auto;padding:2px 4px 4px 0;margin:2px 0 0}
+.opt .tg{display:inline-block;margin:3px 4px 3px 0}
 @media(max-width:560px){
  main{padding:12px;border-radius:16px;margin:8px}
  .fm{grid-template-columns:1fr}.w2{grid-column:auto}.sr .l,.sr .sm2{grid-column:1/3}
@@ -113,7 +131,17 @@ select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}
    alter table settings enable row level security;
    drop policy if exists settings_all on settings;
    create policy settings_all on settings for all to anon using (true) with check (true);
-   alter publication supabase_realtime add table settings;
+   do $$ begin if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='settings') then alter publication supabase_realtime add table settings; end if; end $$;
+   notify pgrst, 'reload schema';
+
+   -- 本轮新增：操作流水（新增项目 / 提交审核次数统计，按设计师累计）
+   create table if not exists task_events(id bigserial primary key, tid text not null, kind text not null default 'submit', at timestamptz not null default now());
+   alter table task_events enable row level security;
+   drop policy if exists task_events_all on task_events;
+   create policy task_events_all on task_events for all to anon using (true) with check (true);
+   grant select, insert, update, delete on public.task_events to anon, authenticated;
+   grant usage, select on sequence public.task_events_id_seq to anon, authenticated;
+   do $$ begin if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='task_events') then alter publication supabase_realtime add table task_events; end if; end $$;
    notify pgrst, 'reload schema';
    ===================================================================== */
 const SUPABASE_URL = "https://kynlglwctlicnnydumke.supabase.co"
@@ -157,24 +185,45 @@ const LS={get(k,d){try{const v=localStorage.getItem('ledboard_'+k);return v?JSON
 const E4=()=>({ty:[],d:[],r:[],de:[]});
 let CFG=LS.get('cfg',null)||{add:E4(),del:E4()};
 
+/* ---------- 界面环境色彩（本机偏好，不参与全组同步） ---------- */
+const THEMES=[['light','光天化日'],['jungle','丛林探险'],['dark','黑灯瞎火']];
+const applyTheme=n=>{if(n==='party')n='jungle';if(n)document.documentElement.dataset.theme=n;else delete document.documentElement.dataset.theme;LS.set('theme',n)};
+applyTheme(LS.get('theme','light'));
+
 let B=[];
-let S={user:'internal',leader:true,lead:LS.get('lead',[72,48,12,1]),fired:LS.get('fired',{})};
-let P={m:'year',off:0,who:'',q:'',st:'',so:'desc'};
-const ST_ALL=['待启动','进行中','审核中','已完成','已暂停'];
+let S={user:'internal',leader:true,lead:LS.get('lead',[72,48,24,12]),fired:LS.get('fired',{})};
+let P={m:'day',off:0,who:'',q:'',st:'',so:'desc',pg:0},_pgN=1;
+const ST_ALL=['审核中','进行中','待启动','已完成','已暂停'];
 const SC={'已完成':'#22a06b','进行中':'#2f6bff','待启动':'#8a94a8','审核中':'#e0912a','已暂停':'#d6523f'},
 TY=['其他平面设计','效果图-平面','效果图-3D建模渲染','效果图-视频','动画-3D建模渲染','剪辑合成','视频剪辑','视频拍摄','照片拍摄','输出提供','UI交互','品牌推广工具包'];
-const LD=[[72,'3天'],[48,'2天'],[12,'半天'],[1,'1小时']];
+const LD=[[72,'3天'],[48,'2天'],[24,'1天'],[12,'半天']];
 const iso=d=>d.toLocaleDateString('sv'),TD=()=>iso(new Date()),addD=(s,n)=>iso(new Date(+new Date(s+'T00:00')+n*864e5));
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
 const md=s=>s?String(s).slice(5):'?';
 let DEF={ty:TY,d:[],r:[],de:[]},DEP=[],REQ=[];
 const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
 let realtimeChannel=null,STAGES_OK=true,SETTINGS_OK=true,SYNC='ok',DRAG=false,PENDING=false;
+let EV=[],EVENTS_OK=true,EV_ERR='';                 /* 操作流水：新增项目 / 提交审核次数统计 */
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- 进度滑条防误触：只有按住滑块(原点)拖动才改值，点击轨道空白处不改值 ---------- */
+const hitThumb=(el,ev)=>{const r=el.getBoundingClientRect(),min=+el.min||0,max=+el.max||100,v=+el.value,fc=max>min?(v-min)/(max-min):0;
+ return Math.abs(ev.clientX-(r.left+8+fc*(r.width-16)))<=14};   /* 滑块宽约16px，容差±14px */
+function guardSlider(el,onval,oncommit){
+ if(!el)return;
+ el.onclick=ev=>ev.stopPropagation();
+ el.onpointerdown=ev=>{if(hitThumb(el,ev)){delete el.dataset.lk;DRAG=true}else{el.dataset.lk='1';el.dataset.ov=el.value;DRAG=false}};
+ el.onpointerup=el.onpointercancel=()=>{DRAG=false;delete el.dataset.lk};
+ el.onblur=()=>{delete el.dataset.lk};
+ el.oninput=()=>{if(el.dataset.lk){el.value=el.dataset.ov;return}onval&&onval(+el.value)};
+ el.onchange=()=>{DRAG=false;const lk=el.dataset.lk;delete el.dataset.lk;if(!lk)oncommit&&oncommit(+el.value)};
+}
 
 /* ---------- 状态 / 进度联动：0%=待启动，1~99%=进行中，100%=已完成 ---------- */
 const stByP=pct=>pct>=100?'已完成':pct>0?'进行中':'待启动';
 const open_=t=>['待启动','进行中','审核中'].includes(t.s);
+const warn_=t=>['进行中','审核中'].includes(t.s);   /* 预警仅覆盖进行中/审核中，待启动不进预警 */
+const si=s=>{const i=ST_ALL.indexOf(s);return i<0?ST_ALL.length:i};   /* 状态分组排序权重 */
 
 /* ---------- 周期：有阶段时 = 各阶段天数之和；否则 = 开始→完成 ---------- */
 const stagesOf=t=>Array.isArray(t.stages)?t.stages:[];
@@ -188,6 +237,7 @@ function norm(r){
   return{...r,s:r.s==='待开展'?'待启动':(r.s||'待启动'),p:+r.p||0,a:(r.a||'').slice(0,10),b:(r.b||'').slice(0,10),
     stages:Array.isArray(st)?st:[],rm:Array.isArray(rm)?rm:[],de:r.de||'',r:r.r||'',d:r.d||'',t:r.t||''}
 }
+const inR=(s,a,b)=>!!s&&s>=a&&s<=b;
 function rebuildLists(){
   const base={ty:TY,d:sp(B.map(x=>x.d)),r:sp(B.map(x=>x.r)),de:[...new Set(B.map(x=>x.de).filter(Boolean))]};
   DEF={};Object.keys(base).forEach(k=>{DEF[k]=[...new Set([...base[k],...(CFG.add[k]||[])])].filter(v=>!(CFG.del[k]||[]).includes(v));if(k!=='ty')DEF[k].sort()});
@@ -243,6 +293,24 @@ async function loadAllTasks(){
   STAGES_OK=!rows.length||rows.some(r=>'stages' in r);
   rebuildLists();return true;
 }
+/* ---------- 操作流水：提交审核次数 ---------- */
+async function loadEvents(){
+  let rows=[],from=0;const step=1000;
+  for(;;){
+    const {data,error}=await sb.from('task_events').select('*').order('id').range(from,from+step-1);
+    if(error){EVENTS_OK=false;EV=[];EV_ERR=(error&&error.message)||String(error);console.warn('task_events 读取失败',error);return false}
+    rows=rows.concat(data||[]);if(!data||data.length<step)break;from+=step;
+  }
+  EVENTS_OK=true;EV_ERR='';EV=rows.map(e=>({id:e.id,tid:e.tid,kind:e.kind||'submit',d:e.at?iso(new Date(e.at)):''}));
+  return true;
+}
+async function logEvent(tid,kind){
+  if(!tid)return false;
+  const {data,error}=await sb.from('task_events').insert({tid,kind}).select();
+  if(error){console.warn('流水写入失败',error);toast('提交记录写入失败：'+error.message);return false}
+  if(data&&data[0])EV.push({id:data[0].id,tid:data[0].tid,kind:data[0].kind||kind,d:String(data[0].at||'').slice(0,10)});
+  render();return true;   /* 立即刷新，设计师统筹的「提交审核」列同步 +1 */
+}
 function rowOf(t){
   const r={id:t.id,t:t.t,ty:t.ty,d:t.d,s:t.s,p:t.p,n:(t.n===''||t.n==null)?null:+t.n,a:t.a||null,b:t.b||null,de:t.de,r:t.r,f:!!t.f,note:t.note,pr:t.pr,path:t.path,rm:t.rm||[]};
   if(STAGES_OK)r.stages=t.stages||[];return r;
@@ -257,9 +325,11 @@ async function saveTaskToDb(t){
   setSync('ok');return true;
 }
 async function patchTask(t,fields){ // 乐观更新，失败自动还原
+  const sub=fields.s==='审核中'&&t.s!=='审核中';            /* 首次进入「审核中」记一次提交 */
   const old={};Object.keys(fields).forEach(k=>old[k]=t[k]);Object.assign(t,fields);render();setSync('saving');
   const {data,error}=await sb.from('tasks').update(fields).eq('id',t.id).select('id');
   if(error||!data||!data.length){Object.assign(t,old);render();setSync('err');toast(error?'保存失败，已还原：'+error.message:'该任务已被他人删除，请刷新');return false}
+  if(sub)await logEvent(t.id,'submit');
   setSync('ok');return true;
 }
 async function deleteTaskFromDb(id){
@@ -278,9 +348,10 @@ function subscribeRealtime(){
   realtimeChannel=sb.channel('task_watch')
     .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},applyChange)
     .on('postgres_changes',{event:'*',schema:'public',table:'settings'},p=>{const cv=p.new&&cfgVal(p.new.value);if(cv){applyCfg(cv);soft()}})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'task_events'},p=>{const e=p.new;if(!e||EV.some(x=>x.id===e.id))return;EV.push({id:e.id,tid:e.tid,kind:e.kind||'submit',d:e.at?iso(new Date(e.at)):''});soft()})
     .subscribe(st=>{if(st==='SUBSCRIBED')setSync('ok');else if(['CHANNEL_ERROR','TIMED_OUT','CLOSED'].includes(st))setSync('poll')});
 }
-async function resync(){if(document.hidden)return;await loadSettings();if(await loadAllTasks()){soft();tick()}}
+async function resync(){if(document.hidden)return;await loadSettings();await loadEvents();if(await loadAllTasks()){soft();tick()}}
 
 /* ---------- 统计 / 预警 ---------- */
 function G(d){d=(d||'未填写').split(',')[0].trim();return/国际/.test(d)?'国际LED事业部':/国内/.test(d)?'国内LED事业部':d;}
@@ -295,8 +366,8 @@ function range(){const n=new Date(),o=P.off;let a,b;
 const lab=()=>{const[a,b]=range();return P.m=='all'?'全部时间':P.m=='day'?a:P.m=='week'?a+' ~ '+b.slice(5):P.m=='month'?a.slice(0,7):P.m=='year'?a.slice(0,4)+'年':a.slice(0,7)+' ~ '+b.slice(0,7)};
 const mine=()=>all().filter(t=>S.leader?(!P.who||t.de==P.who):t.de==S.user);
 const visible=()=>all().filter(t=>S.leader||t.de==S.user); // 提醒不受“设计师筛选”影响
-function scope(l){const[a,b]=range(),d=TD();return l.filter(t=>{const e=t.b||t.a;if(!e)return false;
- if(P.m=='day')return((t.a||e)<=a&&a<=e)||(open_(t)&&e<a&&a==d);return e>=a&&e<=b})}
+function scope(l){const[a,b]=range();return l.filter(t=>{const e=t.b||t.a;if(!e)return false;
+ if(P.m=='day')return (t.a||e)<=a&&a<=e;return e>=a&&e<=b})}
 function stat(l){const c=l.map(cyc).filter(v=>v!=null),dn=l.filter(t=>t.s=='已完成');
  return{n:l.length,dn:dn.length,rate:l.length?Math.round(dn.length/l.length*100):0,cy:c.length?(c.reduce((s,v)=>s+v,0)/c.length).toFixed(1):'-',fin:l.reduce((s,t)=>s+(+t.n||0),0),fl:l.filter(t=>t.f).length,op:l.filter(open_).length}}
 function cnt(l,f){const o={};l.forEach(t=>{const k=f(t);o[k]=(o[k]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])}
@@ -308,11 +379,16 @@ function dueOf(t){
   return t.b?{end:t.b,label:''}:null;
 }
 function alerts(l){const now=Date.now(),r=[];
- l.filter(open_).forEach(t=>{const du=dueOf(t);if(!du)return;
+ l.filter(warn_).forEach(t=>{const du=dueOf(t);if(!du)return;
   const h=(new Date(du.end+'T18:00')-now)/36e5,ls=(t.rm&&t.rm.length?t.rm:S.lead);
   if(isNaN(h))return;
   if(h<0)r.push({t,h,lv:0,end:du.end,sg:du.label});else{const m=ls.filter(x=>h<=x);if(m.length)r.push({t,h,lv:Math.min(...m),end:du.end,sg:du.label})}});
  return r.sort((a,b)=>a.h-b.h)}
+/* 预警按当前时间段过滤：提醒截止点落在所选时间段内，或已逾期（逾期任务任何时间段都显示） */
+function alS(l){const a=addD(TD(),P.off),b=addD(a,{d:7}),o=addD(a,{mo:1}),q=addD(a,{mo:3}),y=addD(a,{y:1});
+ if(P.m=='all')return l.filter(warn_);
+ const hi=P.m=='day'?a:P.m=='week'?b:P.m=='month'?o:P.m=='quarter'?q:y;
+ return l.filter(t=>{if(!warn_(t))return false;const du=dueOf(t);if(!du)return false;const E=du.end;return E<a||(E>=a&&E<=hi)})}
 const fh=h=>h<0?'已逾期 '+(Math.abs(h)>48?Math.round(Math.abs(h)/24)+'天':Math.round(Math.abs(h))+'小时'):h<1?'不足1小时':h<48?'剩 '+Math.round(h)+' 小时':'剩 '+Math.round(h/24)+' 天';
 let toastTimer;
 function toast(m){const e=$('#ts');e.textContent=m;e.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.hidden=true,3200)}
@@ -321,31 +397,41 @@ function toast(m){const e=$('#ts');e.textContent=m;e.hidden=false;clearTimeout(t
 function render(){
  const alOpen=$('#alp')&&!$('#alp').hidden;
  $('#dpl').innerHTML=DEP.map(x=>`<option value="${esc(x)}">`).join('');$('#rql').innerHTML=REQ.map(x=>`<option value="${esc(x)}">`).join('');
- const base=mine(),l=scope(base),s=stat(l),al=alerts(base),L=S.leader;
+ const base=mine(),l=scope(base),s=stat(l),al=alerts(alS(base)),L=S.leader;
  const sl=cnt(l,t=>t.s),gr=cnt(l,t=>G(t.d)),ty=cnt(l,t=>(t.ty||'未分类').split(',')[0]);
  let acc=0;const dn=l.length?'conic-gradient('+sl.map(([k,v])=>{const a=acc/l.length*100;acc+=v;return`${SC[k]||'#999'} ${a}% ${acc/l.length*100}%`}).join(',')+')':'var(--bd)';
- const mo=cnt(l,t=>(t.b||t.a).slice(0,7)).sort((a,b)=>a[0]<b[0]?-1:1),mx=Math.max(1,...mo.map(x=>x[1]));
+ /* 按月任务量：始终保持年度显示（跟随当前查看年份），不随标签切换消失 */
+ const ynum=new Date().getFullYear()+(P.m=='year'?P.off:0);
+ const mo=cnt(B.filter(t=>((t.b||t.a)||'').slice(0,4)==String(ynum)),t=>(t.b||t.a).slice(0,7)).sort((a,b)=>a[0]<b[0]?-1:1),mx=Math.max(1,...mo.map(x=>x[1]));
  const q=P.q.toLowerCase();
- const f=l.filter(t=>(!P.st||t.s==P.st)&&(!q||(t.t+(t.r||'')+(t.d||'')+(t.ty||'')).toLowerCase().includes(q))).sort((a,b)=>{const x=a.b||a.a,y=b.b||b.a;return(x<y?-1:x>y?1:0)*(P.so=='asc'?1:-1)});
+ const f=l.filter(t=>(!P.st||t.s==P.st)&&(!q||(t.t+(t.r||'')+(t.d||'')+(t.ty||'')).toLowerCase().includes(q))).sort((a,b)=>(si(a.s)-si(b.s))||((a.b||a.a)<(b.b||b.a)?-1:(a.b||a.a)>(b.b||b.a)?1:0)*(P.so=='asc'?1:-1));
+ const pgN=Math.max(1,Math.ceil(f.length/100)),pg=Math.min(P.pg||0,pgN-1);_pgN=pgN;
  const alCard=a=>`<div class="mt" style="cursor:pointer" data-e="${esc(a.t.id)}"><b class="${a.h<0?'red':'org'}">${fh(a.h)}</b> · ${esc(a.t.t)}${a.sg?` <span class="tg">${esc(a.sg)}</span>`:''}<br>${esc(a.t.de)} · 截止 ${a.end}</div>`;
+ const [pa,pb]=range(),deOf={};B.forEach(t=>{deOf[t.id]=t.de});   /* 操作数据：新增项目 / 提交审核 / 进度效率 */
+ const newN=d=>EV.filter(e=>e.kind=='create'&&inR(e.d,pa,pb)&&deOf[e.tid]==d).length;
+ const subN=d=>EV.filter(e=>e.kind=='submit'&&inR(e.d,pa,pb)&&deOf[e.tid]==d).length;
+ const ovTbl=L?`<div class="cd sc" style="margin-bottom:14px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th><th>新增项目</th><th>进度效率</th><th>提交审核</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>t.de==d),y=stat(x),an=alerts(alS(x)).length,
+  avgP=x.length?Math.round(x.reduce((s,t)=>s+(+t.p||0),0)/x.length*100):0;
+  return`<tr><td><a href="#" data-w="${esc(d)}" style="color:${P.who==d?'#e0912a':'var(--tx)'};text-decoration:none;font-weight:${P.who==d?'700':'400'}">${esc(d)}</a></td><td>${y.n}</td><td>${y.dn}</td><td>${y.rate}%</td><td>${y.cy}天</td><td>${y.fin}</td><td>${y.op}</td><td>${an?`<span class="red">${an}</span>`:0}</td><td>${newN(d)}</td><td>${avgP}%→${y.rate}%</td><td>${subN(d)}</td></tr>`}).join('')}</table><div class="k" style="margin-top:8px">新增项目：按新建任务卡的时间统计（按设计师累计）；进度效率：周期内任务平均进度 → 完成率；提交审核：该周期内提交审核次数。</div></div>`:'';
  $('#appMain').innerHTML=`<header><button id="sg">⚙ 设置</button><b>内容创意组工作看板</b><span class="k">${L?'全部看板':'👤 '+esc(S.user)}</span><span id="sc" class="k"></span><span class="sp"></span>
  <span style="position:relative"><button id="bl">🔔 预警${al.length?` <b class="red">${al.length}</b>`:''}</button><div class="cd al" id="alp" ${alOpen?'':'hidden'}>${al.length?al.map(alCard).join(''):'<div class="k">暂无临近截止的任务 ✅</div>'}<button class="sm" id="st" style="margin-top:8px">⚙ 提醒设置</button></div></span>
  <button class="pr" id="add">＋ 新建任务卡</button></header>
- <main>${SETTINGS_OK?'':'<div class="warn">⚠ 数据库缺少 settings 表，设计师/部门等设置与提醒时间目前只保存在本设备，无法全组共享。请在 Supabase → SQL Editor 执行页面源码顶部注释里的建表语句。</div>'}${STAGES_OK?'':'<div class="warn">⚠ 数据库 tasks 表缺少 stages 字段，阶段时间暂无法云端保存。请在 Supabase → SQL Editor 执行：<br><b>alter table tasks add column if not exists stages jsonb default \'[]\'::jsonb;</b></div>'}
- <div class="row">${[['day','今日'],['week','本周'],['month','月度'],['quarter','季度'],['year','年度'],['all','全部']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
- ${P.m!='all'?`<button class="sm" id="pv">◀</button><b>${lab()}</b><button class="sm" id="nx">▶</button>`:''}<span class="sp"></span>
+ <main>${SETTINGS_OK?'':'<div class="warn">⚠ 数据库缺少 settings 表，设计师/部门等设置与提醒时间目前只保存在本设备，无法全组共享。请在 Supabase → SQL Editor 执行页面源码顶部注释里的建表语句。</div>'}${STAGES_OK?'':'<div class="warn">⚠ 数据库 tasks 表缺少 stages 字段，阶段时间暂无法云端保存。请在 Supabase → SQL Editor 执行：<br><b>alter table tasks add column if not exists stages jsonb default \'[]\'::jsonb;</b></div>'}${EVENTS_OK?'':`<div class="warn">⚠ task_events 表读取失败，「新增项目 / 提交审核」次数无法统计。数据库返回：<b>${esc(EV_ERR||'未知错误')}</b><br>请在 Supabase → SQL Editor 执行页面源码顶部注释里的建表 + 授权语句。</div>`}
+ <div class="row">${[['day','今日'],['week','本周'],['month','月度']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
+ <button class="sm" id="pv">◀</button><b>${lab()}</b><button class="sm" id="nx">▶</button><span class="sp"></span>
  ${L?`<select id="who"><option value="">全部设计师</option>${DEF.de.map(d=>`<option ${P.who==d?'selected':''}>${esc(d)}</option>`).join('')}</select>`:''}
  <button class="sm" id="csv">⬇ 导出CSV</button><button class="sm" id="cp">📋 复制汇报</button></div>
  <h3 style="margin:4px 0 10px">整体概览 · ${lab()}</h3>
- <div class="grid">${[['任务总数',s.n],['已完成',s.dn+'<small> / '+s.rate+'%</small>'],['进行中/待办',s.op],['平均周期',s.cy+'<small> 天</small>'],['定稿数量',s.fin],['走流程',s.fl],['预警任务','<span class="red">'+al.length+'</span>']].map(([k,v])=>`<div class="cd"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}</div>
+ <div class="grid">${[['任务总数',s.n],['已完成',s.dn+'<small> / '+s.rate+'%</small>'],['进行中/待办',s.op],['平均周期',s.cy+'<small> 天</small>'],['定稿数量',s.fin],['走流程',s.fl],['预警任务',al.length?'<span class="red">'+al.length+'</span>':0]].map(([k,v])=>`<div class="cd"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}</div>
  <div class="grid g2"><div class="cd"><h3>各部门占比</h3>${bars(gr,l.length)}</div>
  <div class="cd"><h3>完成状态</h3><div class="dn"><div style="background:${dn}"></div><div class="lg">${sl.map(([k,v])=>`<span><b style="background:${SC[k]||'#999'}"></b>${k} ${v}（${Math.round(v/l.length*100)}%）</span>`).join('')}</div></div></div>
  <div class="cd"><h3>设计类型占比</h3>${bars(ty,l.length)}</div>
- ${['year','all','quarter'].includes(P.m)?`<div class="cd"><h3>按月任务量</h3><div class="tr">${mo.map(([k,v])=>`<div><i style="height:${v/mx*80}px"></i>${v}<br>${k.slice(5)}月</div>`).join('')}</div></div>`:''}</div>
- <h3 style="margin:4px 0 10px">⚠ 预警项目（${al.length}）</h3><div class="tks" style="margin-bottom:16px">${al.slice(0,60).map(a=>`<div class="cd tk" style="--c:${a.h<0?'#d6523f':'#e0912a'}" data-e="${esc(a.t.id)}"><div class="tt">${esc(a.t.t)}</div><div class="chs"><span class="ch">${fh(a.h)}</span><span class="ch" style="--c:${SC[a.t.s]||'#999'}">${a.t.s}</span>${a.sg?`<span class="ch" style="--c:#8a5cf6">${esc(a.sg)}</span>`:''}</div><div class="mt">👤 设计师：${esc(a.t.de)}　需求人：${esc(a.t.r||'-')}</div><div class="mt">📅 ${a.sg?esc(a.sg)+' 截止':'截止'} ${a.end} 18:00　周期 ${cyc(a.t)??'-'} 天${stagesOf(a.t).length?'（阶段合计）':''}</div><div class="mt"><span class="tg">${esc(G(a.t.d))}</span></div></div>`).join('')||'<div class="k">暂无预警项目 ✅</div>'}</div>
- ${L&&!P.who?`<div class="cd sc" style="margin-bottom:12px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>t.de==d),y=stat(x);return`<tr><td><a href="#" data-w="${esc(d)}">${esc(d)}</a></td><td>${y.n}</td><td>${y.dn}</td><td>${y.rate}%</td><td>${y.cy}天</td><td>${y.fin}</td><td>${y.op}</td><td>${alerts(x).length}</td></tr>`}).join('')}</table></div>`:''}
- <div class="row"><b>任务卡 (${f.length})</b><input id="q" placeholder="搜索内容/需求人/部门" value="${esc(P.q)}" style="flex:1;min-width:160px"><select id="so"><option value="desc" ${P.so!='asc'?'selected':''}>降序（截止最新在前）</option><option value="asc" ${P.so=='asc'?'selected':''}>升序（截止最早在前）</option></select><select id="fs"><option value="">全部状态</option>${ST_ALL.map(k=>`<option ${P.st==k?'selected':''}>${k}</option>`).join('')}</select></div>
- <div class="tks">${f.slice(0,120).map(card).join('')||'<div class="k">该时间段暂无任务</div>'}</div>${f.length>120?'<div class="k" style="margin:10px">仅显示前120条，请用搜索筛选</div>':''}</main>`;
+ <div class="cd"><h3>按月任务量（${ynum}年）</h3><div class="tr">${mo.map(([k,v])=>`<div><i style="height:${v/mx*80}px"></i>${v}<br>${k.slice(5)}月</div>`).join('')||'<div class="k">该年暂无任务</div>'}</div></div></div>
+ ${ovTbl}
+ <h3 style="margin:4px 0 10px">⚠ 预警项目（${al.length}）</h3>
+ <div class="tks" style="margin-bottom:16px">${al.slice(0,60).map(a=>`<div class="cd tk" style="--c:#d6523f" data-e="${esc(a.t.id)}"><div class="tt">${esc(a.t.t)}</div><div class="chs"><span class="ch">${fh(a.h)}</span><span class="ch" style="--c:${SC[a.t.s]||'#999'}">${a.t.s}</span>${a.sg?`<span class="ch" style="--c:#8a5cf6">${esc(a.sg)}</span>`:''}</div><div class="mt">👤 设计师：${esc(a.t.de)}　需求人：${esc(a.t.r||'-')}</div><div class="mt">📅 ${a.sg?esc(a.sg)+' 截止':'截止'} ${a.end} 18:00　周期 ${cyc(a.t)??'-'} 天${stagesOf(a.t).length?'（阶段合计）':''}</div><div class="mt"><span class="tg">${esc(G(a.t.d))}</span></div></div>`).join('')||'<div class="k">该时间段暂无预警项目 ✅</div>'}</div>
+ <div class="row"><b>任务卡 (${f.length})</b><input id="q" placeholder="搜索内容/需求人/部门" value="${esc(P.q)}" style="flex:1;min-width:160px"><select id="so"><option value="desc" ${P.so!='asc'?'selected':''}>降序（截止最新在前）</option><option value="asc" ${P.so=='asc'?'selected':''}>升序（截止最早在前）</option></select><div class="chips">${[['','全部'],...ST_ALL.map(k=>[k,k])].map(([v,k])=>`<button type="button" class="chip ${P.st==v?'on':''}"${v?` style="--c:${SC[v]||'#999'}"`:''} data-st="${v}">${k}</button>`).join('')}</div></div>
+ <div class="tks">${f.slice(pg*100,pg*100+100).map(card).join('')||'<div class="k">该时间段暂无任务</div>'}</div>${pgN>1?`<div class="row" style="justify-content:center;margin-top:12px"><button class="sm" data-pg="${pg-1}" ${pg==0?'disabled':''}>◀ 上一页</button><b class="k">第 ${pg+1} / ${pgN} 页 · 共 ${f.length} 条</b><button class="sm" data-pg="${pg+1}" ${pg>=pgN-1?'disabled':''}>下一页 ▶</button></div>`:''}</main>`;
  setSync(SYNC);bind();
 }
 function card(t){
@@ -359,32 +445,40 @@ function card(t){
  <div class="mt">📅 ${t.a||'?'} → ${t.b||'?'}　${st.length?`阶段合计 ${cyc(t)??'-'} 天（${st.length}段）`:`周期 ${cyc(t)??'-'} 天`}</div>${stList}
  <div class="mt">进度 <b class="pl">${pct}%</b>（拖动记录：0%待启动 · 1–99%进行中 · 100%已完成）</div>
  <input type="range" class="sl" data-s="${esc(t.id)}" min="0" max="100" step="5" value="${pct}">
- <div class="ac">${t.path?`<button class="sm" data-p="${esc(t.path)}" title="${esc(t.path)}">📁 项目文件夹</button>`:''}${open_(t)?`<button class="sm" data-d="${esc(t.id)}">✓ 标记完成</button>`:''}</div></div>`}
+ <div class="ac">${t.path?`<button class="sm" data-p="${esc(t.path)}" title="${esc(t.path)}">📁 项目文件夹</button>`:''}${open_(t)?`<button class="sm" data-d="${esc(t.id)}">✓ 标记完成</button>`:''}${open_(t)?`<button class="sm" data-sb="${esc(t.id)}">提交审核</button>`:''}</div></div>`}
 
 function bind(){const A=$('#appMain');
- A.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{P.m=b.dataset.m;P.off=0;render()});
+ A.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{P.m=b.dataset.m;P.off=0;P.pg=0;render()});
  const g=(i,f)=>{const e=$(i);if(e)e.onclick=f};
- g('#pv',()=>{P.off--;render()});g('#nx',()=>{P.off++;render()});
+ g('#pv',()=>{P.off--;P.pg=0;render()});g('#nx',()=>{P.off++;P.pg=0;render()});
  g('#add',()=>form());g('#st',()=>setf('al'));g('#sg',()=>setf('tp'));
  g('#bl',()=>{$('#alp').hidden=!$('#alp').hidden});
- const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;render()};
- A.querySelectorAll('[data-w]').forEach(a=>a.onclick=e=>{e.preventDefault();P.who=a.dataset.w;render()});
- const q=$('#q');q.onchange=()=>{P.q=q.value;render()};$('#fs').onchange=e=>{P.st=e.target.value;render()};$('#so').onchange=e=>{P.so=e.target.value;render()};
+ const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;P.pg=0;render()};
+ A.querySelectorAll('[data-w]').forEach(a=>a.onclick=e=>{e.preventDefault();P.who=a.dataset.w;P.pg=0;render()});
+ const q=$('#q');q.onchange=()=>{P.q=q.value;P.pg=0;render()};$('#so').onchange=e=>{P.so=e.target.value;P.pg=0;render()};
+ A.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{P.st=b.dataset.st;P.pg=0;render()});
+ A.querySelectorAll('[data-pg]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=+b.dataset.pg;if(v<0||v>=_pgN)return;P.pg=v;render()});
  A.querySelectorAll('[data-e]').forEach(e=>e.onclick=()=>{const t=B.find(t=>t.id==e.dataset.e);if(t)form(t)});
  A.querySelectorAll('[data-d]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=B.find(t=>t.id==b.dataset.d);if(!o)return;
   ask('是否确认「'+esc(o.t)+'」已完成？',async()=>{if(await patchTask(o,{s:'已完成',p:1}))toast('已标记完成')},'确认完成')});
+ A.querySelectorAll('[data-sb]').forEach(b=>b.onclick=e=>{e.stopPropagation();const o=B.find(t=>t.id==b.dataset.sb);if(!o)return;
+  ask('将「'+esc(o.t)+'」提交审核？',async()=>{if(await patchTask(o,{s:'审核中'}))toast('已提交审核')},'提交审核')});
  A.querySelectorAll('[data-p]').forEach(b=>b.onclick=e=>{e.stopPropagation();openP(b.dataset.p)});
- A.querySelectorAll('.sl').forEach(e=>{
-  e.onclick=ev=>ev.stopPropagation();
-  e.onpointerdown=()=>{DRAG=true};e.onpointerup=e.onpointercancel=()=>{DRAG=false};
-  e.oninput=()=>{const c=e.closest('.tk'),v=+e.value,s=stByP(v);c.querySelector('.pl').textContent=v+'%';const ch=c.querySelector('.sch');ch.textContent=s;c.style.setProperty('--c',SC[s])};
-  e.onchange=async()=>{DRAG=false;const o=B.find(t=>t.id==e.dataset.s);if(!o)return;const v=+e.value,s=stByP(v);
-   if(await patchTask(o,{p:v/100,s}))toast(`进度 ${v}% → ${s}`)};
- });
- g('#csv',()=>{const h=['工作内容','设计类型','对应部门','进展状态','进度','定稿数量','开始时间','计划完成时间','周期(天)','阶段明细','优先级','设计师','需求人'],r=mine().map(t=>[t.t,t.ty,t.d,t.s,t.p,t.n,t.a,t.b,cyc(t),stagesOf(t).map((s,i)=>`${stLabel(s,i)} ${s.a}~${s.b}${s.d?'(完成)':''}`).join('；'),t.pr,t.de,t.r].map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(','));
+ A.querySelectorAll('.sl').forEach(e=>guardSlider(e,
+  v=>{const c=e.closest('.tk'),s=stByP(v);c.querySelector('.pl').textContent=v+'%';const ch=c.querySelector('.sch');ch.textContent=s;c.style.setProperty('--c',SC[s])},
+  async v=>{const o=B.find(t=>t.id==e.dataset.s);if(!o)return;const s=stByP(v);if(await patchTask(o,{p:v/100,s}))toast(`进度 ${v}% → ${s}`)}));
+ g('#csv',()=>{const h=['项目名称','设计类型','对应部门','进展状态','进度','定稿数量','开始时间','计划完成时间','周期(天)','阶段明细','优先级','设计师','需求人'],r=mine().map(t=>[t.t,t.ty,t.d,t.s,t.p,t.n,t.a,t.b,cyc(t),stagesOf(t).map((s,i)=>`${stLabel(s,i)} ${s.a}~${s.b}${s.d?'(完成)':''}`).join('；'),t.pr,t.de,t.r].map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(','));
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+h.join(',')+'\n'+r.join('\n')],{type:'text/csv'}));a.download='工作汇报_'+lab()+'.csv';a.click()});
- g('#cp',()=>{const m=mine(),ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无',al=alerts(m),st=stat(m);
-  const tx=`【${lab()}工作汇报】${S.leader?(P.who||'设计组'):S.user}\n任务 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/m.length*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ 已完成项目（${m.filter(t=>t.s=='已完成').length}）：\n`+ls(m.filter(t=>t.s=='已完成'),40)+`\n\n🔄 进行中项目（${m.filter(t=>t.s=='进行中').length}）：\n`+ls(m.filter(t=>t.s=='进行中'),40);
+ g('#cp',()=>{const[a,b]=range(),base=mine(),
+  M={day:'今日',week:'本周',month:'月度',quarter:'季度',year:'年度',all:'全部'}[P.m]||'',
+  rl=P.m=='all'?'':(P.m=='day'?a:a+' ~ '+b),
+  tt=P.m=='all'?'工作汇报':`${M}工作汇报 ${rl}`,
+  m=scope(base),
+  al=alerts(base).filter(x=>x.end<=b),
+  st=stat(m),
+  byS=s=>m.filter(t=>t.s==s),
+  ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无';
+  const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+ls(byS('已完成'),40)+`\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+ls(byS('进行中'),40)+`\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+ls(byS('待启动'),40);
   try{navigator.clipboard.writeText(tx).then(()=>toast('汇报已复制'),()=>prompt('复制汇报',tx))}catch(e){prompt('复制汇报',tx)}})}
 
 function openP(p){if(p.includes('://')){window.open(p,'_blank','noopener');return}try{navigator.clipboard.writeText(p).then(()=>toast('📁 路径已复制，粘贴到资源管理器/访达地址栏即可打开'),()=>prompt('复制路径',p))}catch(e){prompt('复制路径',p)}}
@@ -392,34 +486,49 @@ function ask(m,ok,okt){$('#md').innerHTML=`<div class="md" style="z-index:25"><d
  $('#aq').onclick=()=>{$('#md').innerHTML=''};$('#ay').onclick=async()=>{$('#md').innerHTML='';await ok()}}
 
 async function put(t){
+  const i=B.findIndex(x=>x.id==t.id),prev=i>=0?B[i]:null;
   if(!await saveTaskToDb(t))return false;           // 失败时保留弹窗，数据不丢
-  const i=B.findIndex(x=>x.id==t.id);i>=0?B[i]=t:B.push(t);
+  if(t.s==='审核中'&&(!prev||prev.s!=='审核中'))logEvent(t.id,'submit');
+  if(i<0)logEvent(t.id,'create');   /* 新建任务卡：记一条「新增项目」流水，按设计师累计 */
+  i>=0?B[i]=t:B.push(t);
   rebuildLists();$('#md').innerHTML='';render();toast('已保存');return true;
 }
 
-function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).slice(2,6),t:'',ty:TY[0],d:'',s:'待启动',p:0,n:'',a:TD(),b:addD(TD(),3),de:S.leader?(P.who||(DEF.de[0]||'')):S.user,r:'',f:false,note:'',pr:'',path:'',rm:[],stages:[]};
- const rm=x.rm||[],stdH=LD.map(v=>v[0]),extra=rm.filter(v=>!stdH.includes(v)),o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),
- sel=(i,k,v)=>`<select id="f_${i}">${v?'':'<option value="">请选择</option>'}${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option ${e==v?'selected':''}>${esc(e)}</option>`).join('')}</select>`;
+function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).slice(2,6),t:'',ty:'',d:'',s:'待启动',p:0,n:1,a:TD(),b:addD(TD(),3),de:S.leader?'':S.user,r:'',f:false,note:'',pr:'',path:'',rm:[],stages:[]};
+ const rm=x.rm||[],o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),
+ sel=(i,k,v)=>`<select id="f_${i}">${v?'':'<option value="">请选择</option>'}${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option ${e==v?'selected':''}>${esc(e)}</option>`).join('')}</select>`,
+ pick=(i,k,v)=>`<input id="f_${i}" list="dl_${i}" value="${esc(v||'')}" placeholder="输入或选择"><datalist id="dl_${i}">${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option value="${esc(e)}"></option>`).join('')}</datalist>`;
  let ST=JSON.parse(JSON.stringify(x.stages||[]));
+ /* 必填/有效性校验：实时校验 + 提交二次校验；错误提示定位到对应字段 */
+ const LAB={f_t:'项目名称',f_ty:'设计类型',f_d:'事业部/部门',f_de:'设计师',f_a:'计划开始时间',f_n:'定稿数量'};
+ const ORDER=['f_t','f_ty','f_d','f_de','f_a','f_n'];
+ const markErr=(id,msg)=>{const el=$('#'+id);if(!el)return;const lab=el.closest('label')||el.parentNode;
+  let em=lab.querySelector('.fel');if(!msg){if(em)em.remove();el.classList.remove('bad');return}
+  if(!em){em=document.createElement('div');em.className='fel';lab.appendChild(em)}em.textContent=msg;el.classList.add('bad')};
+ const chk=id=>{const el=$('#'+id);if(!el)return true;let okk=true,msg='';
+  if(id=='f_n'){const t=el.value.trim(),num=+t;okk=t!==''&&isFinite(num)&&num>0;if(!okk)msg='定稿数量为必填项，且必须为大于 0 的数值'}
+  else{okk=!!el.value.trim();if(!okk)msg=LAB[id]+'为必填项'}
+  markErr(id,okk?'':msg);return okk};
+ const chkAll=()=>ORDER.filter(id=>!chk(id));
+ ORDER.forEach(id=>{const el=$('#'+id);if(!el)return;el.addEventListener('input',()=>chk(id));el.addEventListener('change',()=>chk(id))});
  $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>${n?'新建':'编辑'}任务卡</h3><div class="fm">
- <label class="w2">工作内容<input id="f_t" value="${esc(x.t)}"></label>
- <label>设计类型${sel('ty','ty',x.ty)}</label><label>事业部/部门${sel('d','d',x.d)}</label>
- <label>需求人${sel('r','r',x.r)}</label><label>设计师${S.leader?sel('de','de',x.de):`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
- <label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label>
- <label><span class="lbh">计划完成时间<button type="button" class="sm" id="addSt" title="添加阶段时间（审核/穿插/暂停后分段完成）">＋ 阶段</button></span><input type="date" id="f_b" value="${x.b||''}"></label>
+ <label class="w2">项目名称<input id="f_t" value="${esc(x.t)}"></label>
+ <label>设计类型${sel('ty','ty',x.ty)}</label><label>事业部/部门${pick('d','d',x.d)}</label>
+ <label>需求人${pick('r','r',x.r)}</label><label>设计师${S.leader?pick('de','de',x.de):`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
+ <div class="w2 trow"><label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label><label>计划完成时间<input type="date" id="f_b" value="${x.b||''}"></label><button type="button" class="sm" id="addSt" title="添加阶段时间（审核/穿插/暂停后分段完成）">＋ 添加阶段</button></div>
  <div class="w2"><div id="stl"></div><div class="k" id="stn" hidden>已启用阶段时间：开始/完成时间由阶段自动计算，周期 = 各阶段天数之和；每个未完成阶段的结束日都会单独触发提醒。</div></div>
  <div class="w2">周期：<b id="cy"></b> ${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<button type="button" class="sm" data-c="${d}">${k}</button>`).join(' ')}</div>
  <label>进展状态<select id="f_s">${o(ST_ALL,x.s)}</select></label><label>优先级<select id="f_pr"><option></option>${o(['高','中','低'],x.pr)}</select></label>
  <label>进度 <span id="pv_">${Math.round((x.p||0)*100)}%</span><input type="range" class="sl" id="f_p" min="0" max="100" step="5" value="${Math.round((x.p||0)*100)}"></label>
- <label>定稿数量<input type="number" id="f_n" value="${x.n??''}"></label>
+ <label>定稿数量<input type="number" id="f_n" min="1" step="1" inputmode="numeric" value="${x.n??''}"></label>
  <label class="w2"><input type="checkbox" id="f_f" ${x.f?'checked':''}> 是否有流程</label>
  <label class="w2">项目路径位置<input id="f_path" value="${esc(x.path||'')}" placeholder="粘贴网盘链接或文件夹路径"></label>
- <label class="w2">工作进展描述<textarea id="f_note" rows="2">${esc(x.note||'')}</textarea></label>
- <div class="w2"><span class="k">本任务预警提醒（不选则用默认）</span><br>${LD.map(([h,k])=>`<label style="display:inline-block;margin-right:10px"><input type="checkbox" class="rmc" value="${h}" ${rm.includes(h)?'checked':''}> 截止前${k}</label>`).join('')}<label style="display:block;margin-top:6px">其他提醒（小时，逗号分隔）<input id="f_rmx" value="${extra.join(',')}" placeholder="如 6,24"></label></div></div>
+ <label class="w2">工作描述及备注<textarea id="f_note" rows="2">${esc(x.note||'')}</textarea></label>
+ <div class="w2"><span class="k">本任务预警提醒（不选则用默认）</span><br>${LD.map(([h,k])=>`<label style="display:inline-block;margin-right:10px"><input type="checkbox" class="rmc" value="${h}" ${rm.includes(h)?'checked':''}> 截止前${k}</label>`).join('')}</div></div>
  <div class="ft"><span></span><button class="pr" id="ok">保存</button>${n?'<span></span>':'<button id="rmv" title="删除" aria-label="删除">🗑</button>'}</div></div></div>`;
 
  /* 阶段时间编辑 */
- const stRows=()=>{$('#stl').innerHTML=ST.map((s,i)=>`<div class="sr" data-i="${i}"><input class="l sl_l" placeholder="阶段名称，如：初稿 / 修改 / 终稿" value="${esc(s.l||'')}"><input type="date" class="sl_a" value="${s.a||''}" title="阶段开始"><input type="date" class="sl_b" value="${s.b||''}" title="阶段结束"><div class="sm2"><label><input type="checkbox" class="sl_d" ${s.d?'checked':''}> 该阶段已完成</label><span class="k sdu">${s.a&&s.b?days(s.a,s.b)+' 天':'-'}</span><button type="button" class="sm sdel">✕ 删除</button></div></div>`).join('')};
+ const stRows=()=>{$('#stl').innerHTML=ST.map((s,i)=>`<div class="sr" data-i="${i}"><input class="l sl_l" placeholder="阶段名称，如：初稿 / 修改 / 终稿" value="${esc(s.l||'')}"><input type="date" class="sl_a" value="${s.a||''}" title="阶段开始"><input type="date" class="sl_b" value="${s.b||''}" title="阶段结束"><div class="sm2"><label><input type="checkbox" class="sl_d" ${s.d?'checked':''}> 该阶段已完成</label><span class="k sdu">${s.a&&s.b?days(s.a,s.b)+' 天':'-'}</span><select class="sl_c" title="选择周期：以阶段开始日为起点自动推算结束日"><option value="">周期</option>${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<option value="${d}">${k}</option>`).join('')}</select><button type="button" class="sm sdel">✕ 删除</button></div></div>`).join('')};
  const sync=()=>{const has=ST.length>0;
   if(has){const as=ST.map(s=>s.a).filter(Boolean).sort(),bs=ST.map(s=>s.b).filter(Boolean).sort();$('#f_a').value=as[0]||'';$('#f_b').value=bs[bs.length-1]||''}
   $('#f_a').disabled=$('#f_b').disabled=has;document.querySelectorAll('[data-c]').forEach(b=>b.disabled=has);$('#stn').hidden=!has;
@@ -428,42 +537,55 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  stRows();sync();
  $('#f_a').onchange=$('#f_b').onchange=sync;
  $('#addSt').onclick=()=>{
-  if(!ST.length){ST.push({l:'阶段1',a:$('#f_a').value||TD(),b:$('#f_b').value||addD(TD(),1),d:false})}
-  const last=ST[ST.length-1],a=last.b?addD(last.b,1):TD();
-  ST.push({l:'阶段'+(ST.length+1),a,b:addD(a,1),d:false});stRows();sync()};
+  if(!ST.length){
+   ST.push({l:'阶段1',a:$('#f_a').value||TD(),b:$('#f_b').value||addD(TD(),1),d:true});
+   ST.push({l:'阶段2',a:TD(),b:addD(TD(),1),d:false});
+  }else{ST.push({l:'阶段'+(ST.length+1),a:TD(),b:addD(TD(),1),d:false})}
+  stRows();sync();chk('f_a')};
  $('#stl').oninput=$('#stl').onchange=e=>{const r=e.target.closest('.sr');if(!r)return;const s=ST[+r.dataset.i],c=e.target.classList;
   if(c.contains('sl_l'))s.l=e.target.value;else if(c.contains('sl_a'))s.a=e.target.value;else if(c.contains('sl_b'))s.b=e.target.value;else if(c.contains('sl_d'))s.d=e.target.checked;
-  r.querySelector('.sdu').textContent=s.a&&s.b?days(s.a,s.b)+' 天':'-';sync()};
- $('#stl').onclick=e=>{const b=e.target.closest('.sdel');if(b){ST.splice(+b.closest('.sr').dataset.i,1);stRows();sync()}};
+  else if(c.contains('sl_c')&&e.target.value){s.a=s.a||TD();s.b=addD(s.a,+e.target.value);r.querySelector('.sl_a').value=s.a;r.querySelector('.sl_b').value=s.b}
+  r.querySelector('.sdu').textContent=s.a&&s.b?days(s.a,s.b)+' 天':'-';sync();chk('f_a')};
+ $('#stl').onclick=e=>{const b=e.target.closest('.sdel');if(b){ST.splice(+b.closest('.sr').dataset.i,1);stRows();sync();chk('f_a')}};
 
  /* 进度 ↔ 状态 联动 */
  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{$('#f_b').value=addD($('#f_a').value||TD(),+b.dataset.c);sync()});
- $('#f_p').oninput=e=>{const v=+e.target.value;$('#pv_').textContent=v+'%';$('#f_s').value=stByP(v)};
+ $('#f_n').oninput=()=>{const e=$('#f_n');e.value=e.value.replace(/[^0-9]/g,'')};
+ guardSlider($('#f_p'),v=>{$('#pv_').textContent=v+'%';$('#f_s').value=stByP(v)});
  $('#f_s').onchange=e=>{const s=e.target.value;if(s=='已完成'){$('#f_p').value=100;$('#pv_').textContent='100%'}else if(s=='待启动'){$('#f_p').value=0;$('#pv_').textContent='0%'}};
  $('#no').onclick=()=>$('#md').innerHTML='';
  const r=$('#rmv');if(r)r.onclick=()=>ask('确定删除该任务？',async()=>{if(await deleteTaskFromDb(x.id)){render();toast('已删除')}},'删除');
  $('#ok').onclick=async()=>{const v=i=>$('#f_'+i).value.trim();
-  if(!v('t'))return toast('请填写工作内容');
+  const bad=chkAll();                                   /* 提交时二次校验：必填 + 定稿数量 > 0 */
+  if(bad.length){const el=$('#'+bad[0]);if(el){el.scrollIntoView({block:'center',behavior:'smooth'});if(el.focus)el.focus()}
+   return toast('请完善标红字段：'+bad.map(id=>LAB[id]).join('、'))}
   const sts=ST.map(s=>({l:(s.l||'').trim(),a:s.a||'',b:s.b||'',d:!!s.d}));
-  for(const s of sts){if(!s.a||!s.b)return toast('请补全每个阶段的开始和结束日期');if(s.b<s.a)return toast('阶段结束时间不能早于阶段开始时间')}
+  const RE=/^\d{4}-\d{2}-\d{2}$/;
+  for(const s of sts){if(!s.a||!s.b)return toast('请补全每个阶段的开始和结束日期');if(!RE.test(s.a)||!RE.test(s.b))return toast('阶段日期格式不正确，请重新选择');if(s.b<s.a)return toast('阶段结束时间不能早于阶段开始时间')}
   sts.sort((p,q)=>p.a<q.a?-1:p.a>q.a?1:p.b<q.b?-1:p.b>q.b?1:0);sts.forEach((s,i)=>{if(!s.l)s.l='阶段'+(i+1)});
   let a=v('a'),b=v('b');if(sts.length){a=sts[0].a;b=sts.map(s=>s.b).sort().pop()}
+  if((a&&!RE.test(a))||(b&&!RE.test(b)))return toast('时间格式不正确，请重新选择');
   if(a&&b&&b<a)return toast('完成时间不能早于开始时间');
   let s=v('s'),p=Math.round(+$('#f_p').value)/100;if(s=='已完成')p=1;if(s=='待启动')p=0;
-  const rmv=[...document.querySelectorAll('.rmc:checked')].map(c=>+c.value).concat(v('rmx').split(/[,，]/).map(Number).filter(z=>z>0));
+  const nn=v('n')===''?null:Math.max(0,Math.floor(+v('n')||0));
+  const rmv=[...document.querySelectorAll('.rmc:checked')].map(c=>+c.value);
   $('#ok').disabled=true;
-  const okk=await put({...x,t:v('t'),ty:v('ty'),d:v('d'),r:v('r'),de:v('de'),a,b,s,p,pr:v('pr'),n:v('n'),f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...new Set(rmv)],stages:sts});
+  const okk=await put({...x,t:v('t'),ty:v('ty'),d:v('d'),r:v('r'),de:v('de'),a,b,s,p,pr:v('pr'),n:nn,f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...new Set(rmv)],stages:sts});
   if(!okk&&$('#ok'))$('#ok').disabled=false}}
 
-function setf(tab){const tp=tab!='al',N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'},stdH=LD.map(v=>v[0]),extra=S.lead.filter(v=>!stdH.includes(v));
- $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row"><button class="tab ${tp?'on':''}" id="t1">任务卡模板</button><button class="tab ${tp?'':'on'}" id="t2">预警提醒</button></div>`+(tp?Object.keys(N).map(k=>`<div style="margin-bottom:16px"><b>${N[k]}</b>（${DEF[k].length}）<div style="margin:8px 0">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')}</div><div class="row" style="margin:0"><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}" style="flex:1;min-width:0"><button class="ad" data-k="${k}">＋ 添加</button></div></div>`).join('')+'<div class="k">增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响；选项设置全组共享，所有人同步生效。</div>':
- `<div class="k">截止时间按计划完成日（或各阶段结束日）18:00 计算。进入所选时间窗口后会出现在预警列表，并弹出提醒。提醒时间设置全组共享，修改后所有人生效（单张任务卡上单独勾选的提醒不受影响）。</div><p>${LD.map(([h,k])=>`<label style="display:block;margin:6px 0"><input type="checkbox" class="dc" value="${h}" ${S.lead.includes(h)?'checked':''}> 截止前 ${k}提醒（${h}小时）</label>`).join('')}</p><label class="k">自定义（小时，多个用逗号）<input id="cu" value="${extra.join(',')}" placeholder="如 6,24" style="width:100%"></label><p><button id="nt">🔔 开启系统通知</button></p><div class="ft"><span></span><button class="pr" id="sv">保存</button><span></span></div>`)+`</div></div>`;
- $('#no').onclick=()=>{$('#md').innerHTML=''};$('#t1').onclick=()=>setf('tp');$('#t2').onclick=()=>setf('al');
+function setf(tab){const N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'};
+ const TABS=[['tp','任务卡模板'],['al','预警提醒'],['ui','界面设置']];if(!TABS.some(x=>x[0]==tab))tab='tp';
+ const body=tab=='tp'?Object.keys(N).map(k=>`<div style="margin-bottom:12px"><div class="setrow"><b>${N[k]}</b><span class="k">${DEF[k].length} 项</span><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}，回车或点＋添加" style="flex:1"><button class="ad" data-k="${k}">＋ 添加</button></div><div class="opt">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')||'<span class="k">暂无选项</span>'}</div></div>`).join('')+'<div class="k">增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响；选项设置全组共享，所有人同步生效。</div>'
+  :tab=='al'?`<div class="k">截止时间按计划完成日（或各阶段结束日）18:00 计算。进入所选时间窗口后会出现在预警列表，并弹出提醒。提醒时间设置全组共享，修改后所有人生效（单张任务卡上单独勾选的提醒不受影响）。</div><p>${LD.map(([h,k])=>`<label style="display:block;margin:6px 0"><input type="checkbox" class="dc" value="${h}" ${S.lead.includes(h)?'checked':''}> 截止前 ${k}提醒（${h}小时）</label>`).join('')}</p><p><button id="nt">🔔 开启系统通知</button></p><div class="ft"><span></span><button class="pr" id="sv">保存</button><span></span></div>`
+  :`<p class="k">环境色彩仅影响本机显示，不参与全组同步。</p><p class="chips">${THEMES.map(([k,n])=>`<span class="chip ${LS.get('theme','light')==k?'on':''}" data-thm="${k}" style="--c:${k=='jungle'?'#1fd67a':k=='dark'?'#3a4152':'#5b8def'}">${n}</span>`).join('')}</p>`;
+ $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row">${TABS.map(([k,n])=>`<button class="tab ${tab==k?'on':''}" id="tab_${k}">${n}</button>`).join('')}</div>`+body+`</div></div>`;
+ $('#no').onclick=()=>{$('#md').innerHTML=''};TABS.forEach(([k])=>{const b=$('#tab_'+k);if(b)b.onclick=()=>setf(k)});
+ document.querySelectorAll('[data-thm]').forEach(c=>c.onclick=()=>{applyTheme(c.dataset.thm);setf('ui')});
  const add=async k=>{const v=$('#ni_'+k).value.trim();if(!v)return;if(await mutateCfg(c=>{c.add[k]=[...new Set([...(c.add[k]||[]),v])];c.del[k]=(c.del[k]||[]).filter(z=>z!==v)}))setf('tp')};
  document.querySelectorAll('.ad').forEach(b=>b.onclick=()=>add(b.dataset.k));document.querySelectorAll('[id^=ni_]').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')add(i.dataset.k)});
  document.querySelectorAll('.dx').forEach(a=>a.onclick=async e=>{e.preventDefault();const k=a.dataset.k,v=DEF[k][+a.dataset.i];if(await mutateCfg(c=>{c.add[k]=(c.add[k]||[]).filter(z=>z!==v);c.del[k]=[...new Set([...(c.del[k]||[]),v])]}))setf('tp')});
  const nt=$('#nt');if(nt)nt.onclick=()=>{try{Notification.requestPermission().then(r=>toast(r=='granted'?'通知已开启':'未授权，仍会在页面内提醒'))}catch(e){toast('当前浏览器不支持系统通知')}};
- const sv=$('#sv');if(sv)sv.onclick=async()=>{const lead=[...new Set([...document.querySelectorAll('.dc:checked')].map(c=>+c.value).concat($('#cu').value.split(/[,，]/).map(Number).filter(x=>x>0)))].sort((a,b)=>b-a);sv.disabled=true;
+ const sv=$('#sv');if(sv)sv.onclick=async()=>{const lead=[...new Set([...document.querySelectorAll('.dc:checked')].map(c=>+c.value))].sort((a,b)=>b-a);sv.disabled=true;
   if(await mutateCfg(c=>{c.lead=lead})){$('#md').innerHTML='';render();tick();toast('提醒设置已保存（全组共享）')}else sv.disabled=false}}
 
 /* ---------- 到期提醒：登录后立即检查，之后每分钟 + 切回页面时检查；已提醒记录持久化，刷新不重复轰炸 ---------- */
@@ -494,7 +616,7 @@ $('#loginBtn').onclick=async()=>{
     err.style.display='block';return}
   err.style.display='none';
   $('#loginWrap').hidden=true;$('#appMain').hidden=false;
-  await loadSettings();await loadAllTasks();subscribeRealtime();render();tick();
+  await loadSettings();await loadEvents();await loadAllTasks();subscribeRealtime();render();tick();
   setInterval(tick,60000);setInterval(resync,60000);
 }
 $('#pwdInput').onkeydown=e=>{if(e.key==='Enter')$('#loginBtn').click()}
