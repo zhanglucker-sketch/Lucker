@@ -97,7 +97,7 @@ let realtimeChannel=null;
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 async function loadAllTasks(){
-  const {data,error}=await supabase.from('tasks').select('*');
+  const {data,error}=await sb.from('tasks').select('*');
   if(error){toast('读取任务失败：'+error.message);return;}
   B=data||[];
   DES=[...new Set(B.map(x=>x.de).filter(Boolean))];
@@ -111,16 +111,16 @@ async function saveTaskToDb(task){
     a:task.a,b:task.b,de:task.de,r:task.r,f:!!task.f,note:task.note,pr:task.pr,
     path:task.path,rm:task.rm||[]
   }
-  const {error}=await supabase.from('tasks').upsert(payload);
+  const {error}=await sb.from('tasks').upsert(payload);
   if(error) toast('保存失败:'+error.message);
 }
 async function deleteTaskFromDb(id){
-  const {error}=await supabase.from('tasks').delete().eq('id',id);
+  const {error}=await sb.from('tasks').delete().eq('id',id);
   if(error) toast('删除失败:'+error.message);
 }
 function subscribeRealtime(){
   if(realtimeChannel) realtimeChannel.unsubscribe();
-  realtimeChannel = supabase.channel('task_watch')
+  realtimeChannel = sb.channel('task_watch')
   .on('postgres_changes',{event:'*',schema:'public',table:'tasks'},async ()=>{
     await loadAllTasks();
     render();
