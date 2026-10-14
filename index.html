@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>内容创意组工作看板</title>
-<!-- supabase sdk -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f4f6fb;--cd:#fff;--tx:#1d2433;--mu:#6b7488;--bd:#e3e7f0;--ac:#2f6bff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -44,7 +43,8 @@ input:not([type=checkbox]):not([type=range]),select{height:40px}.fm input,.fm se
 .fm{display:grid;grid-template-columns:1fr 1fr;gap:14px}.fm label{display:block;font-size:12px;color:var(--mu)}.fm input,.fm select,.fm textarea{width:100%;display:block}.w2{grid-column:1/3}
 .al{position:absolute;right:14px;top:100%;width:min(360px,92vw);max-height:60vh;overflow:auto;z-index:9;box-shadow:0 8px 30px #0004}
 .red{color:#d6523f}.org{color:#e0912a}
-#lg{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:20px}#lg .cd{width:100%;max-width:380px;text-align:center}#lg input,#lg select{width:100%;margin:12px 0}
+#loginModal{position:fixed;inset:0;background:#0008;z-index:100;display:flex;align-items:center;justify-content:center;}
+#loginModal .box{background:var(--cd);border-radius:16px;padding:32px;min-width:320px}
 #ts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 16px;border-radius:20px;z-index:30}
 body{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 16%,var(--bg)),var(--bg) 45%) fixed}
 header{background:color-mix(in srgb,var(--cd) 88%,transparent);backdrop-filter:blur(10px)}
@@ -56,44 +56,34 @@ h3{display:flex;align-items:center;gap:8px}h3:before{content:"";width:4px;height
 .br i,.tr i{background:linear-gradient(90deg,var(--ac),#8a5cf6)}.tr i{background:linear-gradient(180deg,#8a5cf6,var(--ac))}
 button.pr,.tab.on{background:linear-gradient(135deg,var(--ac),#6a4cf0);border:0;color:#fff}
 .tk{transition:.15s}.tk:hover{transform:translateY(-2px);box-shadow:0 8px 22px #1d24331f}
-#lg{background:radial-gradient(circle at 20% 15%,color-mix(in srgb,var(--ac) 28%,transparent),transparent 55%),radial-gradient(circle at 85% 85%,#8a5cf633,transparent 50%)}
-#lg .cd{padding:42px 30px;border-radius:26px;box-shadow:0 24px 70px #2f6bff30}#lg h2{margin:0 0 8px;font-size:24px}
-.logo{width:80px;height:80px;margin:0 auto 14px;border-radius:24px;font-size:40px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--ac),#8a5cf6)}
-#lg{position:fixed;inset:0;z-index:40;min-height:0;overflow:auto;background:linear-gradient(160deg,#2f6bff 0%,#6a4cf0 55%,#8a5cf6 100%)}
-#lg .cd{background:none;border:0;box-shadow:none;border-radius:0;padding:0;color:#fff}#lg .logo{display:none}#lg h2{color:#fff;font-size:30px;margin:0 0 10px}
-#lg .k{color:#ffffffcc}
-#lg input,#lg select{background:#fff;color:#1d2433;border:0;height:48px;border-radius:12px;padding:0 14px}
-#lg #go{background:#fff;color:#2f6bff;border:0;height:48px;font-weight:600;border-radius:12px}#lg #ld{background:transparent;color:#fff;border:1px solid #ffffffaa;height:48px;border-radius:12px}
-#lg{background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 16%,var(--bg)),var(--bg) 45%)}#lg .cd{color:var(--tx)}#lg h2{color:var(--tx)}#lg .k{color:var(--mu)}
-#lg input,#lg select{background:var(--cd);color:var(--tx);border:1px solid var(--bd)}#lg #go{background:linear-gradient(135deg,var(--ac),#6a4cf0);color:#fff}#lg #ld{background:var(--cd);color:var(--tx);border:1px solid var(--bd)}
 @media(max-width:560px){main{padding:12px;border-radius:16px;margin:8px}}
 @media(max-width:560px){.fm{grid-template-columns:1fr}.w2{grid-column:auto}.br{grid-template-columns:90px 1fr 60px}}
 </style></head>
 <body>
-<div id="lg" hidden>
-  <div class="cd">
-    <div class="logo">🎨</div>
-    <h2>内容创意组工作看板</h2>
-    <div class="k">Supabase登录后使用，多人实时协同</div>
-    <div>
-      <button class="pr" id="loginBtn" style="width:100%">Supabase邮箱登录</button>
-      <div class="k" style="margin:10px 0">登录后自动进入看板</div>
-    </div>
+<div id="loginModal">
+  <div class="box">
+    <h3>内容创意组工作看板</h3>
+    <p>请输入访问密码</p>
+    <input id="pwdInput" type="password" placeholder="输入密码" style="width:100%;margin:8px 0">
+    <button class="pr" id="loginBtn" style="width:100%">进入看板</button>
   </div>
 </div>
+
 <div id="ap" hidden></div><div id="md"></div><div id="ts" hidden></div>
 <datalist id="dpl"></datalist><datalist id="rql"></datalist>
 
 <script>
-// ============ 请替换为你的Supabase项目凭证 =================
+// ---------------- 你的Supabase信息，不要修改 ----------------
 const SUPABASE_URL = "https://kynlglwctlicnnydumke.supabase.co"
 const SUPABASE_ANON_KEY = "sb_publishable_4TSk3Tn3jOnp-fmg-Kls5A_GoY1NRCT"
-// ==========================================================
+// ---------------- 设置团队访问密码，改成你自己的 ----------------
+const PASSWORD = "123456"
+
 const { createClient } = supabase
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-let B = []; // 全部任务从数据库加载，不再写死在前端
-let S={user:'',leader:false,ov:{},custom:[],lead:[72,48,12,1],fired:{},opts:{}};
+let B = [];
+let S={user:'internal',leader:true,ov:{},custom:[],lead:[72,48,12,1],fired:{},opts:{}};
 let P={m:'year',off:0,who:'',q:'',st:'',so:'desc'};
 const SC={'已完成':'#22a06b','进行中':'#2f6bff','待开展':'#8a94a8','审核中':'#e0912a','已暂停':'#d6523f'},
 TY=['其他平面设计','效果图-平面','效果图-3D建模渲染','效果图-视频','动画-3D建模渲染','剪辑合成','视频剪辑','视频拍摄','照片拍摄','输出提供','UI交互','品牌推广工具包'];
@@ -103,10 +93,8 @@ const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
 let DES=[],DEP=[],REQ=[],DEF={ty:TY,d:[],r:[],de:[]};
 const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
 let realtimeChannel=null;
-
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-// ========= Supabase 数据读写函数 =========
 async function loadAllTasks(){
   const {data,error}=await supabase.from('tasks').select('*');
   if(error){toast('读取任务失败：'+error.message);return;}
@@ -116,7 +104,6 @@ async function loadAllTasks(){
   REQ=[...new Set(B.map(x=>x.r).filter(Boolean))].sort();
   DEF={ty:TY,d:sp(B.map(x=>x.d)).sort(),r:sp(B.map(x=>x.r)).sort(),de:DES};
 }
-
 async function saveTaskToDb(task){
   const payload={
     id:task.id,t:task.t,ty:task.ty,d:task.d,s:task.s,p:task.p,n:task.n,
@@ -126,13 +113,10 @@ async function saveTaskToDb(task){
   const {error}=await supabase.from('tasks').upsert(payload);
   if(error) toast('保存失败:'+error.message);
 }
-
 async function deleteTaskFromDb(id){
   const {error}=await supabase.from('tasks').delete().eq('id',id);
   if(error) toast('删除失败:'+error.message);
 }
-
-// 开启实时订阅
 function subscribeRealtime(){
   if(realtimeChannel) realtimeChannel.unsubscribe();
   realtimeChannel = supabase.channel('task_watch')
@@ -141,10 +125,8 @@ function subscribeRealtime(){
     render();
   }).subscribe();
 }
-
 function G(d){d=(d||'未填写').split(',')[0].trim();return/国际/.test(d)?'国际LED事业部':/国内/.test(d)?'国内LED事业部':d;}
 const all=()=>B.map(t=>t).filter(Boolean).concat(S.custom||[]);
-
 function range(){const n=new Date(),o=P.off;let a,b;
  if(P.m=='day'){a=b=addD(TD(),o)}
  else if(P.m=='week'){const d=(n.getDay()+6)%7;a=iso(new Date(n.getFullYear(),n.getMonth(),n.getDate()-d+7*o));b=addD(a,6)}
@@ -166,10 +148,16 @@ function alerts(l){const now=Date.now(),r=[];l.filter(t=>open_(t)&&t.b).forEach(
 const fh=h=>h<0?'已逾期 '+(Math.abs(h)>48?Math.round(Math.abs(h)/24)+'天':Math.round(Math.abs(h))+'小时'):h<1?'不足1小时':h<48?'剩 '+Math.round(h)+' 小时':'剩 '+Math.round(h/24)+' 天';
 function toast(m){const e=$('#ts');e.textContent=m;e.hidden=false;setTimeout(()=>e.hidden=true,2600)}
 
-function render(){
+async function render(){
  $('#dpl').innerHTML=[...new Set(DEP.concat((S.custom||[]).map(t=>t.d)))].map(x=>`<option value="${esc(x)}">`).join('');$('#rql').innerHTML=REQ.map(x=>`<option value="${esc(x)}">`).join('');
- if(!S.user&&!S.leader){$('#lg').hidden=false;$('#ap').hidden=true;return}
- $('#lg').hidden=true;$('#ap').hidden=false;
+ const pwd = prompt("请输入看板访问密码");
+ if(pwd !== PASSWORD){
+   alert("密码错误");
+   return;
+ }
+ $('#loginModal').hidden=true;$('#ap').hidden=false;
+ await loadAllTasks();
+ subscribeRealtime();
  const base=mine(),l=scope(base),s=stat(l),al=alerts(base),L=S.leader;
  const sl=cnt(l,t=>t.s),gr=cnt(l,t=>G(t.d)),ty=cnt(l,t=>(t.ty||'未分类').split(',')[0]);
  let acc=0;const dn=l.length?'conic-gradient('+sl.map(([k,v])=>{const a=acc/l.length*100;acc+=v;return`${SC[k]||'#999'} ${a}% ${acc/l.length*100}%`}).join(',')+')':'var(--bd)';
@@ -177,7 +165,7 @@ function render(){
  const f=l.filter(t=>(!P.st||t.s==P.st)&&(!P.q||(t.t+t.r+t.d+(t.ty||'')).includes(P.q))).sort((a,b)=>{const x=a.b||a.a,y=b.b||b.a;return(x<y?-1:x>y?1:0)*(P.so=='asc'?1:-1)});
  $('#ap').innerHTML=`<header><button id="sg">⚙ 设置</button><b>内容创意组工作看板</b><span class="k">${L?'全部看板':'👤 '+esc(S.user)}</span><span id="sc"></span><span class="sp"></span>
  <span style="position:relative"><button id="bl">🔔 预警${al.length?` <b class="red">${al.length}</b>`:''}</button><div class="cd al" id="alp" hidden>${al.length?al.map(a=>`<div class="mt" style="cursor:pointer" data-e="${a.t.id}"><b class="${a.h<0?'red':'org'}">${fh(a.h)}</b> · ${esc(a.t.t)}<br>${esc(a.t.de)} · 截止 ${a.t.b}</div>`).join(''):'<div class="k">暂无临近截止的任务 ✅</div>'}<button class="sm" id="st" style="margin-top:8px">⚙ 提醒设置</button></div></span>
- <button class="pr" id="add">＋ 新建任务卡</button><button class="sm" id="logout">退出登录</button></header>
+ <button class="pr" id="add">＋ 新建任务卡</button></header>
  <main><div class="row">${[['day','今日'],['week','本周'],['month','月度'],['quarter','季度'],['year','年度'],['all','全部']].map(([k,n])=>`<button class="tab ${P.m==k?'on':''}" data-m="${k}">${n}</button>`).join('')}
  ${P.m!='all'?`<button class="sm" id="pv">◀</button><b>${lab()}</b><button class="sm" id="nx">▶</button>`:''}<span class="sp" style="flex:1"></span>
  ${L?`<select id="who"><option value="">全部设计师</option>${DEF.de.map(d=>`<option ${P.who==d?'selected':''}>${esc(d)}</option>`).join('')}</select>`:''}
@@ -201,7 +189,6 @@ function bind(l,s){const A=$('#ap');
  A.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{P.m=b.dataset.m;P.off=0;render()});
  const g=(i,f)=>{const e=$(i);if(e)e.onclick=f};
  g('#pv',()=>{P.off--;render()});g('#nx',()=>{P.off++;render()});
- g('#logout',async ()=>{await supabase.auth.signOut();S.user='';S.leader=false;render()});
  g('#add',()=>form());g('#st',()=>setf('al'));g('#sg',()=>setf('tp'));
  g('#bl',()=>{$('#alp').hidden=!$('#alp').hidden});
  const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;render()};
@@ -234,54 +221,50 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now(),t:'',ty:TY[0],d:'',s:'待开
  <label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label><label>计划完成时间<input type="date" id="f_b" value="${x.b||''}"></label>
  <div class="w2">周期：<span id="cy"></span> ${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<button class="sm" data-c="${d}">${k}</button>`).join(' ')}</div>
  <label>进展状态<select id="f_s">${o(Object.keys(SC),x.s)}</select></label><label>优先级<select id="f_pr"><option></option>${o(['高','中','低'],x.pr)}</select></label>
- <label>进度 <span id="pv_">${Math.round((x.p||0)*100)}%</span><input type="range" id="f_p" min="0" max="100" step="5" value="${(x.p||0)*100}"></label><label>定稿数量<input type="number" id="f_n" value="${x.n||''}"></label>
- <label class="w2"><input type="checkbox" id="f_f" style="width:auto;display:inline" ${x.f?'checked':''}> 是否有流程</label>
- <label class="w2">项目路径位置<input id="f_path" value="${esc(x.path)}" placeholder="粘贴网盘链接或文件夹路径，卡片上可一键打开"></label>
- <label class="w2">工作进展描述<textarea id="f_note" rows="2">${esc(x.note)}</textarea></label>
- <div class="w2"><span class="k">本任务预警提醒（不选则用默认）</span><br>${LD.map(([h,k])=>`<label style="display:inline-block;margin-right:10px"><input type="checkbox" style="width:auto;display:inline" class="rmc" value="${h}" ${rm.includes(h)?'checked':''}> 截止前${k}</label>`).join('')}</div></div>
- <div class="ft"><span></span><button class="pr" id="ok">保存</button>${n?'<span></span>':'<button id="rmv" title="删除" aria-label="删除">🗑</button>'}</div></div></div>`;
- const cy=()=>$('#cy').textContent=(days($('#f_a').value,$('#f_b').value)??'-')+' 天';cy();$('#f_a').onchange=$('#f_b').onchange=cy;
- $('#f_p').oninput=e=>$('#pv_').textContent=e.target.value+'%';
- document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{$('#f_b').value=addD($('#f_a').value||TD(),+b.dataset.c);cy()});
- $('#no').onclick=()=>$('#md').innerHTML='';
- const r=$('#rmv');if(r)r.onclick=()=>ask('确定删除该任务？',async ()=>{await deleteTaskFromDb(x.id);$('#md').innerHTML='';render()},'删除');
- $('#ok').onclick=async ()=>{const v=i=>$('#f_'+i).value.trim();if(!v('t'))return toast('请填写工作内容');if(v('a')&&v('b')&&v('b')<v('a'))return toast('完成时间不能早于开始时间');
-  let s=v('s'),p=v('p')/100;if(s=='已完成')p=1;
-  await put({...x,t:v('t'),ty:v('ty'),d:v('d'),r:v('r'),de:v('de'),a:v('a'),b:v('b'),s,p,pr:v('pr'),n:v('n'),f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...document.querySelectorAll('.rmc:checked')].map(c=>+c.value)})}}
-function setf(tab){const tp=tab!='al',N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'};
- $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row"><button class="tab ${tp?'on':''}" id="t1">任务卡模板</button><button class="tab ${tp?'':'on'}" id="t2">预警提醒</button></div>`+(tp?Object.keys(N).map(k=>`<div style="margin-bottom:16px"><b>${N[k]}</b>（${DEF[k].length}）<div style="margin:8px 0">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')}</div><div class="row" style="margin:0"><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}" style="flex:1"><button class="ad" data-k="${k}">＋ 添加</button></div></div>`).join('')+'<div class="k">增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响。</div>':
- `<div class="k">截止时间按计划完成日 18:00 计算。进入所选时间窗口后会出现在预警列表，并弹出提醒。</div><p>${LD.map(([h,k])=>`<label style="display:block;margin:6px 0"><input type="checkbox" class="dc" value="${h}" ${S.lead.includes(h)?'checked':''}> 截止前 ${k}提醒（${h}小时）</label>`).join('')}</p><label class="k">自定义（小时，多个用逗号）<input id="cu" placeholder="如 6,24" style="width:100%"></label><p><button id="nt">🔔 开启系统通知</button></p><div class="ft"><span></span><button class="pr" id="sv">保存</button><span></span></div>`)+`</div></div>`;
- $('#no').onclick=()=>{$('#md').innerHTML='';render()};$('#t1').onclick=()=>setf('tp');$('#t2').onclick=()=>setf('al');
- const add=k=>{const v=$('#ni_'+k).value.trim();if(!v)return;DEF[k]=[...new Set([...DEF[k],v])];$('#md').innerHTML='';setf('tp')};
- document.querySelectorAll('.ad').forEach(b=>b.onclick=()=>add(b.dataset.k));document.querySelectorAll('[id^=ni_]').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')add(i.dataset.k)});
- document.querySelectorAll('.dx').forEach(a=>a.onclick=e=>{e.preventDefault();const k=a.dataset.k;DEF[k]=DEF[k].filter((_,j)=>j!=+a.dataset.i);$('#md').innerHTML='';setf('tp')});
- const nt=$('#nt');if(nt)nt.onclick=()=>{try{Notification.requestPermission().then(r=>toast(r=='granted'?'通知已开启':'未授权，仍会在页面内提醒'))}catch(e){toast('当前浏览器不支持系统通知')}};
- const sv=$('#sv');if(sv)sv.onclick=()=>{S.lead=[...new Set([...document.querySelectorAll('.dc:checked')].map(c=>+c.value).concat($('#cu').value.split(/[,，]/).map(Number).filter(x=>x>0)))].sort((a,b)=>b-a);$('#md').innerHTML='';render();toast('提醒设置已保存')}}
-function tick(){if(!S.user&&!S.leader)return;alerts(mine()).forEach(a=>{const k=a.t.id+'|'+a.lv;if(S.fired[k])return;S.fired[k]=1;toast('⏰ '+`${a.t.t}：${fh(a.h)}`);try{if(Notification.permission=='granted')new Notification('任务预警',{body:`${a.t.t}：${fh(a.h)}`})}catch(e){}})}
-
-// 登录逻辑
-$('#loginBtn').onclick=async ()=>{
-  const {error}=await supabase.auth.signInWithOAuth({provider:'email'});
-  if(error) toast(error.message);
+ <label>进度 <span id="pv_">${Math.round((x.p||0)*100)}%</span><input type="range" id="f_p" min="0" max="100" step="5" value="${Math.round((x.p||0)*100)}"></label>
+ <label class="w2">备注<textarea id="f_note">${esc(x.note||'')}</textarea></label>
+ <label class="w2">项目文件夹路径<input id="f_path" value="${esc(x.path||'')}"></label>
+ <label>定稿数量<input id="f_n" value="${esc(x.n||'')}"></label><label><input type="checkbox" id="f_f" ${x.f?'checked':''}> 走流程</label>
+ </div>
+ <div class="ft"><button id="rmv">🗑</button><div></div><button class="pr" id="sv">💾 保存任务</button></div></div></div>`;
+ const $md=$('#md');
+ $md.querySelector('#no').onclick=()=>{$('#md').innerHTML=''};
+ const updateCycle=()=>{const sa=$('#f_a').value,sb=$('#f_b').value;$('#cy').textContent=sa&&sb?days(sa,sb)+' 天':'-'};
+ $('#f_a').onchange=updateCycle;$('#f_b').onchange=updateCycle;updateCycle();
+ $md.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const d=+b.dataset.c;$('#f_b').value=addD($('#f_a').value||TD(),d);updateCycle()});
+ $('#f_p').oninput=()=>{$('#pv_').textContent=$('#f_p').value+'%'};
+ $('#sv').onclick=async ()=>{
+  const nt={
+   id:x.id,
+   t:$('#f_t').value,
+   ty:$('#f_ty').value,
+   d:$('#f_d').value,
+   r:$('#f_r').value,
+   de:S.leader?$('#f_de').value:x.de,
+   a:$('#f_a').value,
+   b:$('#f_b').value,
+   s:$('#f_s').value,
+   pr:$('#f_pr').value,
+   p:$('#f_p').value/100,
+   n:$('#f_n').value,
+   note:$('#f_note').value,
+   path:$('#f_path').value,
+   f:$('#f_f').checked,
+   rm:x.rm
+  };
+  if(!nt.t){alert('请填写工作内容');return}
+  await put(nt);
+  render();
+ };
+ $('#rmv').onclick=()=>ask('确认删除这条任务？',async ()=>{await deleteTaskFromDb(x.id);$('#md').innerHTML='';render()},'删除');
 }
-
-// 监听登录状态
-supabase.auth.onAuthStateChange(async (event,session)=>{
-  if(session?.user){
-    S.user=session.user.email;
-    S.leader=true; // 你可以在这里做简单权限判断，哪些账号是管理员
-    await loadAllTasks();
-    subscribeRealtime();
-    render();
-    setInterval(tick,6e4);
-  }else{
-    S.user='';S.leader=false;
-    render();
-  }
-})
-
-document.addEventListener('click',e=>{const a=$('#alp');if(a&&!a.hidden&&!e.target.closest('#alp,#bl,[data-e]'))a.hidden=true});
+function setf(m){$('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>设置</h3><div class="fm w2">
+<label>预警时间阈值（小时，多个逗号分隔）<input id="lead" value="${S.lead.join(',')}"></label>
+</div><div class="ft"><div></div><div></div><button class="pr" id="sv">保存</button></div></div></div>`;
+$('#no').onclick=()=>{$('#md').innerHTML=''};
+$('#sv').onclick=()=>{const v=$('#lead').value.split(',').map(x=>+x.trim()).filter(Boolean);if(!v.length)return;S.lead=v;$('#md').innerHTML='';render()}};
+}
 render();
 </script>
-</body></html>
-<!-- （注：内容由AI生成） -->
+</body>
+</html>
