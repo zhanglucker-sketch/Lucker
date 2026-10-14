@@ -479,9 +479,21 @@ function bind(){const A=$('#appMain');
   byS=s=>m.filter(t=>t.s==s),
   ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无';
   const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+ls(byS('已完成'),40)+`\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+ls(byS('进行中'),40)+`\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+ls(byS('待启动'),40);
-  try{navigator.clipboard.writeText(tx).then(()=>toast('汇报已复制'),()=>prompt('复制汇报',tx))}catch(e){prompt('复制汇报',tx)}})}
+  copyPlain(tx)})}
+/* 复制兜底：剪贴板 API（https/localhost）→ 隐藏 textarea+execCommand（file:// 也能用）→ 弹窗手动复制 */
+function copyPlain(t,msg){
+  const ok=()=>toast(msg||'已复制到剪贴板');
+  if(window.isSecureContext&&navigator.clipboard)return navigator.clipboard.writeText(t).then(ok,()=>copyFallback(t,msg));
+  return copyFallback(t,msg);
+}
+function copyFallback(t,msg){
+  const a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:-9999px;left:0;opacity:0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){ok=false}a.remove();
+  if(ok)return toast(msg||'已复制到剪贴板');
+  $('#md').innerHTML=`<div class="md" style="z-index:25"><div style="max-width:620px"><button class="x" id="no">✕</button><h3>${msg||'复制内容'}</h3><div class="k" style="margin:0 0 8px">浏览器未能自动复制，下方内容已全选，直接按 Ctrl+C 即可。</div><textarea id="rpt" style="width:100%;height:44vh;font-size:12px;line-height:1.7">${esc(t)}</textarea></div></div>`;
+  const ta=$('#rpt');ta.focus();ta.select();$('#no').onclick=()=>{$('#md').innerHTML=''};
+}
 
-function openP(p){if(p.includes('://')){window.open(p,'_blank','noopener');return}try{navigator.clipboard.writeText(p).then(()=>toast('📁 路径已复制，粘贴到资源管理器/访达地址栏即可打开'),()=>prompt('复制路径',p))}catch(e){prompt('复制路径',p)}}
+function openP(p){if(p.includes('://')){window.open(p,'_blank','noopener');return}copyPlain(p,'📁 路径已复制，粘贴到资源管理器/访达地址栏即可打开')}
 function ask(m,ok,okt){$('#md').innerHTML=`<div class="md" style="z-index:25"><div style="max-width:380px;text-align:center"><h3 style="font-size:16px;margin:8px 0 20px;justify-content:center">${m}</h3><div class="row" style="justify-content:center;margin:0"><button id="aq" style="min-width:110px">取消</button><button class="pr" id="ay" style="min-width:110px">${okt||'确认'}</button></div></div></div>`;
  $('#aq').onclick=()=>{$('#md').innerHTML=''};$('#ay').onclick=async()=>{$('#md').innerHTML='';await ok()}}
 
