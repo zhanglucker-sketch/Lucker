@@ -86,6 +86,11 @@ select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}
 .fm .trow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end}
 .fm .trow input{margin-top:2px;height:36px}
 .fm .trow button{height:36px;padding:0 12px;white-space:nowrap}
+/* 日期选择器按键：黑灯瞎火/丛林探险主题下用对应主题色替换原生黑色图标；光天化日保持系统默认 */
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator,
+:root[data-theme="jungle"] input[type="date"]::-webkit-calendar-picker-indicator{width:16px;height:16px;cursor:pointer;background-repeat:no-repeat;background-position:center;background-size:16px 16px}
+:root[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c95ff'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h5v5H7z'/%3E%3C/svg%3E")}
+:root[data-theme="jungle"] input[type="date"]::-webkit-calendar-picker-indicator{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231fd67a'%3E%3Cpath d='M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h5v5H7z'/%3E%3C/svg%3E")}
 .w2{grid-column:1/3;min-width:0}
 .sr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;padding:10px;border:1px solid var(--bd);border-radius:10px;margin-bottom:8px;background:var(--bg)}
 .sr .l{grid-column:1/3}
@@ -511,6 +516,17 @@ function openP(p){if(p.includes('://')){window.open(p,'_blank','noopener');retur
 function ask(m,ok,okt){$('#md').innerHTML=`<div class="md" style="z-index:25"><div style="max-width:380px;text-align:center"><h3 style="font-size:16px;margin:8px 0 20px;justify-content:center">${m}</h3><div class="row" style="justify-content:center;margin:0"><button id="aq" style="min-width:110px">取消</button><button class="pr" id="ay" style="min-width:110px">${okt||'确认'}</button></div></div></div>`;
  $('#aq').onclick=()=>{$('#md').innerHTML=''};$('#ay').onclick=async()=>{$('#md').innerHTML='';await ok()}}
 
+/* ---------- 敏感操作二次确认：必须输入访问密码，密码错误则操作不生效（防误触） ---------- */
+function askPwd(desc,ok){$('#md').innerHTML=`<div class="md" style="z-index:25"><div style="max-width:380px"><button class="x" id="pq">✕</button><h3 style="font-size:15px">请输入访问密码确认</h3><div class="k" style="margin:0 0 10px">${desc}</div><input id="pwi" type="password" placeholder="输入访问密码" autocomplete="off" style="width:100%;margin-bottom:6px"><div id="pwe" style="display:none;color:#d6523f;font-size:12px;margin-bottom:10px"></div><div class="row" style="justify-content:flex-end;margin:0"><button id="pwc" style="min-width:90px">取消</button><button class="pr" id="pwo" style="min-width:110px">确认生效</button></div></div></div>`;
+ const inp=$('#pwi'),err=$('#pwe');inp.focus();
+ const fail=m=>{err.textContent=m;err.style.display='block';inp.value='';inp.focus()};
+ const go=async()=>{const p=inp.value.trim();if(!p)return fail('请输入密码');
+  await new Promise(r=>setTimeout(r,20));
+  if(pwHash(p)!==PW_HASH)return fail('密码错误，操作未生效');
+  $('#md').innerHTML='';await ok()};
+ $('#pwo').onclick=go;inp.onkeydown=e=>{if(e.key=='Enter')go()};
+ $('#pwc').onclick=$('#pq').onclick=()=>setf('tp')}
+
 async function put(t){
   const i=B.findIndex(x=>x.id==t.id),prev=i>=0?B[i]:null;
   if(!await saveTaskToDb(t))return false;           // 失败时保留弹窗，数据不丢
@@ -613,15 +629,17 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
 
 function setf(tab){const N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'};
  const TABS=[['tp','任务卡模板'],['al','预警提醒'],['ui','界面设置']];if(!TABS.some(x=>x[0]==tab))tab='tp';
- const body=tab=='tp'?Object.keys(N).map(k=>`<div style="margin-bottom:12px"><div class="setrow"><b>${N[k]}</b><span class="k">${DEF[k].length} 项</span><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}，回车或点＋添加" style="flex:1"><button class="ad" data-k="${k}">＋ 添加</button></div><div class="opt">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')||'<span class="k">暂无选项</span>'}</div></div>`).join('')+'<div class="k">增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响；选项设置全组共享，所有人同步生效。</div>'
+ const body=tab=='tp'?Object.keys(N).map(k=>`<div style="margin-bottom:12px"><div class="setrow"><b>${N[k]}</b><span class="k">${DEF[k].length} 项</span><input id="ni_${k}" data-k="${k}" placeholder="新增${N[k]}，回车或点＋添加" style="flex:1"><button class="ad" data-k="${k}">＋ 添加</button></div><div class="opt">${DEF[k].map((v,i)=>`<span class="tg" style="padding:3px 6px 3px 9px">${esc(v)} <a href="#" class="dx" data-k="${k}" data-i="${i}" style="color:#d6523f;text-decoration:none">✕</a></span>`).join('')||'<span class="k">暂无选项</span>'}</div></div>`).join('')+'<div class="k">添加或删除选项均需输入访问密码确认，防止误触；增删只影响新建/编辑任务卡时的下拉选项，已有任务不受影响；选项设置全组共享，所有人同步生效。</div>'
   :tab=='al'?`<div class="k">截止时间按计划完成日（或各阶段结束日）18:00 计算。进入所选时间窗口后会出现在预警列表，并弹出提醒。提醒时间设置全组共享，修改后所有人生效（单张任务卡上单独勾选的提醒不受影响）。</div><p>${LD.map(([h,k])=>`<label style="display:block;margin:6px 0"><input type="checkbox" class="dc" value="${h}" ${S.lead.includes(h)?'checked':''}> 截止前 ${k}提醒（${h}小时）</label>`).join('')}</p><p><button id="nt">🔔 开启系统通知</button></p><div class="ft"><span></span><button class="pr" id="sv">保存</button><span></span></div>`
   :`<p class="k">环境色彩仅影响本机显示，不参与全组同步。</p><p class="chips">${THEMES.map(([k,n])=>`<span class="chip ${LS.get('theme','light')==k?'on':''}" data-thm="${k}" style="--c:${k=='jungle'?'#1fd67a':k=='dark'?'#3a4152':'#5b8def'}">${n}</span>`).join('')}</p>`;
  $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row">${TABS.map(([k,n])=>`<button class="tab ${tab==k?'on':''}" id="tab_${k}">${n}</button>`).join('')}</div>`+body+`</div></div>`;
  $('#no').onclick=()=>{$('#md').innerHTML=''};TABS.forEach(([k])=>{const b=$('#tab_'+k);if(b)b.onclick=()=>setf(k)});
  document.querySelectorAll('[data-thm]').forEach(c=>c.onclick=()=>{applyTheme(c.dataset.thm);setf('ui')});
- const add=async k=>{const v=$('#ni_'+k).value.trim();if(!v)return;if(await mutateCfg(c=>{c.add[k]=[...new Set([...(c.add[k]||[]),v])];c.del[k]=(c.del[k]||[]).filter(z=>z!==v)}))setf('tp')};
+ const add=k=>{const inp=$('#ni_'+k),v=inp.value.trim();if(!v)return;            /* 添加需密码确认，防止误触 */
+  askPwd(`确认添加${N[k]}选项：<b>${esc(v)}</b>`,async()=>{const r=await mutateCfg(c=>{c.add[k]=[...new Set([...(c.add[k]||[]),v])];c.del[k]=(c.del[k]||[]).filter(z=>z!==v)});setf('tp');if(r)toast('已添加：'+v)})};
  document.querySelectorAll('.ad').forEach(b=>b.onclick=()=>add(b.dataset.k));document.querySelectorAll('[id^=ni_]').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')add(i.dataset.k)});
- document.querySelectorAll('.dx').forEach(a=>a.onclick=async e=>{e.preventDefault();const k=a.dataset.k,v=DEF[k][+a.dataset.i];if(await mutateCfg(c=>{c.add[k]=(c.add[k]||[]).filter(z=>z!==v);c.del[k]=[...new Set([...(c.del[k]||[]),v])]}))setf('tp')});
+ document.querySelectorAll('.dx').forEach(a=>a.onclick=e=>{e.preventDefault();const k=a.dataset.k,v=DEF[k][+a.dataset.i];   /* 删除需密码确认，密码不对不生效 */
+  askPwd(`确认删除${N[k]}选项：<b style="color:#d6523f">${esc(v)}</b>？删除后新建/编辑任务卡时将不再出现该选项（已有任务不受影响）。`,async()=>{const r=await mutateCfg(c=>{c.add[k]=(c.add[k]||[]).filter(z=>z!==v);c.del[k]=[...new Set([...(c.del[k]||[]),v])]});setf('tp');if(r)toast('已删除：'+v)})});
  const nt=$('#nt');if(nt)nt.onclick=()=>{try{Notification.requestPermission().then(r=>toast(r=='granted'?'通知已开启':'未授权，仍会在页面内提醒'))}catch(e){toast('当前浏览器不支持系统通知')}};
  const sv=$('#sv');if(sv)sv.onclick=async()=>{const lead=[...new Set([...document.querySelectorAll('.dc:checked')].map(c=>+c.value))].sort((a,b)=>b-a);sv.disabled=true;
   if(await mutateCfg(c=>{c.lead=lead})){$('#md').innerHTML='';render();tick();toast('提醒设置已保存（全组共享）')}else sv.disabled=false}}
