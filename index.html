@@ -53,9 +53,13 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px;borde
 .msb:after{content:'▾';margin-left:auto;color:var(--mu)}
 .msb.ph{color:var(--mu)}
 .msl.bad .msb{border-color:#d6523f;box-shadow:0 0 0 2px rgba(214,82,63,.15)}
-.msp{position:absolute;z-index:6;top:calc(100% + 4px);left:0;right:0;background:var(--cd);border:1px solid var(--bd);border-radius:10px;box-shadow:0 10px 26px #1d243333;max-height:190px;overflow:auto;padding:6px}
+.msp{position:absolute;z-index:6;top:calc(100% + 4px);left:0;right:0;background:var(--cd);border:1px solid var(--bd);border-radius:10px;box-shadow:0 10px 26px #1d243333;max-height:190px;overflow:auto;padding:6px;-webkit-overflow-scrolling:touch}
 .msp label{display:flex;gap:8px;align-items:center;padding:5px 8px;font-size:13px;color:var(--tx);cursor:pointer;border-radius:6px}
 .msp label:hover{background:var(--bg)}
+.cmb{position:relative}
+.clst{position:absolute;z-index:6;top:calc(100% + 4px);left:0;right:0;background:var(--cd);border:1px solid var(--bd);border-radius:10px;box-shadow:0 10px 26px #1d243333;max-height:190px;overflow:auto;-webkit-overflow-scrolling:touch}
+.cit{padding:10px 12px;font-size:14px;color:var(--tx);cursor:pointer;border-radius:6px}
+.cit:hover,.cit:active{background:var(--bg)}
 .mt{font-size:12px;color:var(--mu);margin:3px 0;word-break:break-word}
 .chs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .tg{display:inline-block;background:var(--bg);border-radius:6px;padding:1px 7px;margin:0 4px 4px 0;font-size:11px}
@@ -127,8 +131,7 @@ select{appearance:auto}textarea{resize:vertical;max-width:100%;min-height:64px}
 
 <div id="appMain" hidden></div>
 <div id="md"></div><div id="ts" hidden></div>
-<datalist id="dpl"></datalist><datalist id="rql"></datalist>
-
+</div>
 <script>
 /* =====================================================================
    数据库准备（仅需在 Supabase → SQL Editor 执行一次）：
@@ -209,7 +212,7 @@ const LD=[[72,'3天'],[48,'2天'],[24,'1天'],[12,'半天']];
 const iso=d=>d.toLocaleDateString('sv'),TD=()=>iso(new Date()),addD=(s,n)=>iso(new Date(+new Date(s+'T00:00')+n*864e5));
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
 const md=s=>s?String(s).slice(5):'?';
-let DEF={ty:TY,d:[],r:[],de:[]},DEP=[],REQ=[];
+let DEF={ty:TY,d:[],r:[],de:[]};
 const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
 let realtimeChannel=null,STAGES_OK=true,SETTINGS_OK=true,SYNC='ok',DRAG=false,PENDING=false;
 let EV=[],EVENTS_OK=true,EV_ERR='';                 /* 操作流水：新增项目 / 提交审核次数统计 */
@@ -250,7 +253,6 @@ const inR=(s,a,b)=>!!s&&s>=a&&s<=b;
 function rebuildLists(){
   const base={ty:TY,d:sp(B.map(x=>x.d)),r:sp(B.map(x=>x.r)),de:[...new Set(B.map(x=>x.de).filter(Boolean))]};
   DEF={};Object.keys(base).forEach(k=>{DEF[k]=[...new Set([...base[k],...(CFG.add[k]||[])])].filter(v=>!(CFG.del[k]||[]).includes(v));if(k!=='ty')DEF[k].sort()});
-  DEP=DEF.d;REQ=DEF.r;
 }
 /* ---------- 全组共享设置：settings 表，key='board' ---------- */
 const cfgVal=v=>{if(typeof v==='string'){try{v=JSON.parse(v)}catch(e){return null}}return v&&typeof v==='object'?v:null};
@@ -409,7 +411,6 @@ function toast(m){const e=$('#ts');e.textContent=m;e.hidden=false;clearTimeout(t
 /* ---------- 主渲染 ---------- */
 function render(){
  const alOpen=$('#alp')&&!$('#alp').hidden;
- $('#dpl').innerHTML=DEP.map(x=>`<option value="${esc(x)}">`).join('');$('#rql').innerHTML=REQ.map(x=>`<option value="${esc(x)}">`).join('');
  const base=mine(),l=scope(base),s=stat(l),al=alerts(alS(base)),L=S.leader;
  const sl=cnt(l,t=>t.s),gr=cnt(l,t=>G(t.d)),ty=cnt(l,t=>(t.ty||'未分类').split(',')[0]);
  let acc=0;const dn=l.length?'conic-gradient('+sl.map(([k,v])=>{const a=acc/l.length*100;acc+=v;return`${SC[k]||'#999'} ${a}% ${acc/l.length*100}%`}).join(',')+')':'var(--bd)';
@@ -522,7 +523,7 @@ async function put(t){
 function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).slice(2,6),t:'',ty:'',d:'',s:'待启动',p:0,n:1,a:TD(),b:addD(TD(),3),de:S.leader?'':S.user,r:'',f:false,note:'',pr:'',path:'',rm:[],stages:[]};
  const rm=x.rm||[],o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),
  sel=(i,k,v)=>`<select id="f_${i}">${v?'':'<option value="">请选择</option>'}${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option ${e==v?'selected':''}>${esc(e)}</option>`).join('')}</select>`,
- pick=(i,k,v)=>`<input id="f_${i}" list="dl_${i}" value="${esc(v||'')}" placeholder="输入或选择"><datalist id="dl_${i}">${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option value="${esc(e)}"></option>`).join('')}</datalist>`;
+ pick=(i,k,v)=>`<div class="cmb"><input id="f_${i}" value="${esc(v||'')}" placeholder="输入或选择" autocomplete="off"><div class="clst" hidden>${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<div class="cit" data-v="${esc(e)}">${esc(e)}</div>`).join('')}</div></div>`;
  let ST=JSON.parse(JSON.stringify(x.stages||[]));
  /* 必填/有效性校验：实时校验 + 提交二次校验；错误提示定位到对应字段 */
  const LAB={f_t:'项目名称',f_ty:'设计类型',f_d:'事业部/部门',f_de:'设计师',f_a:'计划开始时间',f_n:'定稿数量'};
@@ -557,6 +558,12 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  const msl=$('#f_ty'),msb=msl.querySelector('.msb'),msp=msl.querySelector('.msp');
  const tyUp=()=>{const s=[...msp.querySelectorAll('.tyc:checked')].map(c=>c.value);msb.textContent=s.length?s.join('、'):'请选择（可多选）';msb.classList.toggle('ph',!s.length)};
  msb.onclick=e=>{e.preventDefault();msp.hidden=!msp.hidden};msp.onchange=tyUp;tyUp();
+ /* 事业部/部门、需求人：自绘输入下拉（替代 datalist —— iOS Safari 不支持 datalist，安卓在弹窗内也常不弹出） */
+ document.querySelectorAll('#md .cmb').forEach(w=>{const inp=w.querySelector('input'),lst=w.querySelector('.clst');
+  const flt=()=>{const q=inp.value.trim().toLowerCase();lst.querySelectorAll('.cit').forEach(c=>c.style.display=!q||c.dataset.v.toLowerCase().includes(q)?'':'none')};
+  inp.addEventListener('focus',()=>{lst.hidden=false;flt()});inp.addEventListener('click',()=>{lst.hidden=false;flt()});inp.addEventListener('input',flt);
+  lst.addEventListener('pointerdown',e=>{e.preventDefault();const c=e.target.closest('.cit');if(!c)return;inp.value=c.dataset.v;lst.hidden=true;inp.dispatchEvent(new Event('input',{bubbles:true}))});
+  inp.addEventListener('blur',()=>{lst.hidden=true})});
 
  /* 阶段时间编辑 */
  const stRows=()=>{$('#stl').innerHTML=ST.map((s,i)=>`<div class="sr" data-i="${i}"><input class="l sl_l" placeholder="阶段名称，如：初稿 / 修改 / 终稿" value="${esc(s.l||'')}"><input type="date" class="sl_a" value="${s.a||''}" title="阶段开始"><input type="date" class="sl_b" value="${s.b||''}" title="阶段结束"><div class="sm2"><label><input type="checkbox" class="sl_d" ${s.d?'checked':''}> 该阶段已完成</label><span class="k sdu">${s.a&&s.b?days(s.a,s.b)+' 天':'-'}</span><select class="sl_c" title="选择周期：以阶段开始日为起点自动推算结束日"><option value="">周期</option>${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<option value="${d}">${k}</option>`).join('')}</select><button type="button" class="sm sdel">✕ 删除</button></div></div>`).join('')};
