@@ -380,8 +380,10 @@ function range(){const n=new Date(),o=P.off;let a,b;
  else if(P.m=='year'){const y=n.getFullYear()+o;a=y+'-01-01';b=y+'-12-31'}else{a='0000';b='9999'}
  return[a,b]}
 const lab=()=>{const[a,b]=range();return P.m=='all'?'全部时间':P.m=='day'?a:P.m=='week'?a+' ~ '+b.slice(5):P.m=='month'?a.slice(0,7):P.m=='year'?a.slice(0,4)+'年':a.slice(0,7)+' ~ '+b.slice(0,7)};
-const mine=()=>all().filter(t=>S.leader?(!P.who||t.de==P.who):t.de==S.user);
-const visible=()=>all().filter(t=>S.leader||t.de==S.user); // 提醒不受“设计师筛选”影响
+const deHasS=(s,d)=>(s||'').split(',').map(x=>x.trim()).includes(d); /* 设计师可多选：de 为逗号分隔多值 */
+const deHas=(t,d)=>deHasS(t.de,d);
+const mine=()=>all().filter(t=>S.leader?(!P.who||deHas(t,P.who)):deHas(t,S.user));
+const visible=()=>all().filter(t=>S.leader||deHas(t,S.user)); // 提醒不受“设计师筛选”影响
 function scope(l){const[a,b]=range();return l.filter(t=>{const e=t.b||t.a;if(!e)return false;
  if(P.m=='day')return (t.a||e)<=a&&a<=e;return e>=a&&e<=b})}
 function stat(l){const c=l.map(cyc).filter(v=>v!=null),dn=l.filter(t=>t.s=='已完成');
@@ -427,9 +429,9 @@ function render(){
  const pgN=Math.max(1,Math.ceil(f.length/100)),pg=Math.min(P.pg||0,pgN-1);_pgN=pgN;
  const alCard=a=>`<div class="mt" style="cursor:pointer" data-e="${esc(a.t.id)}"><b class="${a.h<0?'red':'org'}">${fh(a.h)}</b> · ${esc(a.t.t)}${a.sg?` <span class="tg">${esc(a.sg)}</span>`:''}<br>${esc(a.t.de)} · 截止 ${a.end}</div>`;
  const [pa,pb]=range(),deOf={};B.forEach(t=>{deOf[t.id]=t.de});   /* 操作数据：新增项目 / 提交审核 / 进度效率 */
- const newN=d=>EV.filter(e=>e.kind=='create'&&inR(e.d,pa,pb)&&deOf[e.tid]==d).length;
- const subN=d=>EV.filter(e=>e.kind=='submit'&&inR(e.d,pa,pb)&&deOf[e.tid]==d).length;
- const ovTbl=L?`<div class="cd sc" style="margin-bottom:14px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th><th>新增项目</th><th>进度效率</th><th>提交审核</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>t.de==d),y=stat(x),an=alerts(alS(x)).length,
+ const newN=d=>EV.filter(e=>e.kind=='create'&&inR(e.d,pa,pb)&&deHasS(deOf[e.tid],d)).length;
+ const subN=d=>EV.filter(e=>e.kind=='submit'&&inR(e.d,pa,pb)&&deHasS(deOf[e.tid],d)).length;
+ const ovTbl=L?`<div class="cd sc" style="margin-bottom:14px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th><th>新增项目</th><th>进度效率</th><th>提交审核</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>deHas(t,d)),y=stat(x),an=alerts(alS(x)).length,
   avgP=x.length?Math.round(x.reduce((s,t)=>s+(+t.p||0),0)/x.length*100):0;
   return`<tr><td><a href="#" data-w="${esc(d)}" style="color:${P.who==d?'#e0912a':'var(--tx)'};text-decoration:none;font-weight:${P.who==d?'700':'400'}">${esc(d)}</a></td><td>${y.n}</td><td>${y.dn}</td><td>${y.rate}%</td><td>${y.cy}天</td><td>${y.fin}</td><td>${y.op}</td><td>${an?`<span class="red">${an}</span>`:0}</td><td>${newN(d)}</td><td>${avgP}%→${y.rate}%</td><td>${subN(d)}</td></tr>`}).join('')}</table><div class="k" style="margin-top:8px">新增项目：按新建任务卡的时间统计（按设计师累计）；进度效率：周期内任务平均进度 → 完成率；提交审核：该周期内提交审核次数。</div></div>`:'';
  $('#appMain').innerHTML=`<header><button id="sg">⚙ 设置</button><b>内容创意组工作看板</b><span class="k">${L?'全部看板':'👤 '+esc(S.user)}</span><span id="sc" class="k"></span><span class="sp"></span>
@@ -538,7 +540,6 @@ async function put(t){
 
 function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).slice(2,6),t:'',ty:'',d:'',s:'待启动',p:0,n:1,a:TD(),b:addD(TD(),3),de:S.leader?'':S.user,r:'',f:false,note:'',pr:'',path:'',rm:[],stages:[]};
  const rm=x.rm||[],o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),
- sel=(i,k,v)=>`<select id="f_${i}">${v?'':'<option value="">请选择</option>'}${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<option ${e==v?'selected':''}>${esc(e)}</option>`).join('')}</select>`,
  pick=(i,k,v)=>`<div class="cmb"><input id="f_${i}" value="${esc(v||'')}" placeholder="输入或选择" autocomplete="off"><div class="clst" hidden>${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<div class="cit" data-v="${esc(e)}">${esc(e)}</div>`).join('')}</div></div>`;
  let ST=JSON.parse(JSON.stringify(x.stages||[]));
  /* 必填/有效性校验：实时校验 + 提交二次校验；错误提示定位到对应字段 */
@@ -549,6 +550,7 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
   if(!em){em=document.createElement('div');em.className='fel';lab.appendChild(em)}em.textContent=msg;el.classList.add('bad')};
  const chk=id=>{const el=$('#'+id);if(!el)return true;let okk=true,msg='';
   if(id=='f_ty'){okk=el.querySelectorAll('.tyc:checked').length>0;if(!okk)msg='设计类型为必填项（可多选）'}
+  else if(id=='f_de'&&el.classList&&el.classList.contains('msl')){okk=el.querySelectorAll('.dec:checked').length>0;if(!okk)msg='设计师为必填项（可多选）'}
   else if(id=='f_n'){const t=el.value.trim(),num=+t;okk=t!==''&&isFinite(num)&&num>0;if(!okk)msg='定稿数量为必填项，且必须为大于 0 的数值'}
   else{okk=!!el.value.trim();if(!okk)msg=LAB[id]+'为必填项'}
   markErr(id,okk?'':msg);return okk};
@@ -556,7 +558,7 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>${n?'新建':'编辑'}任务卡</h3><div class="fm">
  <label class="w2">项目名称<input id="f_t" value="${esc(x.t)}"></label>
  <label>设计类型<div class="msl" id="f_ty"><div class="msb">请选择（可多选）</div><div class="msp" hidden>${[...new Set([...DEF.ty,...(x.ty||'').split(',').map(s=>s.trim()).filter(Boolean)])].map(e=>`<label><input type="checkbox" class="tyc" value="${esc(e)}" ${(x.ty||'').split(',').map(s=>s.trim()).includes(e)?'checked':''}> ${esc(e)}</label>`).join('')}</div></div></label><label>事业部/部门${pick('d','d',x.d)}</label>
- <label>需求人${pick('r','r',x.r)}</label><label>设计师${S.leader?sel('de','de',x.de):`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
+ <label>需求人${pick('r','r',x.r)}</label><label>设计师${S.leader?`<div class="msl" id="f_de"><div class="msb">请选择（可多选）</div><div class="msp" hidden>${[...new Set([...DEF.de,...(x.de||'').split(',').map(s=>s.trim()).filter(Boolean)])].map(e=>`<label><input type="checkbox" class="dec" value="${esc(e)}" ${(x.de||'').split(',').map(s=>s.trim()).includes(e)?'checked':''}> ${esc(e)}</label>`).join('')}</div></div>`:`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
  <div class="w2 trow"><label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label><label>计划完成时间<input type="date" id="f_b" value="${x.b||''}"></label><button type="button" class="sm" id="addSt" title="添加阶段时间（审核/穿插/暂停后分段完成）">＋ 添加阶段</button></div>
  <div class="w2"><div id="stl"></div><div class="k" id="stn" hidden>已启用阶段时间：开始/完成时间由阶段自动计算，周期 = 各阶段天数之和；每个未完成阶段的结束日都会单独触发提醒。</div></div>
  <div class="w2">周期：<b id="cy"></b> ${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<button type="button" class="sm" data-c="${d}">${k}</button>`).join(' ')}</div>
@@ -570,10 +572,11 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  <div class="ft"><span></span><button class="pr" id="ok">保存</button>${n?'<span></span>':'<button id="rmv" title="删除" aria-label="删除">🗑</button>'}</div></div></div>`;
  /* 实时校验：在表单渲染完成后绑定（change 事件冒泡到 div#f_ty 亦可触发多选校验） */
  ORDER.forEach(id=>{const el=$('#'+id);if(!el)return;el.addEventListener('input',()=>chk(id));el.addEventListener('change',()=>chk(id))});
- /* 设计类型：下拉框多选 */
- const msl=$('#f_ty'),msb=msl.querySelector('.msb'),msp=msl.querySelector('.msp');
- const tyUp=()=>{const s=[...msp.querySelectorAll('.tyc:checked')].map(c=>c.value);msb.textContent=s.length?s.join('、'):'请选择（可多选）';msb.classList.toggle('ph',!s.length)};
- msb.onclick=e=>{e.preventDefault();msp.hidden=!msp.hidden};msp.onchange=tyUp;tyUp();
+ /* 设计类型、设计师：下拉框多选 */
+ const wireMs=(id,cls)=>{const w=$('#'+id);if(!w)return;const b=w.querySelector('.msb'),p=w.querySelector('.msp');
+  const up=()=>{const s=[...p.querySelectorAll('.'+cls+':checked')].map(c=>c.value);b.textContent=s.length?s.join('、'):'请选择（可多选）';b.classList.toggle('ph',!s.length)};
+  b.onclick=e=>{e.preventDefault();p.hidden=!p.hidden};p.onchange=up;up()};
+ wireMs('f_ty','tyc');wireMs('f_de','dec');
  /* 事业部/部门、需求人：自绘输入下拉（替代 datalist —— iOS Safari 不支持 datalist，安卓在弹窗内也常不弹出） */
  document.querySelectorAll('#md .cmb').forEach(w=>{const inp=w.querySelector('input'),lst=w.querySelector('.clst');
   const flt=()=>{const q=inp.value.trim().toLowerCase();lst.querySelectorAll('.cit').forEach(c=>c.style.display=!q||c.dataset.v.toLowerCase().includes(q)?'':'none')};
@@ -624,7 +627,7 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
   const nn=v('n')===''?null:Math.max(0,Math.floor(+v('n')||0));
   const rmv=[...document.querySelectorAll('.rmc:checked')].map(c=>+c.value);
   $('#ok').disabled=true;
-  const okk=await put({...x,t:v('t'),ty:[...document.querySelectorAll('#f_ty .tyc:checked')].map(c=>c.value).join(','),d:v('d'),r:v('r'),de:v('de'),a,b,s,p,pr:v('pr'),n:nn,f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...new Set(rmv)],stages:sts});
+  const okk=await put({...x,t:v('t'),ty:[...document.querySelectorAll('#f_ty .tyc:checked')].map(c=>c.value).join(','),d:v('d'),r:v('r'),de:S.leader?[...document.querySelectorAll('#f_de .dec:checked')].map(c=>c.value).join(','):v('de'),a,b,s,p,pr:v('pr'),n:nn,f:$('#f_f').checked,note:v('note'),path:v('path'),rm:[...new Set(rmv)],stages:sts});
   if(!okk&&$('#ok'))$('#ok').disabled=false}}
 
 function setf(tab){const N={ty:'设计类型',d:'事业部/部门',r:'需求人',de:'设计师'};
