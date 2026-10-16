@@ -667,6 +667,8 @@ function tick(){
 }
 
 document.addEventListener('click',e=>{const a=$('#alp');if(a&&!a.hidden&&!e.target.closest('#alp,#bl,[data-e]'))a.hidden=true});
+/* 多选下拉：点任意外部区域自动收起（模块级一次性注册，遍历当前打开的面板，只关闭 target 不在其所属 .msl 内的那些） */
+document.addEventListener('click',e=>{document.querySelectorAll('#md .msp:not([hidden])').forEach(p=>{if(!p.parentElement.contains(e.target))p.hidden=true})});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)resync()});
 window.addEventListener('online',resync);
 
