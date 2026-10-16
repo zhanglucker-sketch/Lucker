@@ -219,6 +219,8 @@ const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
 const md=s=>s?String(s).slice(5):'?';
 let DEF={ty:TY,d:[],r:[],de:[]};
 const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
+/* 设计师「多人」占位选项：设计师已支持下拉多选，禁止该值出现在任何选项列表/筛选条件/设置入口中 */
+const isMultiOpt=v=>/多人/.test(String(v||''));
 let realtimeChannel=null,STAGES_OK=true,SETTINGS_OK=true,SYNC='ok',DRAG=false,PENDING=false;
 let EV=[],EVENTS_OK=true,EV_ERR='';                 /* 操作流水：新增项目 / 提交审核次数统计 */
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -256,8 +258,10 @@ function norm(r){
 }
 const inR=(s,a,b)=>!!s&&s>=a&&s<=b;
 function rebuildLists(){
-  const base={ty:TY,d:sp(B.map(x=>x.d)),r:sp(B.map(x=>x.r)),de:[...new Set(B.map(x=>x.de).filter(Boolean))]};
-  DEF={};Object.keys(base).forEach(k=>{DEF[k]=[...new Set([...base[k],...(CFG.add[k]||[])])].filter(v=>!(CFG.del[k]||[]).includes(v));if(k!=='ty')DEF[k].sort()});
+  const base={ty:TY,d:sp(B.map(x=>x.d)),r:sp(B.map(x=>x.r)),de:sp(B.map(x=>x.de))};   /* 设计师为多选值，按逗号拆分后逐人计入统计 */
+  DEF={};Object.keys(base).forEach(k=>{DEF[k]=[...new Set([...base[k],...(CFG.add[k]||[])])].filter(v=>!(CFG.del[k]||[]).includes(v));
+   if(k==='de')DEF[k]=DEF[k].filter(v=>!isMultiOpt(v));   /* 唯一收口：任务数据/本机配置/云端设置任何来源都无法让「多人」选项出现 */
+   if(k!=='ty')DEF[k].sort()});
 }
 /* ---------- 全组共享设置：settings 表，key='board' ---------- */
 const cfgVal=v=>{if(typeof v==='string'){try{v=JSON.parse(v)}catch(e){return null}}return v&&typeof v==='object'?v:null};
@@ -541,6 +545,8 @@ async function put(t){
 function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).slice(2,6),t:'',ty:'',d:'',s:'待启动',p:0,n:1,a:TD(),b:addD(TD(),3),de:S.leader?'':S.user,r:'',f:false,note:'',pr:'',path:'',rm:[],stages:[]};
  const rm=x.rm||[],o=(a,v)=>a.map(i=>`<option ${i==v?'selected':''}>${i}</option>`).join(''),
  pick=(i,k,v)=>`<div class="cmb"><input id="f_${i}" value="${esc(v||'')}" placeholder="输入或选择" autocomplete="off"><div class="clst" hidden>${[...new Set([...DEF[k],...(v?[v]:[])])].map(e=>`<div class="cit" data-v="${esc(e)}">${esc(e)}</div>`).join('')}</div></div>`;
+ const dsel=(x.de||'').split(',').map(s=>s.trim()).filter(Boolean),      /* 当前任务已选设计师 */
+  deOpts=[...new Set([...DEF.de,...dsel])].filter(v=>!isMultiOpt(v));   /* 表单选项同样剔除「多人」，历史数据中的该值不再可选 */
  let ST=JSON.parse(JSON.stringify(x.stages||[]));
  /* 必填/有效性校验：实时校验 + 提交二次校验；错误提示定位到对应字段 */
  const LAB={f_t:'项目名称',f_ty:'设计类型',f_d:'事业部/部门',f_de:'设计师',f_a:'计划开始时间',f_n:'定稿数量'};
@@ -558,7 +564,7 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>${n?'新建':'编辑'}任务卡</h3><div class="fm">
  <label class="w2">项目名称<input id="f_t" value="${esc(x.t)}"></label>
  <label>设计类型<div class="msl" id="f_ty"><div class="msb">请选择（可多选）</div><div class="msp" hidden>${[...new Set([...DEF.ty,...(x.ty||'').split(',').map(s=>s.trim()).filter(Boolean)])].map(e=>`<label><input type="checkbox" class="tyc" value="${esc(e)}" ${(x.ty||'').split(',').map(s=>s.trim()).includes(e)?'checked':''}> ${esc(e)}</label>`).join('')}</div></div></label><label>事业部/部门${pick('d','d',x.d)}</label>
- <label>需求人${pick('r','r',x.r)}</label><label>设计师${S.leader?`<div class="msl" id="f_de"><div class="msb">请选择（可多选）</div><div class="msp" hidden>${[...new Set([...DEF.de,...(x.de||'').split(',').map(s=>s.trim()).filter(Boolean)])].map(e=>`<label><input type="checkbox" class="dec" value="${esc(e)}" ${(x.de||'').split(',').map(s=>s.trim()).includes(e)?'checked':''}> ${esc(e)}</label>`).join('')}</div></div>`:`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
+ <label>需求人${pick('r','r',x.r)}</label><label>设计师${S.leader?`<div class="msl" id="f_de"><div class="msb">请选择（可多选）</div><div class="msp" hidden>${deOpts.map(e=>`<label><input type="checkbox" class="dec" value="${esc(e)}" ${dsel.includes(e)?'checked':''}> ${esc(e)}</label>`).join('')}</div></div>`:`<input id="f_de" value="${esc(x.de)}" disabled>`}</label>
  <div class="w2 trow"><label>开始时间<input type="date" id="f_a" value="${x.a||''}"></label><label>计划完成时间<input type="date" id="f_b" value="${x.b||''}"></label><button type="button" class="sm" id="addSt" title="添加阶段时间（审核/穿插/暂停后分段完成）">＋ 添加阶段</button></div>
  <div class="w2"><div id="stl"></div><div class="k" id="stn" hidden>已启用阶段时间：开始/完成时间由阶段自动计算，周期 = 各阶段天数之和；每个未完成阶段的结束日都会单独触发提醒。</div></div>
  <div class="w2">周期：<b id="cy"></b> ${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<button type="button" class="sm" data-c="${d}">${k}</button>`).join(' ')}</div>
@@ -638,7 +644,9 @@ function setf(tab){const N={ty:'设计类型',d:'事业部/部门',r:'需求人'
  $('#md').innerHTML=`<div class="md"><div><button class="x" id="no">✕</button><h3>⚙ 设置</h3><div class="row">${TABS.map(([k,n])=>`<button class="tab ${tab==k?'on':''}" id="tab_${k}">${n}</button>`).join('')}</div>`+body+`</div></div>`;
  $('#no').onclick=()=>{$('#md').innerHTML=''};TABS.forEach(([k])=>{const b=$('#tab_'+k);if(b)b.onclick=()=>setf(k)});
  document.querySelectorAll('[data-thm]').forEach(c=>c.onclick=()=>{applyTheme(c.dataset.thm);setf('ui')});
- const add=k=>{const inp=$('#ni_'+k),v=inp.value.trim();if(!v)return;            /* 添加需密码确认，防止误触 */
+ const add=k=>{const inp=$('#ni_'+k),v=inp.value.trim();if(!v)return;
+  if(k==='de'&&isMultiOpt(v)){inp.value='';return toast('设计师已支持下拉多选，不支持新增「多人」选项；请直接勾选多位设计师')}   /* 设置面板不提供任何「多人」入口 */
+  /* 添加需密码确认，防止误触 */
   askPwd(`确认添加${N[k]}选项：<b>${esc(v)}</b>`,async()=>{const r=await mutateCfg(c=>{c.add[k]=[...new Set([...(c.add[k]||[]),v])];c.del[k]=(c.del[k]||[]).filter(z=>z!==v)});setf('tp');if(r)toast('已添加：'+v)})};
  document.querySelectorAll('.ad').forEach(b=>b.onclick=()=>add(b.dataset.k));document.querySelectorAll('[id^=ni_]').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')add(i.dataset.k)});
  document.querySelectorAll('.dx').forEach(a=>a.onclick=e=>{e.preventDefault();const k=a.dataset.k,v=DEF[k][+a.dataset.i];   /* 删除需密码确认，密码不对不生效 */
