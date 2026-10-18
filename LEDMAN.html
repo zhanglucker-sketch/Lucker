@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>雷曼家庭巨幕墙智能管家</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: #07080b;
+    color: #eaeaee;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 环境光晕 */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(70% 55% at 50% 42%,
+                rgba(86, 132, 255, .13), rgba(86, 132, 255, 0) 70%);
+  }
+
+  .app {
+    position: relative;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ================= 顶栏 ================= */
+  header {
+    position: relative;
+    flex: 0 0 auto;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    z-index: 5;
+  }
+
+  header h1 {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: .16em;
+    color: rgba(255, 255, 255, .62);
+    white-space: nowrap;
+  }
+
+  .newchat {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .62);
+    background: rgba(255, 255, 255, .045);
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .25s, color .25s, border-color .25s;
+  }
+  .newchat:hover  { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.2); }
+  .newchat:active { transform: translateY(-50%) scale(.96); }
+
+  /* ================= 主舞台 ================= */
+  .stage {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stage::-webkit-scrollbar { display: none; }
+
+  .inner {
+    margin: auto;
+    width: 100%;
+    max-width: 880px;
+    padding: 20px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+  }
+
+  /* AI 文字（无框、无背景，居中大字） */
+  .ai-text {
+    font-size: clamp(19px, 3.1vw, 36px);
+    line-height: 1.62;
+    font-weight: 300;
+    letter-spacing: .02em;
+    color: #f4f5f7;
+    text-align: center;
+    word-break: break-word;
+    text-shadow: 0 0 34px rgba(120, 170, 255, .24);
+  }
+
+  .ai-text .ch {
+    display: inline-block;
+    white-space: pre;
+    animation: charIn .52s cubic-bezier(.22, .68, .3, 1) both;
+  }
+
+  @keyframes charIn {
+    0%   { opacity: 0; filter: blur(10px); transform: translateY(9px) scale(1.08); }
+    60%  { filter: blur(0); }
+    100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+  }
+
+  /* ================= 旋转波动线条 ================= */
+  .loader {
+    width: 108px;
+    height: 108px;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .loader.on { opacity: 1; }
+  .loader[hidden] { display: none; }
+  .loader svg { width: 100%; height: 100%; display: block; }
+
+  .sg {
+    transform-box: view-box;
+    transform-origin: 60px 60px;
+    animation: spin 2.8s linear infinite;
+  }
+  .sg.rev  { animation-duration: 2s;   animation-direction: reverse; }
+  .sg.fast { animation-duration: 1.4s; }
+
+  .ring {
+    fill: none;
+    stroke: url(#lg);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    animation: ringBreathe 1.8s ease-in-out infinite;
+  }
+  .r1 { stroke-dasharray: 80 260; }
+  .r2 { stroke-dasharray: 56 220; animation-delay: .25s; }
+  .r3 { stroke-dasharray: 34 170; animation-delay: .5s; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ringBreathe { 0%, 100% { opacity: .38; } 50% { opacity: 1; } }
+
+  /* ================= 底部区域 ================= */
+  .dock {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 8px 20px calc(20px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* 快捷按键 */
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    max-width: 780px;
+  }
+
+  .chip {
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    color: rgba(255, 255, 255, .6);
+    background: rgba(255, 255, 255, .045);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .22s, color .22s, border-color .22s, transform .12s;
+  }
+  .chip:hover  { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.2); }
+  .chip:active { transform: scale(.96); }
+  .chip.active {
+    background: rgba(110,140,255,.25);
+    color:#fff;
+    border-color:rgba(120,160,255,.4);
+  }
+
+  /* 用户文字（位于输入框上方） */
+  .user-echo {
+    min-height: 20px;
+    max-width: 780px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, .4);
+    letter-spacing: .03em;
+    text-align: center;
+    word-break: break-word;
+    animation: echoIn .35s ease both;
+  }
+  @keyframes echoIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* 输入框 */
+  .composer {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 22px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 999px;
+    transition: background .25s, border-color .25s, box-shadow .25s;
+  }
+  .composer:focus-within {
+    background: rgba(255, 255, 255, .075);
+    border-color: rgba(120, 160, 255, .38);
+    box-shadow: 0 0 0 4px rgba(90, 130, 255, .08);
+  }
+
+  .composer input {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    background: none;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+  }
+  .composer input::placeholder { color: rgba(255, 255, 255, .28); }
+
+  .send {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #6b95ff, #7b63ff);
+    color: #fff;
+    cursor: pointer;
+    transition: filter .22s, box-shadow .22s, transform .12s;
+  }
+  .send:hover  { filter: brightness(1.13); box-shadow: 0 0 22px rgba(110,140,255,.45); }
+  .send:active { transform: scale(.93); }
+
+  /* ================= 移动端 ================= */
+  @media (max-width: 560px) {
+    header { height: 52px; }
+    header h1 { font-size: 12px; letter-spacing: .07em; }
+    .newchat { left: 12px; padding: 6px 11px; font-size: 11.5px; }
+
+    .inner { padding: 14px 18px; gap: 18px; }
+    .ai-text { font-size: clamp(18px, 5.4vw, 26px); line-height: 1.72; }
+    .loader { width: 88px; height: 88px; }
+
+    .dock { padding: 6px 14px calc(14px + env(safe-area-inset-bottom)); gap: 8px; }
+    .chip { padding: 7px 13px; font-size: 12.5px; }
+    .user-echo { font-size: 13px; }
+    .composer { padding: 5px 5px 5px 16px; }
+    .composer input { height: 38px; font-size: 16px; }
+    .send { width: 38px; height: 38px; }
+    .app {
+      height: 100vh;
+      height: -webkit-fill-available;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 顶栏 -->
+  <header>
+    <button class="newchat" id="newChatBtn">换个话题</button>
+    <h1>雷曼家庭巨幕墙智能管家</h1>
+  </header>
+
+  <!-- 主舞台 -->
+  <main class="stage" id="stage">
+    <div class="inner">
+
+      <!-- 旋转波动线条 -->
+      <div class="loader" id="loader" hidden>
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#7aa2ff"/>
+              <stop offset="60%"  stop-color="#b3c0ff"/>
+              <stop offset="100%" stop-color="#7aa2ff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g class="sg"><circle class="ring r1" cx="60" cy="60" r="44"/></g>
+          <g class="sg rev"><circle class="ring r2" cx="60" cy="60" r="33"/></g>
+          <g class="sg fast"><circle class="ring r3" cx="60" cy="60" r="22"/></g>
+        </svg>
+      </div>
+
+      <!-- AI 文字 -->
+      <div class="ai-text" id="aiText"></div>
+
+    </div>
+  </main>
+
+  <!-- 底部 -->
+  <div class="dock">
+
+    <div class="quick" id="quick">
+      <button class="chip" data-tts-toggle>语音播报</button>
+      <button class="chip">调节音量</button>
+      <button class="chip">今天有什么样的新闻</button>
+      <button class="chip">帮我开启电影模式</button>
+      <button class="chip">客厅有点热</button>
+      <button class="chip">现在湿度多少</button>
+    </div>
+
+    <div class="user-echo" id="userEcho"></div>
+
+    <form class="composer" id="composer" autocomplete="off">
+      <input id="input" type="text" placeholder="和雷曼说点什么…" enterkeyhint="send">
+      <button class="send" id="sendBtn" type="submit" aria-label="发送">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+      </button>
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   配置区【这里修改！！】
+   ============================================================ */
+const WORKER_URL = "https://ledman.zhanglucker.workers.dev";
+const MODEL   = "doubao-seed-2-0-mini-260428";
+
+const WELCOME = "您好，我是雷曼！您的巨幕墙管家，今天过得还好吗？";
+
+const SYSTEM_PROMPT = `你是「雷曼家庭巨幕墙智能管家」——雷曼家庭巨幕墙的核心 AI，负责照看这个家的所有智能设备，也负责陪主人说说话。
+
+【你能做的事】
+· 环境感知：温度、湿度、空气质量、光照、噪音、室外天气
+· 设备控制：空调、灯光、窗帘、音响、巨幕/电视、空气净化器、加湿器、新风、扫地机器人、热水器、按摩椅
+· 场景模式：观影模式、睡眠模式、会客模式、阅读模式、离家模式、回家模式
+
+【回答要求】
+1. 全程中文，口语化，像家人聊天一样自然，不要书面腔，不要客服腔。
+2. 简短克制，一般 1～3 句话，总字数不超过 80 字。
+3. 禁止使用 Markdown、列表符号、标题、表情符号、颜文字。
+4. 执行设备操作时，直接说已经做好了，并在句尾用括号补一句状态，例如：（客厅 26℃ · 湿度 52% · 已开启睡眠风）。
+5. 被问到天气、温度、湿度、空气质量时，直接给一个合理的数据，不要说自己无法获取。
+6. 偶尔主动关心主人的情绪和身体状态，但不要每句都煽情。
+7. 不要复述主人的问题，不要解释你是谁，直接回答。`;
+
+/* ============================================================
+   DOM
+   ============================================================ */
+const stage    = document.getElementById('stage');
+const aiText   = document.getElementById('aiText');
+const loader   = document.getElementById('loader');
+const userEcho = document.getElementById('userEcho');
+const input    = document.getElementById('input');
+const composer = document.getElementById('composer');
+const quick    = document.getElementById('quick');
+
+/* ============================================================
+   语音朗读 TTS 相关新增代码
+   ============================================================ */
+let ttsEnable = true; // 默认开启语音播报
+const synth = window.speechSynthesis;
+let ttsVoice = null;
+
+// 加载中文人声
+function loadVoice() {
+  const voices = synth.getVoices();
+  // 优先选择中文语音
+  ttsVoice = voices.find(v => v.lang.includes('zh') && !v.name.includes('Microsoft')) || voices[0];
+}
+// 浏览器加载语音列表事件
+synth.onvoiceschanged = loadVoice;
+loadVoice();
+
+// 朗读文字
+function speakText(text) {
+  if(!ttsEnable || !synth) return;
+  stopSpeak();
+  // 清理括号里状态文本，朗读跳过括号内容
+  const cleanText = text.replace(/\（.+?\）/g,'');
+  const utter = new SpeechSynthesisUtterance(cleanText);
+  if(ttsVoice) utter.voice = ttsVoice;
+  utter.rate = 1.05; // 语速
+  utter.pitch = 1.02; //音调
+  synth.speak(utter);
+}
+
+// 停止朗读
+function stopSpeak(){
+  if(synth.speaking) synth.cancel();
+}
+
+// 语音播报开关按钮事件
+document.querySelector('[data-tts-toggle]').addEventListener('click',function(){
+  ttsEnable = !ttsEnable;
+  this.classList.toggle('active',ttsEnable);
+  if(!ttsEnable) stopSpeak();
+})
+
+/* ============================================================
+   逐字打字机（带 Apple Hello 式淡入）
+   ============================================================ */
+let queue = [];
+let typing = false;
+let runToken = 0;
+let drainResolvers = [];
+let isRequesting = false;
+
+function pushChars(str) {
+  for (const c of str) queue.push(c);
+  if (!typing) runQueue();
+}
+
+function runQueue() {
+  const my = ++runToken;
+  typing = true;
+
+  const step = () => {
+    if (my !== runToken) return;           // 已被重置，放弃这一轮
+    if (!queue.length) {
+      typing = false;
+      const rs = drainResolvers;
+      drainResolvers = [];
+      rs.forEach(r => r());
+      return;
+    }
+    const c = queue.shift();
+    const span = document.createElement('span');
+    span.className = 'ch';
+    span.textContent = c === ' ' ? '\u00A0' : c;
+    aiText.appendChild(span);
+    scrollToBottom();
+    setTimeout(step, 24);
+  };
+
+  step();
+}
+
+function waitDrained() {
+  if (!typing && !queue.length) return Promise.resolve();
+  return new Promise(res => drainResolvers.push(res));
+}
+
+function resetTyping() {
+  runToken++;
+  queue = [];
+  typing = false;
+  const rs = drainResolvers;
+  drainResolvers = [];
+  rs.forEach(r => r());
+}
+
+function scrollToBottom() {
+  if (stage.scrollHeight > stage.clientHeight + 4) {
+    stage.scrollTop = stage.scrollHeight;
+  }
+}
+
+/* ============================================================
+   界面状态
+   ============================================================ */
+function clearAI() {
+  aiText.innerHTML = '';
+}
+
+function setLoading(on) {
+  if (on) {
+    loader.hidden = false;
+    requestAnimationFrame(() => loader.classList.add('on'));
+  } else {
+    loader.classList.remove('on');
+    setTimeout(() => { loader.hidden = true; }, 300);
+  }
+}
+
+function playWelcome() {
+  clearAI();
+  pushChars(WELCOME);
+  // 欢迎语朗读
+  speakText(WELCOME);
+}
+
+/* ============================================================
+   对话状态
+   ============================================================ */
+let history = [];
+let controller = null;
+const MAX_ROUND = 6; //最多保留6轮对话
+
+/* ============================================================
+   发送【重点：改成请求Cloudflare Worker代理】
+   ============================================================ */
+async function send(text) {
+  if(isRequesting) return;
+  const content = (text !== undefined ? text : input.value).trim();
+  if (!content) return;
+
+  // 打断上一轮语音、请求
+  stopSpeak();
+  if (controller) controller.abort();
+  controller = new AbortController();
+  const mySignal = controller.signal;
+
+  resetTyping();
+  input.value = '';
+  userEcho.textContent = content;
+  history.push({ role: 'user', content });
+  // 截断历史
+  if(history.length > MAX_ROUND *2){
+    history = history.slice(history.length - MAX_ROUND * 2);
+  }
+
+  clearAI();
+  setLoading(true);
+  isRequesting = true;
+  input.disabled = true;
+
+  let full = '';
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      signal: mySignal,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...history],
+        stream: true,
+        temperature: 0.85,
+        max_tokens: 600
+      })
+    });
+
+    if (!res.ok) {
+      const t = await res.text().catch(() => '');
+      throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 160));
+    }
+
+    /* 无流式响应体时降级处理 */
+    if (!res.body) {
+      const json = await res.json();
+      full = json.choices?.[0]?.message?.content || '';
+      setLoading(false);
+      pushChars(full);
+      await waitDrained();
+      history.push({ role: 'assistant', content: full });
+      speakText(full);
+      return;
+    }
+
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+
+      for (const raw of lines) {
+        const line = raw.trim();
+        if (!line || !line.startsWith('data:')) continue;
+
+        const payload = line.slice(5).trim();
+        if (payload === '[DONE]') continue;
+
+        try {
+          const json = JSON.parse(payload);
+          const delta = json.choices?.[0]?.delta?.content || '';
+          if (delta) {
+            if (!full) setLoading(false);   // 第一个字到达，收起加载动画
+            full += delta;
+            pushChars(delta);
+          }
+        } catch (e) { /* 忽略半包 */ }
+      }
+    }
+
+    await waitDrained();
+    if (full) history.push({ role: 'assistant', content: full });
+    // 打字完成后朗读回答
+    speakText(full);
+
+  } catch (err) {
+    if (err.name === 'AbortError') return;   // 被新消息打断，静默退出
+
+    setLoading(false);
+    clearAI();
+    resetTyping();
+    const errTxt = '抱歉，我这边连接不太顺畅，稍后再试一次好吗？';
+    pushChars(errTxt);
+    speakText(errTxt);
+    await waitDrained();
+
+  } finally {
+    setLoading(false);
+    isRequesting = false;
+    input.disabled = false;
+  }
+}
+
+/* ============================================================
+   事件绑定
+   ============================================================ */
+composer.addEventListener('submit', e => {
+  e.preventDefault();
+  send();
+});
+
+quick.addEventListener('click', e => {
+  const btn = e.target.closest('.chip');
+  if (!btn) return;
+  // 跳过语音开关按钮
+  if(btn.hasAttribute('data-tts-toggle')) return;
+  send(btn.textContent.trim());
+});
+
+document.getElementById('newChatBtn').addEventListener('click', () => {
+  stopSpeak();
+  if (controller) controller.abort();
+  controller = null;
+  resetTyping();
+  history = [];
+  clearAI();
+  userEcho.textContent = '';
+  input.value = '';
+  setLoading(false);
+  playWelcome();
+});
+
+/* ============================================================
+   启动
+   ============================================================ */
+// 默认开启，按钮高亮
+document.querySelector('[data-tts-toggle]').classList.add('active');
+playWelcome();
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
