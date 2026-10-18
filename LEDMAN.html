@@ -355,9 +355,9 @@
 
 <script>
 /* ============================================================
-   配置区【这里修改！！】
+   配置区【部署完腾讯云后，把下面地址改成你的腾讯云函数地址】
    ============================================================ */
-const WORKER_URL = "https://ledman.zhanglucker.workers.dev";
+const WORKER_URL = "https://1255468956-lz8he75wor.ap-guangzhou.tencentscf.com";
 const MODEL   = "doubao-seed-2-0-mini-260428";
 
 const WELCOME = "您好，我是雷曼！您的巨幕墙管家，今天过得还好吗？";
@@ -390,41 +390,34 @@ const composer = document.getElementById('composer');
 const quick    = document.getElementById('quick');
 
 /* ============================================================
-   语音朗读 TTS 相关新增代码
+   语音朗读 TTS
    ============================================================ */
-let ttsEnable = true; // 默认开启语音播报
+let ttsEnable = true;
 const synth = window.speechSynthesis;
 let ttsVoice = null;
 
-// 加载中文人声
 function loadVoice() {
   const voices = synth.getVoices();
-  // 优先选择中文语音
   ttsVoice = voices.find(v => v.lang.includes('zh') && !v.name.includes('Microsoft')) || voices[0];
 }
-// 浏览器加载语音列表事件
 synth.onvoiceschanged = loadVoice;
 loadVoice();
 
-// 朗读文字
 function speakText(text) {
   if(!ttsEnable || !synth) return;
   stopSpeak();
-  // 清理括号里状态文本，朗读跳过括号内容
   const cleanText = text.replace(/\（.+?\）/g,'');
   const utter = new SpeechSynthesisUtterance(cleanText);
   if(ttsVoice) utter.voice = ttsVoice;
-  utter.rate = 1.05; // 语速
-  utter.pitch = 1.02; //音调
+  utter.rate = 1.05;
+  utter.pitch = 1.02;
   synth.speak(utter);
 }
 
-// 停止朗读
 function stopSpeak(){
   if(synth.speaking) synth.cancel();
 }
 
-// 语音播报开关按钮事件
 document.querySelector('[data-tts-toggle]').addEventListener('click',function(){
   ttsEnable = !ttsEnable;
   this.classList.toggle('active',ttsEnable);
@@ -432,7 +425,7 @@ document.querySelector('[data-tts-toggle]').addEventListener('click',function(){
 })
 
 /* ============================================================
-   逐字打字机（带 Apple Hello 式淡入）
+   逐字打字机
    ============================================================ */
 let queue = [];
 let typing = false;
@@ -448,9 +441,8 @@ function pushChars(str) {
 function runQueue() {
   const my = ++runToken;
   typing = true;
-
   const step = () => {
-    if (my !== runToken) return;           // 已被重置，放弃这一轮
+    if (my !== runToken) return;
     if (!queue.length) {
       typing = false;
       const rs = drainResolvers;
@@ -466,7 +458,6 @@ function runQueue() {
     scrollToBottom();
     setTimeout(step, 24);
   };
-
   step();
 }
 
@@ -493,9 +484,7 @@ function scrollToBottom() {
 /* ============================================================
    界面状态
    ============================================================ */
-function clearAI() {
-  aiText.innerHTML = '';
-}
+function clearAI() { aiText.innerHTML = ''; }
 
 function setLoading(on) {
   if (on) {
@@ -510,7 +499,6 @@ function setLoading(on) {
 function playWelcome() {
   clearAI();
   pushChars(WELCOME);
-  // 欢迎语朗读
   speakText(WELCOME);
 }
 
@@ -519,17 +507,16 @@ function playWelcome() {
    ============================================================ */
 let history = [];
 let controller = null;
-const MAX_ROUND = 6; //最多保留6轮对话
+const MAX_ROUND = 6;
 
 /* ============================================================
-   发送【重点：改成请求Cloudflare Worker代理】
+   发送（非流式，腾讯云函数版）
    ============================================================ */
 async function send(text) {
   if(isRequesting) return;
   const content = (text !== undefined ? text : input.value).trim();
   if (!content) return;
 
-  // 打断上一轮语音、请求
   stopSpeak();
   if (controller) controller.abort();
   controller = new AbortController();
@@ -539,7 +526,6 @@ async function send(text) {
   input.value = '';
   userEcho.textContent = content;
   history.push({ role: 'user', content });
-  // 截断历史
   if(history.length > MAX_ROUND *2){
     history = history.slice(history.length - MAX_ROUND * 2);
   }
@@ -549,19 +535,15 @@ async function send(text) {
   isRequesting = true;
   input.disabled = true;
 
-  let full = '';
-
   try {
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       signal: mySignal,
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: MODEL,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...history],
-        stream: true,
+        stream: false,
         temperature: 0.85,
         max_tokens: 600
       })
@@ -569,60 +551,20 @@ async function send(text) {
 
     if (!res.ok) {
       const t = await res.text().catch(() => '');
-      throw new Error('HTTP ' + res.status + ' ' + t.slice(0, 160));
+      throw new Error('HTTP ' + res.status);
     }
 
-    /* 无流式响应体时降级处理 */
-    if (!res.body) {
-      const json = await res.json();
-      full = json.choices?.[0]?.message?.content || '';
-      setLoading(false);
-      pushChars(full);
-      await waitDrained();
-      history.push({ role: 'assistant', content: full });
-      speakText(full);
-      return;
-    }
+    const json = await res.json();
+    const full = json.choices?.[0]?.message?.content || '';
 
-    const reader  = res.body.getReader();
-    const decoder = new TextDecoder('utf-8');
-    let buf = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n');
-      buf = lines.pop();
-
-      for (const raw of lines) {
-        const line = raw.trim();
-        if (!line || !line.startsWith('data:')) continue;
-
-        const payload = line.slice(5).trim();
-        if (payload === '[DONE]') continue;
-
-        try {
-          const json = JSON.parse(payload);
-          const delta = json.choices?.[0]?.delta?.content || '';
-          if (delta) {
-            if (!full) setLoading(false);   // 第一个字到达，收起加载动画
-            full += delta;
-            pushChars(delta);
-          }
-        } catch (e) { /* 忽略半包 */ }
-      }
-    }
-
+    setLoading(false);
+    pushChars(full);
     await waitDrained();
-    if (full) history.push({ role: 'assistant', content: full });
-    // 打字完成后朗读回答
+    history.push({ role: 'assistant', content: full });
     speakText(full);
 
   } catch (err) {
-    if (err.name === 'AbortError') return;   // 被新消息打断，静默退出
-
+    if (err.name === 'AbortError') return;
     setLoading(false);
     clearAI();
     resetTyping();
@@ -630,7 +572,6 @@ async function send(text) {
     pushChars(errTxt);
     speakText(errTxt);
     await waitDrained();
-
   } finally {
     setLoading(false);
     isRequesting = false;
@@ -649,7 +590,6 @@ composer.addEventListener('submit', e => {
 quick.addEventListener('click', e => {
   const btn = e.target.closest('.chip');
   if (!btn) return;
-  // 跳过语音开关按钮
   if(btn.hasAttribute('data-tts-toggle')) return;
   send(btn.textContent.trim());
 });
@@ -670,10 +610,8 @@ document.getElementById('newChatBtn').addEventListener('click', () => {
 /* ============================================================
    启动
    ============================================================ */
-// 默认开启，按钮高亮
 document.querySelector('[data-tts-toggle]').classList.add('active');
 playWelcome();
 </script>
 </body>
 </html>
-<!-- （注：内容由AI生成） -->
