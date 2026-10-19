@@ -50,11 +50,12 @@
   }
 
   header h1 {
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: .16em;
-    color: rgba(255, 255, 255, .62);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    color: #a9ccff;
     white-space: nowrap;
+    text-shadow: 0 0 22px rgba(130,175,255,.45);
   }
 
   .newchat {
@@ -77,6 +78,33 @@
   }
   .newchat:hover  { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.2); }
   .newchat:active { transform: translateY(-50%) scale(.96); }
+
+  /* 右上角语音播报按钮（与左侧"换个话题"对称） */
+  .ttsbtn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    font-family: inherit;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .62);
+    background: rgba(255, 255, 255, .045);
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .25s, color .25s, border-color .25s;
+  }
+  .ttsbtn:hover  { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.2); }
+  .ttsbtn:active { transform: translateY(-50%) scale(.96); }
+  .ttsbtn.on {
+    background: rgba(110,140,255,.25);
+    color: #fff;
+    border-color: rgba(120,160,255,.4);
+  }
 
   /* ================= 主舞台 ================= */
   .stage {
@@ -223,12 +251,36 @@
     max-width: 780px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 6px 6px 22px;
+    gap: 6px;
+    padding: 6px 6px 6px 8px;
     background: rgba(255, 255, 255, .05);
     border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 999px;
     transition: background .25s, border-color .25s, box-shadow .25s;
+  }
+
+  .mic {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255,255,255,.55);
+    cursor: pointer;
+    transition: background .2s, color .2s;
+  }
+  .mic:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .mic.rec {
+    background: rgba(255,90,90,.25);
+    color: #ff9090;
+    animation: micPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes micPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,90,90,.45); }
+    50%     { box-shadow: 0 0 0 8px rgba(255,90,90,0); }
   }
   .composer:focus-within {
     background: rgba(255, 255, 255, .075);
@@ -268,8 +320,10 @@
   /* ================= 移动端 ================= */
   @media (max-width: 560px) {
     header { height: 52px; }
-    header h1 { font-size: 12px; letter-spacing: .07em; }
-    .newchat { left: 12px; padding: 6px 11px; font-size: 11.5px; }
+    header h1 { font-size: 15px; letter-spacing: .08em; }
+    .newchat { left: 12px; padding: 6px 10px; font-size: 11.5px; }
+    .ttsbtn  { right: 12px; padding: 6px 10px; font-size: 11.5px; }
+    .ttsbtn span { display: none; }
 
     .inner { padding: 14px 18px; gap: 18px; }
     .ai-text { font-size: clamp(18px, 5.4vw, 26px); line-height: 1.72; }
@@ -278,9 +332,10 @@
     .dock { padding: 6px 14px calc(14px + env(safe-area-inset-bottom)); gap: 8px; }
     .chip { padding: 7px 13px; font-size: 12.5px; }
     .user-echo { font-size: 13px; }
-    .composer { padding: 5px 5px 5px 16px; }
+    .composer { padding: 5px 5px 5px 6px; }
     .composer input { height: 38px; font-size: 16px; }
     .send { width: 38px; height: 38px; }
+    .mic { width: 32px; height: 32px; }
     .app {
       height: 100vh;
       height: -webkit-fill-available;
@@ -296,6 +351,14 @@
   <header>
     <button class="newchat" id="newChatBtn">换个话题</button>
     <h1>雷曼家庭巨幕墙智能管家</h1>
+    <button class="ttsbtn on" id="ttsBtn" title="语音播报开关">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 6 9H2v6h4l5 4V5z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+        <path d="M18.6 5.4a9 9 0 0 1 0 13.2"/>
+      </svg>
+      <span>语音播报</span>
+    </button>
   </header>
 
   <!-- 主舞台 -->
@@ -328,7 +391,7 @@
   <div class="dock">
 
     <div class="quick" id="quick">
-      <button class="chip" data-tts-toggle>语音播报</button>
+      <button class="chip" id="voiceSwitchBtn">换音色</button>
       <button class="chip">调节音量</button>
       <button class="chip">今天有什么样的新闻</button>
       <button class="chip">帮我开启电影模式</button>
@@ -339,6 +402,13 @@
     <div class="user-echo" id="userEcho"></div>
 
     <form class="composer" id="composer" autocomplete="off">
+      <button class="mic" id="micBtn" type="button" title="语音输入">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="2" width="6" height="12" rx="3"/>
+          <path d="M5 10a7 7 0 0 0 14 0"/>
+          <path d="M12 19v3"/>
+        </svg>
+      </button>
       <input id="input" type="text" placeholder="和雷曼说点什么…" enterkeyhint="send">
       <button class="send" id="sendBtn" type="submit" aria-label="发送">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -376,7 +446,8 @@ const SYSTEM_PROMPT = `你是「雷曼家庭巨幕墙智能管家」——雷曼
 4. 执行设备操作时，直接说已经做好了，并在句尾用括号补一句状态，例如：（客厅 26℃ · 湿度 52% · 已开启睡眠风）。
 5. 被问到天气、温度、湿度、空气质量时，直接给一个合理的数据，不要说自己无法获取。
 6. 偶尔主动关心主人的情绪和身体状态，但不要每句都煽情。
-7. 不要复述主人的问题，不要解释你是谁，直接回答。`;
+7. 不要复述主人的问题，不要解释你是谁，直接回答。
+8. 被问到今天新闻、时事、股价、比分等实时信息时，不要编造具体事件，直接说自己暂时连不上实时资讯，建议主人用手机看一眼。`;
 
 /* ============================================================
    DOM
@@ -390,39 +461,68 @@ const composer = document.getElementById('composer');
 const quick    = document.getElementById('quick');
 
 /* ============================================================
-   语音朗读 TTS
+   语音朗读 TTS（支持多音色切换）
    ============================================================ */
 let ttsEnable = true;
 const synth = window.speechSynthesis;
-let ttsVoice = null;
+let zhVoices = [];
+let voiceIdx = 0;
 
-function loadVoice() {
-  const voices = synth.getVoices();
-  ttsVoice = voices.find(v => v.lang.includes('zh') && !v.name.includes('Microsoft')) || voices[0];
+function loadVoices() {
+  const all = (synth && synth.getVoices()) || [];
+  zhVoices = all.filter(v => v.lang && v.lang.toLowerCase().indexOf('zh') === 0);
+  if (!zhVoices.length) zhVoices = all.slice(0, 1);
+  if (voiceIdx >= zhVoices.length) voiceIdx = 0;
 }
-synth.onvoiceschanged = loadVoice;
-loadVoice();
+if (synth) {
+  loadVoices();
+  synth.onvoiceschanged = loadVoices;
+}
+
+function currentVoice() { return zhVoices[voiceIdx] || null; }
 
 function speakText(text) {
   if(!ttsEnable || !synth) return;
   stopSpeak();
   const cleanText = text.replace(/\（.+?\）/g,'');
   const utter = new SpeechSynthesisUtterance(cleanText);
-  if(ttsVoice) utter.voice = ttsVoice;
+  const v = currentVoice();
+  if (v) utter.voice = v;
+  utter.lang = (v && v.lang) || 'zh-CN';
   utter.rate = 1.05;
   utter.pitch = 1.02;
   synth.speak(utter);
 }
 
 function stopSpeak(){
-  if(synth.speaking) synth.cancel();
+  if(synth && synth.speaking) synth.cancel();
 }
 
-document.querySelector('[data-tts-toggle]').addEventListener('click',function(){
+/* 右上角语音播报开关 */
+const ttsBtn = document.getElementById('ttsBtn');
+ttsBtn.addEventListener('click', () => {
   ttsEnable = !ttsEnable;
-  this.classList.toggle('active',ttsEnable);
-  if(!ttsEnable) stopSpeak();
-})
+  ttsBtn.classList.toggle('on', ttsEnable);
+  if(!ttsEnable) {
+    stopSpeak();
+  } else {
+    speakText('语音播报已开启');
+  }
+});
+
+/* 换音色：在系统可用的中文音色之间循环 */
+document.getElementById('voiceSwitchBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(!synth) { speakText('当前浏览器不支持语音播报'); return; }
+  if(zhVoices.length < 2) {
+    speakText('当前设备只装了一种中文音色，没法换');
+    return;
+  }
+  voiceIdx = (voiceIdx + 1) % zhVoices.length;
+  const v = currentVoice();
+  stopSpeak();
+  speakText('你好，现在换成' + (v.name || '新音色') + '了');
+});
 
 /* ============================================================
    逐字打字机
@@ -590,7 +690,7 @@ composer.addEventListener('submit', e => {
 quick.addEventListener('click', e => {
   const btn = e.target.closest('.chip');
   if (!btn) return;
-  if(btn.hasAttribute('data-tts-toggle')) return;
+  if (btn.id === 'voiceSwitchBtn') return;   // 音色按钮自己绑事件
   send(btn.textContent.trim());
 });
 
@@ -608,9 +708,52 @@ document.getElementById('newChatBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
+   语音输入（浏览器 Web Speech API）
+   ============================================================ */
+const micBtn = document.getElementById('micBtn');
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SR) {
+  let recognition = new SR();
+  recognition.lang = 'zh-CN';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  micBtn.addEventListener('click', () => {
+    if (micBtn.classList.contains('rec')) {
+      recognition.stop();
+      return;
+    }
+    try {
+      recognition.start();
+      micBtn.classList.add('rec');
+    } catch (err) {}
+  });
+
+  recognition.onresult = (e) => {
+    let finalText = '';
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += t;
+      else interim += t;
+    }
+    input.value = finalText + interim;
+  };
+  recognition.onend = () => {
+    micBtn.classList.remove('rec');
+    const v = input.value.trim();
+    if (v) send(v);
+  };
+  recognition.onerror = () => {
+    micBtn.classList.remove('rec');
+  };
+} else {
+  micBtn.style.display = 'none';
+}
+
+/* ============================================================
    启动
    ============================================================ */
-document.querySelector('[data-tts-toggle]').classList.add('active');
 playWelcome();
 </script>
 </body>
