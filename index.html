@@ -217,11 +217,59 @@ const LD=[[72,'3天'],[48,'2天'],[24,'1天'],[12,'半天']];
 const iso=d=>d.toLocaleDateString('sv'),TD=()=>iso(new Date()),addD=(s,n)=>iso(new Date(+new Date(s+'T00:00')+n*864e5));
 const days=(a,b)=>a&&b?Math.round((new Date(b)-new Date(a))/864e5):null;
 const md=s=>s?String(s).slice(5):'?';
+/* ==================== 节假日规则配置表（可配置，调整假日无需修改业务代码） ====================
+   【配置格式】每条规则为表中的一条记录，字段说明：
+     name    : 规则名称（仅备注用，不参与计算）
+     type    : 'off' = 休息日（法定节假日/常规周末），'work' = 工作日（调休上班日）
+     范围二选一：
+       start + end : 起止日期 'YYYY-MM-DD'（含首尾两天），适用于法定节假日等连续区间
+       weekend     : 数组，每周固定休息的星期几（0=周日 … 6=周六），适用于常规周末
+     days    : 天数备注（仅说明用，可省略）
+   【生效规则】
+     1. 按表中顺序逐条匹配；同一天命中多条规则时，以靠后的规则为准。
+        因此请保持「周末规则在最前 → 法定节假日 → 调休上班日最后」的顺序，调休上班日即可覆盖周末。
+     2. 未命中任何规则的日期默认为工作日（普通周一至周五）。
+     3. 每年国务院放假安排发布后，只需在下方增删/修改对应记录，周期计算自动生效，无需改动其他代码。 */
+const HOLIDAY_RULES=[
+ {name:'周末',type:'off',weekend:[0,6],days:2},
+ /* ---- 2025年（国办发明电〔2024〕12号） ---- */
+ {name:'元旦',type:'off',start:'2025-01-01',end:'2025-01-01',days:1},
+ {name:'春节',type:'off',start:'2025-01-28',end:'2025-02-04',days:8},
+ {name:'春节调休上班',type:'work',start:'2025-01-26',end:'2025-01-26'},
+ {name:'春节调休上班',type:'work',start:'2025-02-08',end:'2025-02-08'},
+ {name:'清明节',type:'off',start:'2025-04-04',end:'2025-04-06',days:3},
+ {name:'劳动节',type:'off',start:'2025-05-01',end:'2025-05-05',days:5},
+ {name:'劳动节调休上班',type:'work',start:'2025-04-27',end:'2025-04-27'},
+ {name:'端午节',type:'off',start:'2025-05-31',end:'2025-06-02',days:3},
+ {name:'国庆节·中秋节',type:'off',start:'2025-10-01',end:'2025-10-08',days:8},
+ {name:'国庆调休上班',type:'work',start:'2025-09-28',end:'2025-09-28'},
+ {name:'国庆调休上班',type:'work',start:'2025-10-11',end:'2025-10-11'},
+ /* ---- 2026年（国办发明电〔2025〕7号） ---- */
+ {name:'元旦',type:'off',start:'2026-01-01',end:'2026-01-03',days:3},
+ {name:'元旦调休上班',type:'work',start:'2026-01-04',end:'2026-01-04'},
+ {name:'春节',type:'off',start:'2026-02-15',end:'2026-02-23',days:9},
+ {name:'春节调休上班',type:'work',start:'2026-02-14',end:'2026-02-14'},
+ {name:'春节调休上班',type:'work',start:'2026-02-28',end:'2026-02-28'},
+ {name:'清明节',type:'off',start:'2026-04-04',end:'2026-04-06',days:3},
+ {name:'劳动节',type:'off',start:'2026-05-01',end:'2026-05-05',days:5},
+ {name:'劳动节调休上班',type:'work',start:'2026-05-09',end:'2026-05-09'},
+ {name:'端午节',type:'off',start:'2026-06-19',end:'2026-06-21',days:3},
+ {name:'中秋节',type:'off',start:'2026-09-25',end:'2026-09-27',days:3},
+ {name:'国庆节',type:'off',start:'2026-10-01',end:'2026-10-07',days:7},
+ {name:'国庆调休上班',type:'work',start:'2026-09-20',end:'2026-09-20'},
+ {name:'国庆调休上班',type:'work',start:'2026-10-10',end:'2026-10-10'},
+];
+/* 规则引擎：命中多条规则时以靠后者为准（周末规则在最前、调休上班在最后） */
+const ruleHit=(r,s)=>r.weekend?r.weekend.includes(new Date(s+'T00:00').getDay()):(r.start<=s&&s<=r.end);
+const isWork=s=>{let t=null;for(const r of HOLIDAY_RULES){if(ruleHit(r,s))t=r.type}return t?t=='work':true};
+/* 工作日天数：与 days() 同口径 = (a,b] 区间内工作日数，周六日/法定假日自动减除，调休上班的周末计入 */
+const wdays=(a,b)=>{if(!a||!b)return null;if(b<a)return -wdays(b,a);let n=0,d=a;while(d<b){d=addD(d,1);if(isWork(d))n++}return n};
 let DEF={ty:TY,d:[],r:[],de:[]};
 const sp=a=>[...new Set(a.flatMap(x=>(x||'').split(',').map(t=>t.trim())).filter(Boolean))];
 /* 设计师「多人」占位选项：设计师已支持下拉多选，禁止该值出现在任何选项列表/筛选条件/设置入口中 */
 const isMultiOpt=v=>/多人/.test(String(v||''));
 let realtimeChannel=null,STAGES_OK=true,SETTINGS_OK=true,SYNC='ok',DRAG=false,PENDING=false;
+let WK={k:'b',dir:1,open:true,off:0};            /* 本周工作排期：排序字段(部门d/时间b/状态s)、方向(1升/-1降)、折叠状态、周偏移(0=本周) */
 let EV=[],EVENTS_OK=true,EV_ERR='';                 /* 操作流水：新增项目 / 提交审核次数统计 */
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -246,7 +294,7 @@ const si=s=>{const i=ST_ALL.indexOf(s);return i<0?ST_ALL.length:i};   /* 状态�
 
 /* ---------- 周期：有阶段时 = 各阶段天数之和；否则 = 开始→完成 ---------- */
 const stagesOf=t=>Array.isArray(t.stages)?t.stages:[];
-const cyc=t=>{const st=stagesOf(t).filter(x=>x.a&&x.b);return st.length?st.reduce((s,x)=>s+Math.max(0,days(x.a,x.b)),0):days(t.a,t.b)};
+const cyc=t=>{const st=stagesOf(t).filter(x=>x.a&&x.b);return st.length?st.reduce((s,x)=>s+Math.max(0,wdays(x.a,x.b)),0):wdays(t.a,t.b)};   /* 周期按工作日计：自动减除周六日与法定假日 */
 const stLabel=(s,i)=>s.l||('阶段'+(i+1));
 
 /* ---------- 数据读写 ---------- */
@@ -438,6 +486,21 @@ function render(){
  const ovTbl=L?`<div class="cd sc" style="margin-bottom:14px"><h3>设计师统筹（${lab()}）</h3><table><tr><th>设计师</th><th>任务</th><th>完成</th><th>完成率</th><th>平均周期</th><th>定稿</th><th>未完成</th><th>预警</th><th>新增项目</th><th>进度效率</th><th>提交审核</th></tr>${DEF.de.map(d=>{const x=l.filter(t=>deHas(t,d)),y=stat(x),an=alerts(alS(x)).length,
   avgP=x.length?Math.round(x.reduce((s,t)=>s+(+t.p||0),0)/x.length*100):0;
   return`<tr><td><a href="#" data-w="${esc(d)}" style="color:${P.who==d?'#e0912a':'var(--tx)'};text-decoration:none;font-weight:${P.who==d?'700':'400'}">${esc(d)}</a></td><td>${y.n}</td><td>${y.dn}</td><td>${y.rate}%</td><td>${y.cy}天</td><td>${y.fin}</td><td>${y.op}</td><td>${an?`<span class="red">${an}</span>`:0}</td><td>${newN(d)}</td><td>${avgP}%→${y.rate}%</td><td>${subN(d)}</td></tr>`}).join('')}</table><div class="k" style="margin-top:8px">新增项目：按新建任务卡的时间统计（按设计师累计）；进度效率：周期内任务平均进度 → 完成率；提交审核：该周期内提交审核次数。</div></div>`:'';
+ /* ---------- 本周工作排期（默认本周，可◀▶翻看上一周/历史周） ---------- */
+ const wn=new Date(),wd=(wn.getDay()+6)%7,wa0=iso(new Date(wn.getFullYear(),wn.getMonth(),wn.getDate()-wd));   /* 本周一（固定锚点，完成时间的「本周X/下周X」以此为基准） */
+ const wa=addD(wa0,WK.off*7),wb=addD(wa,6);                  /* 当前查看周的起止 */
+ const wkl=visible().filter(t=>['进行中','审核中','待启动'].includes(t.s)&&(t.a||t.b)&&(t.a||t.b)<=wb&&(t.b||t.a)>=wa);
+ const wkKey=t=>WK.k=='d'?(t.d||''):WK.k=='s'?si(t.s):(t.b||t.a||'9999');
+ wkl.sort((a,b)=>{const x=wkKey(a),y=wkKey(b);return (x<y?-1:x>y?1:0)*WK.dir});
+ const wkTh=(k,n)=>`<th data-wk="${k}" style="cursor:pointer;user-select:none" title="点击排序">${n} <span style="font-size:10px;color:${WK.k==k?'var(--ac)':'var(--mu)'}">${WK.k==k?(WK.dir>0?'▲':'▼'):'⇅'}</span></th>`;
+ /* 完成时间显示：落在本周→「本周X | 日期」；下周一~下周五→「下周X | 日期」；超过下周五（或更早的历史日期）→纯日期 */
+ const CN=['日','一','二','三','四','五','六'];
+ const wkD=s=>{if(!s)return'-';const d=CN[new Date(s+'T00:00').getDay()];
+  if(s>=wa0&&s<=addD(wa0,6))return`本周${d} | ${s}`;
+  if(s>=addD(wa0,7)&&s<=addD(wa0,11))return`下周${d} | ${s}`;
+  return s};
+ const wkDept=cnt(wkl,t=>G(t.d)).map(([k,v])=>`${k} ${v} 项`).join('、');
+ const wkTbl=`<div class="cd sc" style="margin-bottom:14px"><h3 id="wkh" style="cursor:pointer;user-select:none">${WK.off==0?'本周工作排期':'工作排期'}（${wa.slice(5)} ~ ${wb.slice(5)} · ${wkl.length}项）<button class="sm" data-wn="-1" title="上一周" style="padding:1px 7px;margin:0 2px 0 6px">◀</button>${WK.off!=0?`<button class="sm" data-wn="0" title="回到本周" style="padding:1px 7px;margin-right:2px">本周</button>`:''}<button class="sm" data-wn="1" title="下一周" style="padding:1px 7px">▶</button> <span style="color:var(--mu);font-size:11px">${WK.open?'▼':'▶'}</span></h3>${WK.open?`<table><tr><th>设计师</th><th>项目名</th>${wkTh('d','部门')}${wkTh('b','计划完成时间')}${wkTh('s','进展状态')}</tr>${wkl.map(t=>`<tr data-e="${esc(t.id)}" style="cursor:pointer"><td>${esc(t.de||'-')}</td><td style="white-space:normal;min-width:180px">${esc(t.t)}</td><td>${esc(t.d||'-')}</td><td style="white-space:normal">${wkD(t.b||t.a)}</td><td><span class="ch" style="--c:${SC[t.s]||'#999'}">${t.s}</span></td></tr>`).join('')||'<tr><td colspan="5" class="k">该周暂无进行中、审核中或待启动的工作 ✅</td></tr>'}</table><div class="k" style="margin-top:8px">${WK.off==0?'本周':'该周'}工作共计 ${wkl.length} 项${wkDept?'，各事业部：'+wkDept:''}</div>`:''}</div>`;
  $('#appMain').innerHTML=`<header><button id="sg">⚙ 设置</button><b>内容创意组工作看板</b><span class="k">${L?'全部看板':'👤 '+esc(S.user)}</span><span id="sc" class="k"></span><span class="sp"></span>
  <span style="position:relative"><button id="bl">🔔 预警${al.length?` <b class="red">${al.length}</b>`:''}</button><div class="cd al" id="alp" ${alOpen?'':'hidden'}>${al.length?al.map(alCard).join(''):'<div class="k">暂无临近截止的任务 ✅</div>'}<button class="sm" id="st" style="margin-top:8px">⚙ 提醒设置</button></div></span>
  <button class="pr" id="add">＋ 新建任务卡</button></header>
@@ -453,6 +516,7 @@ function render(){
  <div class="cd"><h3>设计类型占比</h3>${bars(ty,l.length)}</div>
  <div class="cd"><h3>按月任务量（${ynum}年）</h3><div class="tr">${mo.map(([k,v])=>`<div><i style="height:${v/mx*80}px"></i>${v}<br>${k.slice(5)}月</div>`).join('')||'<div class="k">该年暂无任务</div>'}</div></div></div>
  ${ovTbl}
+ ${wkTbl}
  <h3 style="margin:4px 0 10px">⚠ 预警项目（${al.length}）</h3>
  <div class="tks" style="margin-bottom:16px">${al.slice(0,60).map(a=>`<div class="cd tk" style="--c:#d6523f" data-e="${esc(a.t.id)}">${emoTag(a.t,a.h)}<div class="tt">${esc(a.t.t)}</div><div class="chs"><span class="ch">${fh(a.h)}</span><span class="ch" style="--c:${SC[a.t.s]||'#999'}">${a.t.s}</span>${a.sg?`<span class="ch" style="--c:#8a5cf6">${esc(a.sg)}</span>`:''}</div><div class="mt">👤 设计师：${esc(a.t.de)}　需求人：${esc(a.t.r||'-')}</div><div class="mt">📅 ${a.sg?esc(a.sg)+' 截止':'截止'} ${a.end} 18:00　周期 ${cyc(a.t)??'-'} 天${stagesOf(a.t).length?'（阶段合计）':''}</div><div class="mt"><span class="tg">${esc(G(a.t.d))}</span></div></div>`).join('')||'<div class="k">该时间段暂无预警项目 ✅</div>'}</div>
  <div class="row"><b>任务卡 (${f.length})</b><input id="q" placeholder="搜索内容/需求人/部门" value="${esc(P.q)}" style="flex:1;min-width:160px"><select id="so"><option value="desc" ${P.so!='asc'?'selected':''}>降序（截止最新在前）</option><option value="asc" ${P.so=='asc'?'selected':''}>升序（截止最早在前）</option></select><div class="chips">${[['','全部'],...ST_ALL.map(k=>[k,k])].map(([v,k])=>`<button type="button" class="chip ${P.st==v?'on':''}"${v?` style="--c:${SC[v]||'#999'}"`:''} data-st="${v}">${k}</button>`).join('')}</div></div>
@@ -462,7 +526,7 @@ function render(){
 function card(t){
  const pct=Math.round((t.p||0)*100),st=stagesOf(t),du=dueOf(t),now=Date.now();
  const stList=st.length?`<div class="stg">${st.map((s,i)=>{const cur=du&&du.label===stLabel(s,i)&&!s.d&&open_(t),od=!s.d&&open_(t)&&s.b&&new Date(s.b+'T18:00')<now;
-   return`<div class="${s.d?'sd':''} ${cur?'cur':''} ${od?'od':''}">${s.d?'✔':od?'⚠':cur?'▶':'○'} ${esc(stLabel(s,i))}　${md(s.a)} → ${md(s.b)}　${days(s.a,s.b)??'-'}天</div>`}).join('')}</div>`:'';
+   return`<div class="${s.d?'sd':''} ${cur?'cur':''} ${od?'od':''}">${s.d?'✔':od?'⚠':cur?'▶':'○'} ${esc(stLabel(s,i))}　${md(s.a)} → ${md(s.b)}　${wdays(s.a,s.b)??'-'}天</div>`}).join('')}</div>`:'';
  return`<div class="cd tk" style="--c:${SC[t.s]||'#999'}" data-e="${esc(t.id)}"><div class="tt">${esc(t.t)}</div>
  <div class="chs"><span class="ch sch">${t.s||'-'}</span>${t.pr?`<span class="ch" style="--c:#d6523f">${esc(t.pr)}优先</span>`:''}${t.f?'<span class="tg">走流程</span>':''}</div>
  <div class="mt">${(t.ty||'').split(',').filter(Boolean).map(x=>`<span class="tg">${esc(x.trim())}</span>`).join('')}<span class="tg">${esc(G(t.d))}</span></div>
@@ -480,6 +544,9 @@ function bind(){const A=$('#appMain');
  g('#bl',()=>{$('#alp').hidden=!$('#alp').hidden});
  const w=$('#who');if(w)w.onchange=()=>{P.who=w.value;P.pg=0;render()};
  A.querySelectorAll('[data-w]').forEach(a=>a.onclick=e=>{e.preventDefault();P.who=a.dataset.w;P.pg=0;render()});
+ const wkh=$('#wkh');if(wkh)wkh.onclick=e=>{if(e.target.closest('[data-wn]'))return;WK.open=!WK.open;render()};   /* 本周工作排期：折叠/展开（点◀▶不触发） */
+ A.querySelectorAll('[data-wn]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=+b.dataset.wn;WK.off=v==0?0:WK.off+v;render()});   /* 本周工作排期：上一周/下一周/回本周 */
+ A.querySelectorAll('[data-wk]').forEach(h=>h.onclick=()=>{const k=h.dataset.wk;if(WK.k==k)WK.dir=-WK.dir;else{WK.k=k;WK.dir=1}render()});   /* 本周工作排期：切换排序维度/方向 */
  const q=$('#q');q.onchange=()=>{P.q=q.value;P.pg=0;render()};$('#so').onchange=e=>{P.so=e.target.value;P.pg=0;render()};
  A.querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{P.st=b.dataset.st;P.pg=0;render()});
  A.querySelectorAll('[data-pg]').forEach(b=>b.onclick=e=>{e.stopPropagation();const v=+b.dataset.pg;if(v<0||v>=_pgN)return;P.pg=v;render()});
@@ -502,8 +569,8 @@ function bind(){const A=$('#appMain');
   al=alerts(base).filter(x=>x.end<=b),
   st=stat(m),
   byS=s=>m.filter(t=>t.s==s),
-  ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无';
-  const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+ls(byS('已完成'),40)+`\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+ls(byS('进行中'),40)+`\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+ls(byS('待启动'),40);
+  ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}｜定稿${t.n??'-'}件`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无';
+  const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜定稿${a.t.n??'-'}件｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+ls(byS('已完成'),40)+`\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+ls(byS('进行中'),40)+`\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+ls(byS('待启动'),40);
   copyPlain(tx)})}
 /* 复制兜底：剪贴板 API（https/localhost）→ 隐藏 textarea+execCommand（file:// 也能用）→ 弹窗手动复制 */
 function copyPlain(t,msg){
@@ -591,12 +658,12 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
   inp.addEventListener('blur',()=>{lst.hidden=true})});
 
  /* 阶段时间编辑 */
- const stRows=()=>{$('#stl').innerHTML=ST.map((s,i)=>`<div class="sr" data-i="${i}"><input class="l sl_l" placeholder="阶段名称，如：初稿 / 修改 / 终稿" value="${esc(s.l||'')}"><input type="date" class="sl_a" value="${s.a||''}" title="阶段开始"><input type="date" class="sl_b" value="${s.b||''}" title="阶段结束"><div class="sm2"><label><input type="checkbox" class="sl_d" ${s.d?'checked':''}> 该阶段已完成</label><span class="k sdu">${s.a&&s.b?days(s.a,s.b)+' 天':'-'}</span><select class="sl_c" title="选择周期：以阶段开始日为起点自动推算结束日"><option value="">周期</option>${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<option value="${d}">${k}</option>`).join('')}</select><button type="button" class="sm sdel">✕ 删除</button></div></div>`).join('')};
+ const stRows=()=>{$('#stl').innerHTML=ST.map((s,i)=>`<div class="sr" data-i="${i}"><input class="l sl_l" placeholder="阶段名称，如：初稿 / 修改 / 终稿" value="${esc(s.l||'')}"><input type="date" class="sl_a" value="${s.a||''}" title="阶段开始"><input type="date" class="sl_b" value="${s.b||''}" title="阶段结束"><div class="sm2"><label><input type="checkbox" class="sl_d" ${s.d?'checked':''}> 该阶段已完成</label><span class="k sdu">${s.a&&s.b?wdays(s.a,s.b)+' 天':'-'}</span><select class="sl_c" title="选择周期：以阶段开始日为起点自动推算结束日"><option value="">周期</option>${[[1,'1天'],[2,'2天'],[3,'3天'],[7,'1周'],[14,'2周']].map(([d,k])=>`<option value="${d}">${k}</option>`).join('')}</select><button type="button" class="sm sdel">✕ 删除</button></div></div>`).join('')};
  const sync=()=>{const has=ST.length>0;
   if(has){const as=ST.map(s=>s.a).filter(Boolean).sort(),bs=ST.map(s=>s.b).filter(Boolean).sort();$('#f_a').value=as[0]||'';$('#f_b').value=bs[bs.length-1]||''}
   $('#f_a').disabled=$('#f_b').disabled=has;document.querySelectorAll('[data-c]').forEach(b=>b.disabled=has);$('#stn').hidden=!has;
-  const tot=ST.filter(s=>s.a&&s.b).reduce((z,s)=>z+Math.max(0,days(s.a,s.b)),0);
-  $('#cy').textContent=has?`${tot} 天（${ST.length} 个阶段合计）`:((days($('#f_a').value,$('#f_b').value)??'-')+' 天')};
+  const tot=ST.filter(s=>s.a&&s.b).reduce((z,s)=>z+Math.max(0,wdays(s.a,s.b)),0);
+  $('#cy').textContent=has?`${tot} 天（${ST.length} 个阶段合计）`:((wdays($('#f_a').value,$('#f_b').value)??'-')+' 天')};
  stRows();sync();
  $('#f_a').onchange=$('#f_b').onchange=sync;
  $('#addSt').onclick=()=>{
@@ -608,7 +675,7 @@ function form(t){const n=!t,x=t||{id:'c'+Date.now()+Math.random().toString(36).s
  $('#stl').oninput=$('#stl').onchange=e=>{const r=e.target.closest('.sr');if(!r)return;const s=ST[+r.dataset.i],c=e.target.classList;
   if(c.contains('sl_l'))s.l=e.target.value;else if(c.contains('sl_a'))s.a=e.target.value;else if(c.contains('sl_b'))s.b=e.target.value;else if(c.contains('sl_d'))s.d=e.target.checked;
   else if(c.contains('sl_c')&&e.target.value){s.a=s.a||TD();s.b=addD(s.a,+e.target.value);r.querySelector('.sl_a').value=s.a;r.querySelector('.sl_b').value=s.b}
-  r.querySelector('.sdu').textContent=s.a&&s.b?days(s.a,s.b)+' 天':'-';sync();chk('f_a')};
+  r.querySelector('.sdu').textContent=s.a&&s.b?wdays(s.a,s.b)+' 天':'-';sync();chk('f_a')};
  $('#stl').onclick=e=>{const b=e.target.closest('.sdel');if(b){ST.splice(+b.closest('.sr').dataset.i,1);stRows();sync();chk('f_a')}};
 
  /* 进度 ↔ 状态 联动 */
