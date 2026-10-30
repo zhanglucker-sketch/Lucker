@@ -569,8 +569,24 @@ function bind(){const A=$('#appMain');
   al=alerts(base).filter(x=>x.end<=b),
   st=stat(m),
   byS=s=>m.filter(t=>t.s==s),
-  ls=(a,n)=>a.length?a.slice(0,n).map((t,i)=>`${i+1}. ${t.t}${S.leader?'（'+t.de+'）':''}｜定稿${t.n??'-'}件`).join('\n')+(a.length>n?`\n…等共${a.length}项`:''):'无';
-  const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+`\n\n⚠ 预警项目（${al.length}）：\n`+(al.length?al.slice(0,30).map((a,i)=>`${i+1}. ${a.t.t}${a.sg?'['+a.sg+']':''}｜${a.t.de}｜定稿${a.t.n??'-'}件｜截止${a.end}｜${fh(a.h)}`).join('\n'):'无')+`\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+ls(byS('已完成'),40)+`\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+ls(byS('进行中'),40)+`\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+ls(byS('待启动'),40);
+  /* 四维度均按「事业部门」标题标签分组（标签后附该部门该维度的定稿合计），组内同一设计师的项目聚拢（次级排序）；部门按项目数降序 */
+  gp=(l,tf,fmt,cap,word)=>{if(!l.length)return'无';
+   const o=new Map,cn=g2=>[...g2.values()].reduce((s,v)=>s+v.length,0),sn=g2=>[...g2.values()].flat().reduce((s,x)=>s+(+tf(x).n||0),0);
+   l.forEach(x=>{const t=tf(x),k=G(t.d),u=S.leader&&t.de?t.de:'';
+    if(!o.has(k))o.set(k,new Map);
+    const g2=o.get(k);if(!g2.has(u))g2.set(u,[]);g2.get(u).push(x)});
+   const lines=[];let i=0;
+   [...o.entries()].sort((x,y)=>cn(y[1])-cn(x[1])).forEach(([d,g2])=>{
+    lines.push(`【${d}】${word}定稿${sn(g2)}件`);g2.forEach(items=>items.forEach(x=>{if(i<cap){i++;lines.push(fmt(i,x))}}))});
+   if(l.length>cap)lines.push(`…等共${l.length}项`);
+   return lines.join('\n')},
+  wf=(i,x)=>`${i}. ${x.t.t}${x.sg?'['+x.sg+']':''}｜${x.t.de}｜定稿${x.t.n??'-'}件｜截止${x.end}｜${fh(x.h)}`,
+  lf=(i,t)=>`${i}. ${t.t}${S.leader?'（'+t.de+'）':''}｜定稿${t.n??'-'}件`;
+  const tx=`【${tt}】${S.leader?(P.who||'内容创意组'):S.user}\n任务总数 ${st.n} 项，完成 ${st.dn} 项（${st.rate}%），进行中/待办 ${st.op} 项\n平均周期 ${st.cy} 天，定稿 ${st.fin} 件，走流程 ${st.fl} 项\n部门占比：`+cnt(m,t=>G(t.d)).slice(0,6).map(([k,v])=>`${k} ${Math.round(v/(m.length||1)*100)}%`).join('、')+
+   `\n\n⚠ 预警项目（${al.length}）：\n`+gp(al,x=>x.t,wf,30,'预警项目')+
+   `\n\n✅ ${M}已完成项目（${byS('已完成').length}）：\n`+gp(byS('已完成'),t=>t,lf,40,'已完成项目')+
+   `\n\n🔄 进行中项目（${byS('进行中').length}）：\n`+gp(byS('进行中'),t=>t,lf,40,'进行中项目')+
+   `\n\n🚀 待启动项目（${byS('待启动').length}）：\n`+gp(byS('待启动'),t=>t,lf,40,'待启动项目');
   copyPlain(tx)})}
 /* 复制兜底：剪贴板 API（https/localhost）→ 隐藏 textarea+execCommand（file:// 也能用）→ 弹窗手动复制 */
 function copyPlain(t,msg){
